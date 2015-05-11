@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension
+         point="org.knime.workbench.repository.categories">
+      <category
+            icon="img/spark-logo.png"
+            level-id="spark4knime"
+            locked="false"
+            name="Spark Nodes"
+            path="/">
+      </category>
+      <category
+            icon="img/default.png"
+            level-id="input"
+            locked="true"
+            name="Input"
+            path="/spark4knime">
+      </category>
+      <category
+            icon="img/default.png"
+            level-id="transformations"
+            locked="false"
+            name="Transformations"
+            path="/spark4knime">
+      </category>
+      <category
+            icon="img/default.png"
+            level-id="actions"
+            locked="false"
+            name="Actions"
+            path="/spark4knime">
+      </category>
+      <category
+            icon="img/default.png"
+            level-id="output"
+            locked="false"
+            name="Output"
+            path="/spark4knime">
+      </category>
+   </extension>
+
+   <!-- This is an example for providing an own category 
+      <extension
+         point="org.knime.workbench.repository.categories">
+      <category
+            description="Category containing my nodes"
+            icon="icons/default.png"
+            level-id="myNodes"
+            name="My nodes"
+            path="/"/>
+   </extension>
+   -->
+   
+   <extension
+         point="org.knime.workbench.repository.nodes">
+      <node
+            category-path="/spark4knime/input"
+            factory-class="de.pavloff.spark4knime.input.FileToRDDNodeFactory"
+            id="de.pavloff.spark4knime.FileToRDDNodeFactory"/>
+   </extension>
+   
+</plugin>
