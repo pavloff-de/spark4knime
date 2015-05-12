@@ -15,7 +15,7 @@ import org.knime.core.data.DataType;
  * 
  * @author Oleg Pavlov
  */
-class RddCell extends DataCell {
+public class RddCell extends DataCell {
 
 	private static final long serialVersionUID = 2926662445712660558L;
 
