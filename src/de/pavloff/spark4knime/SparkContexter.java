@@ -47,4 +47,21 @@ public class SparkContexter {
 		}
 		return sc;
 	}
+	
+	/**
+	 * Return Spark Master which is used before
+	 * 
+	 * @param defaultMaster
+	 * @return master used before or defaultMaster
+	 */
+	public static String getCurrentMaster(String defaultMaster) {
+		String currentMaster = defaultMaster;
+		JavaSparkContext sc = SparkContexter.sparkContext.get(currentMaster);
+		if (sc == null) {
+			if (SparkContexter.sparkContext.size() != 0) {
+				currentMaster = (String) SparkContexter.sparkContext.keySet().toArray()[0];
+			}
+		}
+		return currentMaster;
+	}
 }

@@ -5,6 +5,8 @@ import org.knime.core.node.defaultnodesettings.DialogComponentFileChooser;
 import org.knime.core.node.defaultnodesettings.DialogComponentString;
 import org.knime.core.node.defaultnodesettings.SettingsModelString;
 
+import de.pavloff.spark4knime.SparkContexter;
+
 /**
  * <code>NodeDialog</code> for the "FileToRDD" Node. Read a text file and
  * parallelize data by lines
@@ -28,7 +30,8 @@ public class FileToRDDNodeDialog extends DefaultNodeSettingsPane {
 		// master
 		addDialogComponent(new DialogComponentString(new SettingsModelString(
 				FileToRDDNodeModel.CFGKEY_MASTER,
-				FileToRDDNodeModel.DEFAULT_MASTER),
+				SparkContexter
+						.getCurrentMaster(FileToRDDNodeModel.DEFAULT_MASTER)),
 				FileToRDDNodeModel.CFGKEY_MASTER, true, 15));
 
 		// text file
