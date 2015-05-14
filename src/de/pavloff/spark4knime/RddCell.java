@@ -3,7 +3,7 @@
  */
 package de.pavloff.spark4knime;
 
-import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaRDDLike;
 import org.knime.core.data.DataCell;
 import org.knime.core.data.DataType;
 
@@ -28,7 +28,7 @@ public class RddCell extends DataCell {
 	public static final DataType TYPE = DataType.getType(RddCell.class);
 
 	@SuppressWarnings("rawtypes")
-	private final JavaRDD m_rdd;
+	private final JavaRDDLike m_rdd;
 
 	/**
 	 * Creates a new cell for a Spark RDD.
@@ -37,7 +37,7 @@ public class RddCell extends DataCell {
 	 *            The JavaRDD
 	 */
 	@SuppressWarnings("rawtypes")
-	public RddCell(final JavaRDD rdd) {
+	public RddCell(final JavaRDDLike rdd) {
 		m_rdd = rdd;
 	}
 
@@ -47,7 +47,7 @@ public class RddCell extends DataCell {
 	 * @return JavaRDD
 	 */
 	@SuppressWarnings("rawtypes")
-	public JavaRDD get_rdd() {
+	public JavaRDDLike get_rdd() {
 		return m_rdd;
 	}
 

@@ -3,7 +3,7 @@
  */
 package de.pavloff.spark4knime;
 
-import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaRDDLike;
 import org.knime.core.data.DataCell;
 import org.knime.core.data.DataColumnSpecCreator;
 import org.knime.core.data.DataTableSpec;
@@ -17,7 +17,7 @@ import org.knime.core.node.ExecutionContext;
 
 /**
  * Common static class for communication between Spark nodes via
- * BufferedDataTable. Table contains a single RddCell with JavaRDD object.
+ * BufferedDataTable. Table contains a single RddCell with JavaRDDLike object.
  * <table>
  * <col width="25%"/> <col width="75%"/> <tbody>
  * <tr>
@@ -26,7 +26,7 @@ import org.knime.core.node.ExecutionContext;
  * </tr>
  * <tr>
  * <td>RDD</td>
- * <td>JavaRDD object</td>
+ * <td>JavaRDDLike object</td>
  * </tr>
  * </tbody>
  * </table>
@@ -38,18 +38,18 @@ import org.knime.core.node.ExecutionContext;
 public class RddTable {
 
 	/**
-	 * Save an JavaRDD object in BufferedDataTable via ExecutionContext exec
+	 * Save an RDD object in BufferedDataTable via ExecutionContext
 	 * 
 	 * @param exec
 	 *            <code>ExecutionContext</code>
 	 * @param rdd
-	 *            <code>JavaRDD</code> to save in table
+	 *            <code>JavaRDDLike</code> to save in table
 	 * @throws NullPointerException
 	 *             If rdd is null
 	 * @return <code>BufferedDataTable</code> with a single Cell containing rdd
 	 */
 	public static BufferedDataTable setRDD(final ExecutionContext exec,
-			@SuppressWarnings("rawtypes") JavaRDD rdd) {
+			@SuppressWarnings("rawtypes") JavaRDDLike rdd) {
 		if (rdd == null) {
 			throw new NullPointerException("RDD shouldn't be null");
 		}
@@ -63,20 +63,20 @@ public class RddTable {
 	}
 
 	/**
-	 * Read an JavaRDD from BufferedDataTable table
+	 * Read an RDD from BufferedDataTable table
 	 * 
 	 * @param table
 	 *            <code>BufferedDataTable</code>
 	 * @throws IndexOutOfBoundsException
 	 *             If table doesn't contain any DataCell
 	 * @throws ClassCastException
-	 *             If table contains non JavaRDD
+	 *             If table contains non JavaRDDLike
 	 * @throws IllegalArgumentException
 	 *             If table contains more than one DataCell
-	 * @return <code>JavaRDD</code> saved in table
+	 * @return <code>JavaRDDLike</code> saved in table
 	 */
 	@SuppressWarnings("rawtypes")
-	public static JavaRDD getRDD(BufferedDataTable[] table) {
+	public static JavaRDDLike getRDD(BufferedDataTable[] table) {
 		if (table.length == 0) {
 			throw new IndexOutOfBoundsException("table should'n be empty");
 		}
@@ -91,7 +91,7 @@ public class RddTable {
 		try {
 			c = (RddCell) dc;
 		} catch (Exception e) {
-			throw new ClassCastException("table contains non JavaRDD object");
+			throw new ClassCastException("table contains non JavaRDDLike object");
 		}
 		return c.get_rdd();
 	}
