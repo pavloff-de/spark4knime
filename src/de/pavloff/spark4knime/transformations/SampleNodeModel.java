@@ -1,14 +1,16 @@
-package de.pavloff.spark4knime.input;
+package de.pavloff.spark4knime.transformations;
 
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
-import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.JavaRDDLike;
 import org.knime.core.data.DataTableSpec;
 import org.knime.core.node.BufferedDataTable;
 import org.knime.core.node.CanceledExecutionException;
-import org.knime.core.node.defaultnodesettings.SettingsModelString;
+import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
+import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
 import org.knime.core.node.ExecutionContext;
 import org.knime.core.node.ExecutionMonitor;
 import org.knime.core.node.InvalidSettingsException;
@@ -18,69 +20,75 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
 import de.pavloff.spark4knime.RddTable;
-import de.pavloff.spark4knime.SparkContexter;
 
 /**
- * This is the model implementation of FileToRDD. Read a text file and
- * parallelize data by lines
+ * This is the model implementation of Sample. Sample operation on Spark RDD
  * 
  * @author Oleg Pavlov
  */
-public class FileToRDDNodeModel extends NodeModel {
+public class SampleNodeModel extends NodeModel {
 
 	// the logger instance
 	private static final NodeLogger logger = NodeLogger
-			.getLogger(FileToRDDNodeModel.class);
+			.getLogger(SampleNodeModel.class);
 
 	/**
 	 * the settings key which is used to retrieve and store the settings (from
 	 * the dialog or from a settings file) (package visibility to be usable from
 	 * the dialog).
 	 */
-	static final String CFGKEY_MASTER = "Spark Master";
-	static final String CFGKEY_PATH = "File";
+	static final String CFGKEY_REPLACEMENT = "With replacement";
+	static final String CFGKEY_FRACTION = "Fraction of data (%)";
+	static final String CFGKEY_SEED = "Random number generator";
 
-	/** initial default values */
-	static final String DEFAULT_MASTER = "local[2]";
-	static final String DEFAULT_PATH = "";
+	/** initial default count value. */
+	static final Boolean DEFAULT_REPLACEMENT = false;
+	static final int DEFAULT_FRACTION = 10;
+	static final int DEFAULT_SEED = 1;
 
-	//
-	private final SettingsModelString m_master = new SettingsModelString(
-			FileToRDDNodeModel.CFGKEY_MASTER, FileToRDDNodeModel.DEFAULT_MASTER);
-
-	private final SettingsModelString m_path = new SettingsModelString(
-			FileToRDDNodeModel.CFGKEY_PATH, FileToRDDNodeModel.DEFAULT_PATH);
+	// example value: the models count variable filled from the dialog
+	// and used in the models execution method. The default components of the
+	// dialog work with "SettingsModels".
+	private final SettingsModelBoolean m_replacement = new SettingsModelBoolean(
+			SampleNodeModel.CFGKEY_REPLACEMENT,
+			SampleNodeModel.DEFAULT_REPLACEMENT);
+	private final SettingsModelIntegerBounded m_fraction = new SettingsModelIntegerBounded(
+			SampleNodeModel.CFGKEY_FRACTION, SampleNodeModel.DEFAULT_FRACTION,
+			0, 100);
+	private final SettingsModelIntegerBounded m_seed = new SettingsModelIntegerBounded(
+			SampleNodeModel.CFGKEY_SEED, SampleNodeModel.DEFAULT_SEED,
+			Integer.MIN_VALUE, Integer.MAX_VALUE);
 
 	/**
 	 * Constructor for the node model.
 	 */
-	protected FileToRDDNodeModel() {
-		// input: null
-		// output: BufferedDataTable with JavaRDD
-		super(0, 1);
+	protected SampleNodeModel() {
+		// input: BufferedDataTable with JavaRDD
+		// output: BufferedDataTable with Sample of JavaRDD
+		super(1, 1);
 	}
 
 	/**
 	 * {@inheritDoc}
-	 * 
-	 * @throws IllegalArgumentException
-	 *             If path to text file is empty
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
 			final ExecutionContext exec) throws Exception {
 
-		JavaSparkContext sparkContext = SparkContexter.getSparkContext(m_master
-				.getStringValue());
+		JavaRDDLike rdd;
+		if (RddTable.isPairRDD(inData[0])) {
+			rdd = ((JavaPairRDD) RddTable.getRDD(inData)).sample(
+					m_replacement.getBooleanValue(),
+					m_fraction.getIntValue() / 100.0, m_seed.getIntValue());
+			return new BufferedDataTable[] { RddTable.setRDD(exec, rdd, true) };
 
-		String path = m_path.getStringValue();
-		if (path.length() == 0) {
-			throw new IllegalArgumentException(
-					"Path to text file shouldn't be empty");
+		} else {
+			rdd = ((JavaRDD) RddTable.getRDD(inData)).sample(
+					m_replacement.getBooleanValue(),
+					m_fraction.getIntValue() / 100.0, m_seed.getIntValue());
+			return new BufferedDataTable[] { RddTable.setRDD(exec, rdd, false) };
 		}
-		JavaRDD<String> rdd = sparkContext.textFile(m_path.getStringValue());
-
-		return new BufferedDataTable[] { RddTable.setRDD(exec, rdd, false) };
 	}
 
 	/**
@@ -114,8 +122,12 @@ public class FileToRDDNodeModel extends NodeModel {
 	 */
 	@Override
 	protected void saveSettingsTo(final NodeSettingsWO settings) {
-		m_master.saveSettingsTo(settings);
-		m_path.saveSettingsTo(settings);
+
+		// TODO save user settings to the config object.
+
+		m_replacement.saveSettingsTo(settings);
+		m_fraction.saveSettingsTo(settings);
+		m_seed.saveSettingsTo(settings);
 	}
 
 	/**
@@ -129,8 +141,9 @@ public class FileToRDDNodeModel extends NodeModel {
 		// It can be safely assumed that the settings are valided by the
 		// method below.
 
-		m_master.loadSettingsFrom(settings);
-		m_path.loadSettingsFrom(settings);
+		m_replacement.loadSettingsFrom(settings);
+		m_fraction.loadSettingsFrom(settings);
+		m_seed.loadSettingsFrom(settings);
 	}
 
 	/**
@@ -145,8 +158,9 @@ public class FileToRDDNodeModel extends NodeModel {
 		// SettingsModel).
 		// Do not actually set any values of any member variables.
 
-		m_master.validateSettings(settings);
-		m_path.validateSettings(settings);
+		m_replacement.validateSettings(settings);
+		m_fraction.validateSettings(settings);
+		m_seed.validateSettings(settings);
 	}
 
 	/**

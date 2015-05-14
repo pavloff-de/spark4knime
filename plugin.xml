@@ -1,42 +1,15 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.0"?>
-<plugin>
-   <extension
-         point="org.knime.workbench.repository.categories">
-      <category
-            icon="img/spark-logo.png"
-            level-id="spark4knime"
-            locked="false"
-            name="Spark Nodes"
-            path="/">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?eclipse version="3.0"?><plugin>
+   <extension point="org.knime.workbench.repository.categories">
+      <category icon="img/spark-logo.png" level-id="spark4knime" locked="false" name="Spark Nodes" path="/">
       </category>
-      <category
-            icon="img/default.png"
-            level-id="input"
-            locked="true"
-            name="Input"
-            path="/spark4knime">
+      <category icon="img/default.png" level-id="input" locked="true" name="Input" path="/spark4knime">
       </category>
-      <category
-            icon="img/default.png"
-            level-id="transformations"
-            locked="false"
-            name="Transformations"
-            path="/spark4knime">
+      <category icon="img/default.png" level-id="transformations" locked="false" name="Transformations" path="/spark4knime">
       </category>
-      <category
-            icon="img/default.png"
-            level-id="actions"
-            locked="false"
-            name="Actions"
-            path="/spark4knime">
+      <category icon="img/default.png" level-id="actions" locked="false" name="Actions" path="/spark4knime">
       </category>
-      <category
-            icon="img/default.png"
-            level-id="output"
-            locked="false"
-            name="Output"
-            path="/spark4knime">
+      <category icon="img/default.png" level-id="output" locked="false" name="Output" path="/spark4knime">
       </category>
    </extension>
 
@@ -52,12 +25,10 @@
    </extension>
    -->
    
-   <extension
-         point="org.knime.workbench.repository.nodes">
-      <node
-            category-path="/spark4knime/input"
-            factory-class="de.pavloff.spark4knime.input.FileToRDDNodeFactory"
-            id="de.pavloff.spark4knime.FileToRDDNodeFactory"/>
-   </extension>
+   <extension point="org.knime.workbench.repository.nodes">
+      <node category-path="/spark4knime/input" factory-class="de.pavloff.spark4knime.input.FileToRDDNodeFactory" id="de.pavloff.spark4knime.FileToRDDNodeFactory"/>
+   <node category-path="/spark4knime/input" factory-class="de.pavloff.spark4knime.input.TableToRDDNodeFactory" id="de.pavloff.spark4knime.input.TableToRDDNodeFactory"/>
+<node category-path="/spark4knime/transformations" factory-class="de.pavloff.spark4knime.transformations.SampleNodeFactory" id="de.pavloff.spark4knime.transformations.SampleNodeFactory"/>
+</extension>
    
 </plugin>
