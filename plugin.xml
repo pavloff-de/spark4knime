@@ -29,6 +29,7 @@
       <node category-path="/spark4knime/input" factory-class="de.pavloff.spark4knime.input.FileToRDDNodeFactory" id="de.pavloff.spark4knime.FileToRDDNodeFactory"/>
    <node category-path="/spark4knime/input" factory-class="de.pavloff.spark4knime.input.TableToRDDNodeFactory" id="de.pavloff.spark4knime.input.TableToRDDNodeFactory"/>
 <node category-path="/spark4knime/transformations" factory-class="de.pavloff.spark4knime.transformations.SampleNodeFactory" id="de.pavloff.spark4knime.transformations.SampleNodeFactory"/>
+<node category-path="/spark4knime/transformations" factory-class="de.pavloff.spark4knime.transformations.UnionNodeFactory" id="de.pavloff.spark4knime.transformations.UnionNodeFactory"/>
 </extension>
    
 </plugin>
