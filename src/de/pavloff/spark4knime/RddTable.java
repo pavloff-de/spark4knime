@@ -72,25 +72,13 @@ public class RddTable {
 	 * 
 	 * @param table
 	 *            <code>BufferedDataTable</code>
-	 * @throws IndexOutOfBoundsException
-	 *             If table doesn't contain any DataCell
 	 * @throws ClassCastException
 	 *             If table contains non JavaRDDLike
-	 * @throws IllegalArgumentException
-	 *             If table contains more than one DataCell
 	 * @return <code>JavaRDDLike</code> saved in table
 	 */
 	@SuppressWarnings("rawtypes")
-	public static JavaRDDLike getRDD(BufferedDataTable[] table) {
-		if (table.length == 0) {
-			throw new IndexOutOfBoundsException("table should'n be empty");
-		}
-		if (table.length != 1) {
-			throw new IllegalArgumentException(
-					"table should contain only one cell");
-		}
-		BufferedDataTable data = table[0];
-		CloseableRowIterator it = data.iterator();
+	public static JavaRDDLike getRDD(BufferedDataTable table) {
+		CloseableRowIterator it = table.iterator();
 		DataCell dc = it.next().getCell(0);
 		RddCell c;
 		try {

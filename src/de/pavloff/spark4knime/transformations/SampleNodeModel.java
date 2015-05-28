@@ -78,13 +78,13 @@ public class SampleNodeModel extends NodeModel {
 
 		JavaRDDLike rdd;
 		if (RddTable.isPairRDD(inData[0])) {
-			rdd = ((JavaPairRDD) RddTable.getRDD(inData)).sample(
+			rdd = ((JavaPairRDD) RddTable.getRDD(inData[0])).sample(
 					m_replacement.getBooleanValue(),
 					m_fraction.getIntValue() / 100.0, m_seed.getIntValue());
 			return new BufferedDataTable[] { RddTable.setRDD(exec, rdd, true) };
 
 		} else {
-			rdd = ((JavaRDD) RddTable.getRDD(inData)).sample(
+			rdd = ((JavaRDD) RddTable.getRDD(inData[0])).sample(
 					m_replacement.getBooleanValue(),
 					m_fraction.getIntValue() / 100.0, m_seed.getIntValue());
 			return new BufferedDataTable[] { RddTable.setRDD(exec, rdd, false) };
