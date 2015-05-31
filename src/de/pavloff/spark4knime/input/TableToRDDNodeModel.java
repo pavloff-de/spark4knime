@@ -130,6 +130,31 @@ public class TableToRDDNodeModel extends NodeModel {
 	}
 
 	/**
+	 * Returns a DataCell value
+	 * 
+	 * @param cell
+	 *            <code>DataCell</code>
+	 * @return <code>Object</code> saved in cell
+	 */
+	private Object getCellValue(DataCell cell) {
+		DataType type = cell.getType();
+
+		if (type == StringCell.TYPE) {
+			return ((StringCell) cell).getStringValue();
+		} else if (type == DoubleCell.TYPE) {
+			return ((DoubleCell) cell).getDoubleValue();
+		} else if (type == IntCell.TYPE) {
+			return ((IntCell) cell).getIntValue();
+		} else if (type == LongCell.TYPE) {
+			return ((LongCell) cell).getLongValue();
+		} else if (type == BooleanCell.TYPE) {
+			return ((BooleanCell) cell).getBooleanValue();
+		} else {
+			return null;
+		}
+	}
+
+	/**
 	 * Creates JavaRDD from BufferedDataTable
 	 * 
 	 * @param data
@@ -142,20 +167,23 @@ public class TableToRDDNodeModel extends NodeModel {
 	private JavaRDD createRDD(BufferedDataTable data, int[] colIndices) {
 		JavaRDD rdd;
 		CloseableRowIterator rowIt = data.iterator();
-		DataCell cell = rowIt.next().getCell(colIndices[0]);
+		DataCell firstCell = rowIt.next().getCell(colIndices[0]);
 
 		JavaSparkContext sparkContext = SparkContexter.getSparkContext(m_master
 				.getStringValue());
-		ArrayList toParallelize = cellToCollection(cell, null);
+		ArrayList toParallelize = new ArrayList(1);
+		toParallelize.add(getCellValue(firstCell));
+
 		rdd = sparkContext.parallelize(toParallelize);
+		ArrayList rest = new ArrayList();
 
 		while (rowIt.hasNext()) {
-			toParallelize = cellToCollection(rowIt.next()
-					.getCell(colIndices[0]), toParallelize);
-			JavaRDD<String> otherRDD = sparkContext.parallelize(toParallelize);
-			rdd = rdd.union(otherRDD);
+			toParallelize = new ArrayList(1);
+			DataRow nextRow = rowIt.next();
+			toParallelize.add(getCellValue(nextRow.getCell(colIndices[0])));
+			rest.add(sparkContext.parallelize(toParallelize));
 		}
-		return rdd;
+		return sparkContext.union(rdd, rest);
 	}
 
 	/**
@@ -176,61 +204,24 @@ public class TableToRDDNodeModel extends NodeModel {
 		JavaSparkContext sparkContext = SparkContexter.getSparkContext(m_master
 				.getStringValue());
 		ArrayList toParallelize = new ArrayList(1);
-		ArrayList first = cellToCollection(firstRow.getCell(colIndices[0]),
-				null);
-		ArrayList second = cellToCollection(firstRow.getCell(colIndices[1]),
-				null);
-		toParallelize.add(new Tuple2(first.get(0), second.get(0)));
+		toParallelize.add(new Tuple2(getCellValue(firstRow
+				.getCell(colIndices[0])), getCellValue(firstRow
+				.getCell(colIndices[1]))));
 
 		rdd = JavaPairRDD.fromJavaRDD(sparkContext.parallelize(toParallelize));
+		ArrayList rest = new ArrayList();
 
 		while (rowIt.hasNext()) {
-			toParallelize.clear();
-			first = cellToCollection(rowIt.next().getCell(colIndices[0]), first);
-			second = cellToCollection(firstRow.getCell(colIndices[1]), second);
-			toParallelize.add(new Tuple2(first.get(0), second.get(0)));
-			JavaPairRDD otherRDD = JavaPairRDD.fromJavaRDD(sparkContext
-					.parallelize(toParallelize));
-			rdd = rdd.union(otherRDD);
+			toParallelize = new ArrayList(1);
+			DataRow nextRow = rowIt.next();
+			toParallelize.add(new Tuple2(getCellValue(nextRow
+					.getCell(colIndices[0])), getCellValue(nextRow
+					.getCell(colIndices[1]))));
+			rest.add(JavaPairRDD.fromJavaRDD(sparkContext
+					.parallelize(toParallelize)));
 		}
 
-		return rdd;
-	}
-
-	/**
-	 * Saves DataCell value in an array without type considering
-	 * 
-	 * @param cell
-	 *            <code>DataCell</code> with some value
-	 * @param l
-	 *            <code>Collection</code> with value from cell
-	 * @return l
-	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private ArrayList cellToCollection(DataCell cell, ArrayList l) {
-		if (l == null) {
-			l = new ArrayList(1);
-		} else {
-			l.clear();
-		}
-		DataType type = cell.getType();
-
-		if (type == StringCell.TYPE) {
-			l.add(((StringCell) cell).getStringValue());
-		} else if (type == DoubleCell.TYPE) {
-			l.add(((DoubleCell) cell).getDoubleValue());
-		} else if (type == IntCell.TYPE) {
-			l.add(((IntCell) cell).getIntValue());
-		} else if (type == LongCell.TYPE) {
-			l.add(((LongCell) cell).getLongValue());
-		} else if (type == BooleanCell.TYPE) {
-			l.add(((BooleanCell) cell).getBooleanValue());
-		} else {
-			throw new ClassCastException("Type " + type.toString()
-					+ " couldn't be used to create RDD");
-		}
-
-		return l;
+		return sparkContext.union(rdd, rest);
 	}
 
 	/**
