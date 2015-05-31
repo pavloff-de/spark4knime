@@ -8,6 +8,8 @@ import org.apache.spark.api.java.JavaRDD;
 import org.knime.core.data.DataTableSpec;
 import org.knime.core.node.BufferedDataTable;
 import org.knime.core.node.CanceledExecutionException;
+import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
+import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
 import org.knime.core.node.ExecutionContext;
 import org.knime.core.node.ExecutionMonitor;
 import org.knime.core.node.InvalidSettingsException;
@@ -19,43 +21,74 @@ import org.knime.core.node.NodeSettingsWO;
 import de.pavloff.spark4knime.TableCellUtils;
 
 /**
- * This is the model implementation of Collect. Collect all the elements of the
- * RDD as a table
+ * This is the model implementation of TakeSample. Returns a sample of RDD as
+ * list
  * 
  * @author Oleg Pavlov
  */
-public class CollectNodeModel extends NodeModel {
+public class TakeSampleNodeModel extends NodeModel {
 
 	// the logger instance
 	private static final NodeLogger logger = NodeLogger
-			.getLogger(CollectNodeModel.class);
+			.getLogger(TakeSampleNodeModel.class);
+
+	/**
+	 * the settings key which is used to retrieve and store the settings (from
+	 * the dialog or from a settings file) (package visibility to be usable from
+	 * the dialog).
+	 */
+	static final String CFGKEY_REPLACEMENT = "With replacement";
+	static final String CFGKEY_COUNT = "Number of data";
+	static final String CFGKEY_SEED = "Random number generator";
+
+	/** initial default count value. */
+	static final Boolean DEFAULT_REPLACEMENT = false;
+	static final int DEFAULT_COUNT = 10;
+	static final int DEFAULT_SEED = 1;
+
+	// example value: the models count variable filled from the dialog
+	// and used in the models execution method. The default components of the
+	// dialog work with "SettingsModels".
+	private final SettingsModelBoolean m_replacement = new SettingsModelBoolean(
+			TakeSampleNodeModel.CFGKEY_REPLACEMENT,
+			TakeSampleNodeModel.DEFAULT_REPLACEMENT);
+	private final SettingsModelIntegerBounded m_count = new SettingsModelIntegerBounded(
+			TakeSampleNodeModel.CFGKEY_COUNT,
+			TakeSampleNodeModel.DEFAULT_COUNT, 1, Integer.MAX_VALUE);
+	private final SettingsModelIntegerBounded m_seed = new SettingsModelIntegerBounded(
+			TakeSampleNodeModel.CFGKEY_SEED, TakeSampleNodeModel.DEFAULT_SEED,
+			Integer.MIN_VALUE, Integer.MAX_VALUE);
 
 	/**
 	 * Constructor for the node model.
 	 */
-	protected CollectNodeModel() {
-		// input: BufferedDataTables with JavaRDD
-		// output: BufferedDataTable with elements of JavaRDD
+	protected TakeSampleNodeModel() {
+		// input: BufferedDataTables with JavaRDDLike
+		// output: BufferedDataTable with sample elements
 		super(1, 1);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@SuppressWarnings({ "rawtypes" })
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
 			final ExecutionContext exec) throws Exception {
 
 		if (TableCellUtils.isPairRDD(inData[0])) {
 			return new BufferedDataTable[] { TableCellUtils.listOfPairsToTable(
-					((JavaPairRDD) TableCellUtils.getRDD(inData[0])).collect(),
-					exec) };
+					((JavaPairRDD) TableCellUtils.getRDD(inData[0]))
+							.takeSample(m_replacement.getBooleanValue(),
+									m_count.getIntValue(),
+									m_seed.getIntValue()), exec) };
 
 		} else {
 			return new BufferedDataTable[] { TableCellUtils
 					.listOfElementsToTable(((JavaRDD) TableCellUtils
-							.getRDD(inData[0])).collect(), exec) };
+							.getRDD(inData[0])).takeSample(
+							m_replacement.getBooleanValue(),
+							m_count.getIntValue(), m_seed.getIntValue()), exec) };
 		}
 	}
 
@@ -91,6 +124,10 @@ public class CollectNodeModel extends NodeModel {
 	@Override
 	protected void saveSettingsTo(final NodeSettingsWO settings) {
 
+		m_replacement.saveSettingsTo(settings);
+		m_count.saveSettingsTo(settings);
+		m_seed.saveSettingsTo(settings);
+
 	}
 
 	/**
@@ -100,6 +137,10 @@ public class CollectNodeModel extends NodeModel {
 	protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
 			throws InvalidSettingsException {
 
+		m_replacement.loadSettingsFrom(settings);
+		m_count.loadSettingsFrom(settings);
+		m_seed.loadSettingsFrom(settings);
+
 	}
 
 	/**
@@ -108,6 +149,10 @@ public class CollectNodeModel extends NodeModel {
 	@Override
 	protected void validateSettings(final NodeSettingsRO settings)
 			throws InvalidSettingsException {
+
+		m_replacement.validateSettings(settings);
+		m_count.validateSettings(settings);
+		m_seed.validateSettings(settings);
 
 	}
 

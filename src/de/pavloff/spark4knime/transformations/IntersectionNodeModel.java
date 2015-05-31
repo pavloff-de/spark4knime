@@ -1,10 +1,11 @@
-package de.pavloff.spark4knime.actions;
+package de.pavloff.spark4knime.transformations;
 
 import java.io.File;
 import java.io.IOException;
 
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaRDDLike;
 import org.knime.core.data.DataTableSpec;
 import org.knime.core.node.BufferedDataTable;
 import org.knime.core.node.CanceledExecutionException;
@@ -19,43 +20,60 @@ import org.knime.core.node.NodeSettingsWO;
 import de.pavloff.spark4knime.TableCellUtils;
 
 /**
- * This is the model implementation of Collect. Collect all the elements of the
- * RDD as a table
+ * This is the model implementation of Intersection. Create an Intersection of
+ * two RDD's
  * 
  * @author Oleg Pavlov
  */
-public class CollectNodeModel extends NodeModel {
+public class IntersectionNodeModel extends NodeModel {
 
 	// the logger instance
 	private static final NodeLogger logger = NodeLogger
-			.getLogger(CollectNodeModel.class);
+			.getLogger(IntersectionNodeModel.class);
 
 	/**
 	 * Constructor for the node model.
 	 */
-	protected CollectNodeModel() {
-		// input: BufferedDataTables with JavaRDD
-		// output: BufferedDataTable with elements of JavaRDD
-		super(1, 1);
+	protected IntersectionNodeModel() {
+		// input: two BufferedDataTables with JavaRDD
+		// output: BufferedDataTable with union of JavaRDD's
+		super(2, 1);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@SuppressWarnings({ "rawtypes" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
 			final ExecutionContext exec) throws Exception {
 
-		if (TableCellUtils.isPairRDD(inData[0])) {
-			return new BufferedDataTable[] { TableCellUtils.listOfPairsToTable(
-					((JavaPairRDD) TableCellUtils.getRDD(inData[0])).collect(),
-					exec) };
+		if (inData.length != 2) {
+			throw new IndexOutOfBoundsException(
+					"inData should contain two tables each with JavaRDDLike");
+		}
 
+		JavaRDDLike rdd;
+		if (TableCellUtils.isPairRDD(inData[0])) {
+			if (TableCellUtils.isPairRDD(inData[1])) {
+				rdd = ((JavaPairRDD) TableCellUtils.getRDD(inData[0]))
+						.intersection((JavaPairRDD) TableCellUtils
+								.getRDD(inData[1]));
+				return new BufferedDataTable[] { TableCellUtils.setRDD(exec,
+						rdd, true) };
+			} else {
+				throw new IllegalArgumentException("RDD's must be of same type");
+			}
 		} else {
-			return new BufferedDataTable[] { TableCellUtils
-					.listOfElementsToTable(((JavaRDD) TableCellUtils
-							.getRDD(inData[0])).collect(), exec) };
+			if (TableCellUtils.isPairRDD(inData[1])) {
+				throw new IllegalArgumentException("RDD's must be of same type");
+			} else {
+				rdd = ((JavaRDD) TableCellUtils.getRDD(inData[0]))
+						.intersection((JavaRDD) TableCellUtils
+								.getRDD(inData[1]));
+				return new BufferedDataTable[] { TableCellUtils.setRDD(exec,
+						rdd, false) };
+			}
 		}
 	}
 
@@ -91,6 +109,8 @@ public class CollectNodeModel extends NodeModel {
 	@Override
 	protected void saveSettingsTo(final NodeSettingsWO settings) {
 
+		// TODO save user settings to the config object.
+
 	}
 
 	/**
@@ -100,6 +120,10 @@ public class CollectNodeModel extends NodeModel {
 	protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
 			throws InvalidSettingsException {
 
+		// TODO load (valid) settings from the config object.
+		// It can be safely assumed that the settings are valided by the
+		// method below.
+
 	}
 
 	/**
@@ -108,6 +132,11 @@ public class CollectNodeModel extends NodeModel {
 	@Override
 	protected void validateSettings(final NodeSettingsRO settings)
 			throws InvalidSettingsException {
+
+		// TODO check if the settings could be applied to our model
+		// e.g. if the count is in a certain range (which is ensured by the
+		// SettingsModel).
+		// Do not actually set any values of any member variables.
 
 	}
 

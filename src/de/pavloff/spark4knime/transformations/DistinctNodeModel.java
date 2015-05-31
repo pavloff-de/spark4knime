@@ -1,4 +1,4 @@
-package de.pavloff.spark4knime.actions;
+package de.pavloff.spark4knime.transformations;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,43 +19,43 @@ import org.knime.core.node.NodeSettingsWO;
 import de.pavloff.spark4knime.TableCellUtils;
 
 /**
- * This is the model implementation of Collect. Collect all the elements of the
- * RDD as a table
+ * This is the model implementation of Distinct. Creates a new RDD that contains
+ * the distinct elements of the source RDD's
  * 
  * @author Oleg Pavlov
  */
-public class CollectNodeModel extends NodeModel {
+public class DistinctNodeModel extends NodeModel {
 
 	// the logger instance
 	private static final NodeLogger logger = NodeLogger
-			.getLogger(CollectNodeModel.class);
+			.getLogger(DistinctNodeModel.class);
 
 	/**
 	 * Constructor for the node model.
 	 */
-	protected CollectNodeModel() {
-		// input: BufferedDataTables with JavaRDD
-		// output: BufferedDataTable with elements of JavaRDD
+	protected DistinctNodeModel() {
+		// input: BufferedDataTable with JavaRDD
+		// output: BufferedDataTable with distinct JavaRDD
 		super(1, 1);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@SuppressWarnings({ "rawtypes" })
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
 			final ExecutionContext exec) throws Exception {
 
 		if (TableCellUtils.isPairRDD(inData[0])) {
-			return new BufferedDataTable[] { TableCellUtils.listOfPairsToTable(
-					((JavaPairRDD) TableCellUtils.getRDD(inData[0])).collect(),
-					exec) };
+			return new BufferedDataTable[] { TableCellUtils
+					.setRDD(exec, ((JavaPairRDD) TableCellUtils
+							.getRDD(inData[0])).distinct(), true) };
 
 		} else {
-			return new BufferedDataTable[] { TableCellUtils
-					.listOfElementsToTable(((JavaRDD) TableCellUtils
-							.getRDD(inData[0])).collect(), exec) };
+			return new BufferedDataTable[] { TableCellUtils.setRDD(exec,
+					((JavaRDD) TableCellUtils.getRDD(inData[0])).distinct(),
+					false) };
 		}
 	}
 
@@ -91,6 +91,8 @@ public class CollectNodeModel extends NodeModel {
 	@Override
 	protected void saveSettingsTo(final NodeSettingsWO settings) {
 
+		// TODO save user settings to the config object.
+
 	}
 
 	/**
@@ -100,6 +102,10 @@ public class CollectNodeModel extends NodeModel {
 	protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
 			throws InvalidSettingsException {
 
+		// TODO load (valid) settings from the config object.
+		// It can be safely assumed that the settings are valided by the
+		// method below.
+
 	}
 
 	/**
@@ -108,6 +114,11 @@ public class CollectNodeModel extends NodeModel {
 	@Override
 	protected void validateSettings(final NodeSettingsRO settings)
 			throws InvalidSettingsException {
+
+		// TODO check if the settings could be applied to our model
+		// e.g. if the count is in a certain range (which is ensured by the
+		// SettingsModel).
+		// Do not actually set any values of any member variables.
 
 	}
 

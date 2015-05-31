@@ -2,9 +2,10 @@ package de.pavloff.spark4knime.actions;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Map;
 
 import org.apache.spark.api.java.JavaPairRDD;
-import org.apache.spark.api.java.JavaRDD;
 import org.knime.core.data.DataTableSpec;
 import org.knime.core.node.BufferedDataTable;
 import org.knime.core.node.CanceledExecutionException;
@@ -16,46 +17,54 @@ import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
+import scala.Tuple2;
+
 import de.pavloff.spark4knime.TableCellUtils;
 
 /**
- * This is the model implementation of Collect. Collect all the elements of the
- * RDD as a table
+ * This is the model implementation of CountByKey. Make a hash map of count for
+ * each key. Only for pairRDD available
  * 
  * @author Oleg Pavlov
  */
-public class CollectNodeModel extends NodeModel {
+public class CountByKeyNodeModel extends NodeModel {
 
 	// the logger instance
 	private static final NodeLogger logger = NodeLogger
-			.getLogger(CollectNodeModel.class);
+			.getLogger(CountByKeyNodeModel.class);
 
 	/**
 	 * Constructor for the node model.
 	 */
-	protected CollectNodeModel() {
-		// input: BufferedDataTables with JavaRDD
-		// output: BufferedDataTable with elements of JavaRDD
+	protected CountByKeyNodeModel() {
+
+		// TODO one incoming port and one outgoing port is assumed
 		super(1, 1);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	@SuppressWarnings({ "rawtypes" })
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
 			final ExecutionContext exec) throws Exception {
 
 		if (TableCellUtils.isPairRDD(inData[0])) {
+			Map countMap = ((JavaPairRDD) TableCellUtils.getRDD(inData[0]))
+					.countByKey();
+
+			ArrayList l = new ArrayList();
+			for (Object o : countMap.keySet()) {
+				l.add(new Tuple2(o, ((Long) countMap.get(o)).intValue()));
+			}
+
 			return new BufferedDataTable[] { TableCellUtils.listOfPairsToTable(
-					((JavaPairRDD) TableCellUtils.getRDD(inData[0])).collect(),
-					exec) };
+					l, exec) };
 
 		} else {
-			return new BufferedDataTable[] { TableCellUtils
-					.listOfElementsToTable(((JavaRDD) TableCellUtils
-							.getRDD(inData[0])).collect(), exec) };
+			throw new IllegalArgumentException(
+					"CountByKey is only for PairRDD available");
 		}
 	}
 
@@ -91,6 +100,8 @@ public class CollectNodeModel extends NodeModel {
 	@Override
 	protected void saveSettingsTo(final NodeSettingsWO settings) {
 
+		// TODO save user settings to the config object.
+
 	}
 
 	/**
@@ -100,6 +111,10 @@ public class CollectNodeModel extends NodeModel {
 	protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
 			throws InvalidSettingsException {
 
+		// TODO load (valid) settings from the config object.
+		// It can be safely assumed that the settings are valided by the
+		// method below.
+
 	}
 
 	/**
@@ -108,6 +123,11 @@ public class CollectNodeModel extends NodeModel {
 	@Override
 	protected void validateSettings(final NodeSettingsRO settings)
 			throws InvalidSettingsException {
+
+		// TODO check if the settings could be applied to our model
+		// e.g. if the count is in a certain range (which is ensured by the
+		// SettingsModel).
+		// Do not actually set any values of any member variables.
 
 	}
 

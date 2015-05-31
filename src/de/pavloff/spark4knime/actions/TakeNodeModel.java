@@ -8,6 +8,7 @@ import org.apache.spark.api.java.JavaRDD;
 import org.knime.core.data.DataTableSpec;
 import org.knime.core.node.BufferedDataTable;
 import org.knime.core.node.CanceledExecutionException;
+import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
 import org.knime.core.node.ExecutionContext;
 import org.knime.core.node.ExecutionMonitor;
 import org.knime.core.node.InvalidSettingsException;
@@ -19,23 +20,40 @@ import org.knime.core.node.NodeSettingsWO;
 import de.pavloff.spark4knime.TableCellUtils;
 
 /**
- * This is the model implementation of Collect. Collect all the elements of the
- * RDD as a table
+ * This is the model implementation of Take. Take first n elements of RDD
  * 
  * @author Oleg Pavlov
  */
-public class CollectNodeModel extends NodeModel {
+public class TakeNodeModel extends NodeModel {
 
 	// the logger instance
 	private static final NodeLogger logger = NodeLogger
-			.getLogger(CollectNodeModel.class);
+			.getLogger(TakeNodeModel.class);
+
+	/**
+	 * the settings key which is used to retrieve and store the settings (from
+	 * the dialog or from a settings file) (package visibility to be usable from
+	 * the dialog).
+	 */
+	static final String CFGKEY_COUNT = "Number of elements";
+
+	/** initial default count value. */
+	static final int DEFAULT_COUNT = 1;
+
+	// example value: the models count variable filled from the dialog
+	// and used in the models execution method. The default components of the
+	// dialog work with "SettingsModels".
+	private final SettingsModelIntegerBounded m_count = new SettingsModelIntegerBounded(
+			TakeNodeModel.CFGKEY_COUNT, TakeNodeModel.DEFAULT_COUNT, 1,
+			Integer.MAX_VALUE);
 
 	/**
 	 * Constructor for the node model.
 	 */
-	protected CollectNodeModel() {
-		// input: BufferedDataTables with JavaRDD
-		// output: BufferedDataTable with elements of JavaRDD
+	protected TakeNodeModel() {
+
+		// input: BufferedDataTables with JavaRDDLike
+		// output: BufferedDataTable with first n elements
 		super(1, 1);
 	}
 
@@ -49,13 +67,14 @@ public class CollectNodeModel extends NodeModel {
 
 		if (TableCellUtils.isPairRDD(inData[0])) {
 			return new BufferedDataTable[] { TableCellUtils.listOfPairsToTable(
-					((JavaPairRDD) TableCellUtils.getRDD(inData[0])).collect(),
-					exec) };
+					((JavaPairRDD) TableCellUtils.getRDD(inData[0]))
+							.take(m_count.getIntValue()), exec) };
 
 		} else {
 			return new BufferedDataTable[] { TableCellUtils
 					.listOfElementsToTable(((JavaRDD) TableCellUtils
-							.getRDD(inData[0])).collect(), exec) };
+							.getRDD(inData[0])).take(m_count.getIntValue()),
+							exec) };
 		}
 	}
 
@@ -91,6 +110,10 @@ public class CollectNodeModel extends NodeModel {
 	@Override
 	protected void saveSettingsTo(final NodeSettingsWO settings) {
 
+		// TODO save user settings to the config object.
+
+		m_count.saveSettingsTo(settings);
+
 	}
 
 	/**
@@ -100,6 +123,12 @@ public class CollectNodeModel extends NodeModel {
 	protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
 			throws InvalidSettingsException {
 
+		// TODO load (valid) settings from the config object.
+		// It can be safely assumed that the settings are valided by the
+		// method below.
+
+		m_count.loadSettingsFrom(settings);
+
 	}
 
 	/**
@@ -108,6 +137,13 @@ public class CollectNodeModel extends NodeModel {
 	@Override
 	protected void validateSettings(final NodeSettingsRO settings)
 			throws InvalidSettingsException {
+
+		// TODO check if the settings could be applied to our model
+		// e.g. if the count is in a certain range (which is ensured by the
+		// SettingsModel).
+		// Do not actually set any values of any member variables.
+
+		m_count.validateSettings(settings);
 
 	}
 

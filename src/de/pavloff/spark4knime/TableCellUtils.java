@@ -3,8 +3,11 @@
  */
 package de.pavloff.spark4knime;
 
+import java.util.List;
+
 import org.apache.spark.api.java.JavaRDDLike;
 import org.knime.core.data.DataCell;
+import org.knime.core.data.DataColumnSpec;
 import org.knime.core.data.DataColumnSpecCreator;
 import org.knime.core.data.DataRow;
 import org.knime.core.data.DataTableSpec;
@@ -17,9 +20,12 @@ import org.knime.core.data.def.DoubleCell;
 import org.knime.core.data.def.IntCell;
 import org.knime.core.data.def.LongCell;
 import org.knime.core.data.def.StringCell;
+import org.knime.core.data.util.ObjectToDataCellConverter;
 import org.knime.core.node.BufferedDataContainer;
 import org.knime.core.node.BufferedDataTable;
 import org.knime.core.node.ExecutionContext;
+
+import scala.Tuple2;
 
 /**
  * Common static class for communication between Spark nodes via
@@ -122,7 +128,7 @@ public class TableCellUtils {
 		}
 		return c.getBooleanValue();
 	}
-	
+
 	/**
 	 * Find out type of element
 	 * 
@@ -145,6 +151,80 @@ public class TableCellUtils {
 		} else {
 			return null;
 		}
+	}
+
+	/**
+	 * Makes a BufferedDataTable from a List of pairs
+	 * 
+	 * @param l
+	 *            <code>List</code> of Tuple2 objects
+	 * @param exec
+	 *            <code>ExecutionContext</code> of KNIME
+	 * @return <code>BufferedDataTable</code>
+	 */
+	@SuppressWarnings({ "rawtypes", "deprecation" })
+	public static BufferedDataTable listOfPairsToTable(List l,
+			final ExecutionContext exec) {
+
+		if (l.isEmpty()) {
+			return null;
+		}
+
+		Tuple2 t = (Tuple2) l.get(0);
+
+		BufferedDataContainer container = exec
+				.createDataContainer(new DataTableSpec(new DataColumnSpec[] {
+						new DataColumnSpecCreator("Column 0", TableCellUtils
+								.getTypeOfElement(t._1)).createSpec(),
+						new DataColumnSpecCreator("Column 1", TableCellUtils
+								.getTypeOfElement(t._2)).createSpec() }));
+		ObjectToDataCellConverter cellFactory = ObjectToDataCellConverter.INSTANCE;
+
+		int i = 0;
+		for (Object s : l) {
+			t = (Tuple2) s;
+			DataRow row = new DefaultRow(new RowKey("Row " + i++),
+					new DataCell[] { cellFactory.createDataCell(t._1),
+							cellFactory.createDataCell(t._2) });
+			container.addRowToTable(row);
+		}
+		container.close();
+		
+		return container.getTable();
+	}
+
+	/**
+	 * Makes a BufferedDataTable from a List of simple elements
+	 * 
+	 * @param l
+	 *            <code>List</code> of Tuple2 objects
+	 * @param exec
+	 *            <code>ExecutionContext</code> of KNIME
+	 * @return <code>BufferedDataTable</code>
+	 */
+	@SuppressWarnings({ "rawtypes", "deprecation" })
+	public static BufferedDataTable listOfElementsToTable(List l,
+			final ExecutionContext exec) {
+
+		if (l.isEmpty()) {
+			return null;
+		}
+
+		BufferedDataContainer container = exec
+				.createDataContainer(new DataTableSpec(
+						new DataColumnSpec[] { new DataColumnSpecCreator(
+								"Column 0", TableCellUtils.getTypeOfElement(l
+										.get(0))).createSpec() }));
+		ObjectToDataCellConverter cellFactory = ObjectToDataCellConverter.INSTANCE;
+
+		int i = 0;
+		for (Object s : l) {
+			container.addRowToTable(new DefaultRow(new RowKey("Row " + i++),
+					new DataCell[] { cellFactory.createDataCell(s) }));
+		}
+		container.close();
+
+		return container.getTable();
 	}
 
 }

@@ -32,6 +32,11 @@
 <node category-path="/spark4knime/transformations" factory-class="de.pavloff.spark4knime.transformations.UnionNodeFactory" id="de.pavloff.spark4knime.transformations.UnionNodeFactory"/>
 <node category-path="/spark4knime/actions" factory-class="de.pavloff.spark4knime.actions.CollectNodeFactory" id="de.pavloff.spark4knime.actions.CollectNodeFactory"/>
 <node category-path="/spark4knime/actions" factory-class="de.pavloff.spark4knime.actions.CountNodeFactory" id="de.pavloff.spark4knime.actions.CountNodeFactory"/>
+<node category-path="/spark4knime/actions" factory-class="de.pavloff.spark4knime.actions.TakeNodeFactory" id="de.pavloff.spark4knime.actions.TakeNodeFactory"/>
+<node category-path="/spark4knime/actions" factory-class="de.pavloff.spark4knime.actions.TakeSampleNodeFactory" id="de.pavloff.spark4knime.actions.TakeSampleNodeFactory"/>
+<node category-path="/spark4knime/actions" factory-class="de.pavloff.spark4knime.actions.CountByKeyNodeFactory" id="de.pavloff.spark4knime.actions.CountByKeyNodeFactory"/>
+<node category-path="/spark4knime/transformations" factory-class="de.pavloff.spark4knime.transformations.IntersectionNodeFactory" id="de.pavloff.spark4knime.transformations.IntersectionNodeFactory"/>
+<node category-path="/spark4knime/transformations" factory-class="de.pavloff.spark4knime.transformations.DistinctNodeFactory" id="de.pavloff.spark4knime.transformations.DistinctNodeFactory"/>
 </extension>
    
 </plugin>
