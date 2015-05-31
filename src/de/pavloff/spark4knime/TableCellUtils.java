@@ -13,6 +13,10 @@ import org.knime.core.data.RowKey;
 import org.knime.core.data.container.CloseableRowIterator;
 import org.knime.core.data.def.BooleanCell;
 import org.knime.core.data.def.DefaultRow;
+import org.knime.core.data.def.DoubleCell;
+import org.knime.core.data.def.IntCell;
+import org.knime.core.data.def.LongCell;
+import org.knime.core.data.def.StringCell;
 import org.knime.core.node.BufferedDataContainer;
 import org.knime.core.node.BufferedDataTable;
 import org.knime.core.node.ExecutionContext;
@@ -37,7 +41,7 @@ import org.knime.core.node.ExecutionContext;
  * 
  * @author Oleg Pavlov
  */
-public class RddTable {
+public class TableCellUtils {
 
 	/**
 	 * Save an RDD object in BufferedDataTable via ExecutionContext
@@ -117,6 +121,30 @@ public class RddTable {
 					"table contains non JavaRDDLike object");
 		}
 		return c.getBooleanValue();
+	}
+	
+	/**
+	 * Find out type of element
+	 * 
+	 * @param element
+	 * @return <code>DataType</code> of element
+	 */
+	public static DataType getTypeOfElement(Object element) {
+		if (element instanceof Double) {
+			return DoubleCell.TYPE;
+		} else if (element instanceof Float) {
+			return DoubleCell.TYPE;
+		} else if (element instanceof String) {
+			return StringCell.TYPE;
+		} else if (element instanceof Integer) {
+			return IntCell.TYPE;
+		} else if (element instanceof Boolean) {
+			return BooleanCell.TYPE;
+		} else if (element instanceof Long) {
+			return LongCell.TYPE;
+		} else {
+			return null;
+		}
 	}
 
 }

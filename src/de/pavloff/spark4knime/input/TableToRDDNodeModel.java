@@ -35,7 +35,7 @@ import org.knime.core.node.NodeSettingsWO;
 
 import scala.Tuple2;
 
-import de.pavloff.spark4knime.RddTable;
+import de.pavloff.spark4knime.TableCellUtils;
 import de.pavloff.spark4knime.SparkContexter;
 
 /**
@@ -121,10 +121,10 @@ public class TableToRDDNodeModel extends NodeModel {
 		JavaRDDLike rdd;
 		if (numColumns == 1) {
 			rdd = createRDD(data, colIndices);
-			return new BufferedDataTable[] { RddTable.setRDD(exec, rdd, false) };
+			return new BufferedDataTable[] { TableCellUtils.setRDD(exec, rdd, false) };
 		} else {
 			rdd = createPairRDD(data, colIndices);
-			return new BufferedDataTable[] { RddTable.setRDD(exec, rdd, true) };
+			return new BufferedDataTable[] { TableCellUtils.setRDD(exec, rdd, true) };
 		}
 
 	}

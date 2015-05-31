@@ -13,12 +13,7 @@ import org.knime.core.data.DataRow;
 import org.knime.core.data.DataTableSpec;
 import org.knime.core.data.DataType;
 import org.knime.core.data.RowKey;
-import org.knime.core.data.def.BooleanCell;
 import org.knime.core.data.def.DefaultRow;
-import org.knime.core.data.def.DoubleCell;
-import org.knime.core.data.def.IntCell;
-import org.knime.core.data.def.LongCell;
-import org.knime.core.data.def.StringCell;
 import org.knime.core.data.util.ObjectToDataCellConverter;
 import org.knime.core.node.BufferedDataContainer;
 import org.knime.core.node.BufferedDataTable;
@@ -33,7 +28,7 @@ import org.knime.core.node.NodeSettingsWO;
 
 import scala.Tuple2;
 
-import de.pavloff.spark4knime.RddTable;
+import de.pavloff.spark4knime.TableCellUtils;
 
 /**
  * This is the model implementation of Collect. Collect all the elements of the
@@ -57,30 +52,6 @@ public class CollectNodeModel extends NodeModel {
 	}
 
 	/**
-	 * Find out type of element
-	 * 
-	 * @param element
-	 * @return <code>DataType</code> of element
-	 */
-	private DataType getTypeOfElement(Object element) {
-		if (element instanceof Double) {
-			return DoubleCell.TYPE;
-		} else if (element instanceof Float) {
-			return DoubleCell.TYPE;
-		} else if (element instanceof String) {
-			return StringCell.TYPE;
-		} else if (element instanceof Integer) {
-			return IntCell.TYPE;
-		} else if (element instanceof Boolean) {
-			return BooleanCell.TYPE;
-		} else if (element instanceof Long) {
-			return LongCell.TYPE;
-		} else {
-			return null;
-		}
-	}
-
-	/**
 	 * {@inheritDoc}
 	 */
 	@SuppressWarnings({ "rawtypes", "deprecation" })
@@ -94,16 +65,16 @@ public class CollectNodeModel extends NodeModel {
 		BufferedDataTable out;
 		BufferedDataContainer container;
 
-		Boolean isPairRdd = RddTable.isPairRDD(inData[0]);
+		Boolean isPairRdd = TableCellUtils.isPairRDD(inData[0]);
 		if (isPairRdd) {
-			l = ((JavaPairRDD) RddTable.getRDD(inData[0])).collect();
+			l = ((JavaPairRDD) TableCellUtils.getRDD(inData[0])).collect();
 			if (l.isEmpty()) {
 				return new BufferedDataTable[] { null };
 			}
 			
 			Tuple2 t = (Tuple2) l.get(0);
-			DataType elemType1 = getTypeOfElement(t._1);
-			DataType elemType2 = getTypeOfElement(t._2);
+			DataType elemType1 = TableCellUtils.getTypeOfElement(t._1);
+			DataType elemType2 = TableCellUtils.getTypeOfElement(t._2);
 			allColSpecs = new DataColumnSpec[2];
 			allColSpecs[0] = new DataColumnSpecCreator("Column 0",
 					elemType1).createSpec();
@@ -123,12 +94,12 @@ public class CollectNodeModel extends NodeModel {
 			}
 
 		} else {
-			l = ((JavaRDD) RddTable.getRDD(inData[0])).collect();
+			l = ((JavaRDD) TableCellUtils.getRDD(inData[0])).collect();
 			if (l.isEmpty()) {
 				return new BufferedDataTable[] { null };
 			}
 			
-			DataType elemType = getTypeOfElement(l.get(0));
+			DataType elemType = TableCellUtils.getTypeOfElement(l.get(0));
 			allColSpecs = new DataColumnSpec[1];
 			allColSpecs[0] = new DataColumnSpecCreator("Column 0",
 					elemType).createSpec();

@@ -17,7 +17,7 @@ import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import de.pavloff.spark4knime.RddTable;
+import de.pavloff.spark4knime.TableCellUtils;
 
 /**
  * This is the model implementation of Union. Creates a new RDD that contains
@@ -53,19 +53,19 @@ public class UnionNodeModel extends NodeModel {
 		}
 		
 		JavaRDDLike rdd;
-		if (RddTable.isPairRDD(inData[0])) {
-			if (RddTable.isPairRDD(inData[1])) {
-				rdd = ((JavaPairRDD) RddTable.getRDD(inData[0])).union((JavaPairRDD) RddTable.getRDD(inData[1]));
-				return new BufferedDataTable[] { RddTable.setRDD(exec, rdd, true) };
+		if (TableCellUtils.isPairRDD(inData[0])) {
+			if (TableCellUtils.isPairRDD(inData[1])) {
+				rdd = ((JavaPairRDD) TableCellUtils.getRDD(inData[0])).union((JavaPairRDD) TableCellUtils.getRDD(inData[1]));
+				return new BufferedDataTable[] { TableCellUtils.setRDD(exec, rdd, true) };
 			} else {
 				throw new IllegalArgumentException("RDD's must be of same type");
 			}
 		} else {
-			if (RddTable.isPairRDD(inData[1])) {
+			if (TableCellUtils.isPairRDD(inData[1])) {
 				throw new IllegalArgumentException("RDD's must be of same type");
 			} else {
-				rdd = ((JavaRDD) RddTable.getRDD(inData[0])).union((JavaRDD) RddTable.getRDD(inData[1]));
-				return new BufferedDataTable[] { RddTable.setRDD(exec, rdd, false) };
+				rdd = ((JavaRDD) TableCellUtils.getRDD(inData[0])).union((JavaRDD) TableCellUtils.getRDD(inData[1]));
+				return new BufferedDataTable[] { TableCellUtils.setRDD(exec, rdd, false) };
 			}
 		}
 	}

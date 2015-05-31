@@ -17,7 +17,7 @@ import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import de.pavloff.spark4knime.RddTable;
+import de.pavloff.spark4knime.TableCellUtils;
 import de.pavloff.spark4knime.SparkContexter;
 
 /**
@@ -80,7 +80,7 @@ public class FileToRDDNodeModel extends NodeModel {
 		}
 		JavaRDD<String> rdd = sparkContext.textFile(m_path.getStringValue());
 
-		return new BufferedDataTable[] { RddTable.setRDD(exec, rdd, false) };
+		return new BufferedDataTable[] { TableCellUtils.setRDD(exec, rdd, false) };
 	}
 
 	/**

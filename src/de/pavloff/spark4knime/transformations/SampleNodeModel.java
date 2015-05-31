@@ -19,7 +19,7 @@ import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import de.pavloff.spark4knime.RddTable;
+import de.pavloff.spark4knime.TableCellUtils;
 
 /**
  * This is the model implementation of Sample. Sample operation on Spark RDD
@@ -77,17 +77,17 @@ public class SampleNodeModel extends NodeModel {
 			final ExecutionContext exec) throws Exception {
 
 		JavaRDDLike rdd;
-		if (RddTable.isPairRDD(inData[0])) {
-			rdd = ((JavaPairRDD) RddTable.getRDD(inData[0])).sample(
+		if (TableCellUtils.isPairRDD(inData[0])) {
+			rdd = ((JavaPairRDD) TableCellUtils.getRDD(inData[0])).sample(
 					m_replacement.getBooleanValue(),
 					m_fraction.getIntValue() / 100.0, m_seed.getIntValue());
-			return new BufferedDataTable[] { RddTable.setRDD(exec, rdd, true) };
+			return new BufferedDataTable[] { TableCellUtils.setRDD(exec, rdd, true) };
 
 		} else {
-			rdd = ((JavaRDD) RddTable.getRDD(inData[0])).sample(
+			rdd = ((JavaRDD) TableCellUtils.getRDD(inData[0])).sample(
 					m_replacement.getBooleanValue(),
 					m_fraction.getIntValue() / 100.0, m_seed.getIntValue());
-			return new BufferedDataTable[] { RddTable.setRDD(exec, rdd, false) };
+			return new BufferedDataTable[] { TableCellUtils.setRDD(exec, rdd, false) };
 		}
 	}
 

@@ -20,7 +20,7 @@ import org.knime.core.node.NodeModel;
 import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
-import de.pavloff.spark4knime.RddTable;
+import de.pavloff.spark4knime.TableCellUtils;
 
 /**
  * This is the model implementation of Count. Counting elements of RDD
@@ -56,7 +56,7 @@ public class CountNodeModel extends NodeModel {
 								"Column 0", LongCell.TYPE).createSpec() }));
 
 		container.addRowToTable(new DefaultRow(new RowKey("Row 0"),
-				new LongCell[] { new LongCell(RddTable.getRDD(inData[0])
+				new LongCell[] { new LongCell(TableCellUtils.getRDD(inData[0])
 						.count()) }));
 		container.close();
 		return new BufferedDataTable[] { container.getTable() };
