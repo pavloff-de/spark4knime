@@ -1,7 +1,5 @@
 package de.pavloff.spark4knime.commons;
 
-import java.util.HashMap;
-
 import org.apache.spark.api.java.JavaSparkContext;
 
 /**
@@ -15,7 +13,7 @@ public class SparkContexter {
 	/**
 	 * SparkContext objects in a current JVM cached
 	 */
-	private static HashMap<String, JavaSparkContext> sparkContext = new HashMap<String, JavaSparkContext>();
+	private static JavaSparkContext sparkContext;
 
 	private SparkContexter() {
 		// not allowed to create new objects
@@ -32,20 +30,10 @@ public class SparkContexter {
 	 * @return <code>SparkContext</code>
 	 */
 	public static JavaSparkContext getSparkContext(String master) {
-		JavaSparkContext sc = SparkContexter.sparkContext.get(master);
-		if (sc == null) {
-			if (SparkContexter.sparkContext.size() == 1) {
-				for (JavaSparkContext prev : SparkContexter.sparkContext
-						.values()) {
-					prev.getConf().set("spark.driver.allowMultipleContexts",
-							"true");
-				}
-			}
-			sc = new JavaSparkContext(master, "KnimeSparkApplication-"
-					+ master.hashCode());
-			SparkContexter.sparkContext.put(master, sc);
+		if (sparkContext == null) {
+			sparkContext = new JavaSparkContext(master, "KnimeSparkApplication");
 		}
-		return sc;
+		return sparkContext;
 	}
 	
 	/**
@@ -56,11 +44,8 @@ public class SparkContexter {
 	 */
 	public static String getCurrentMaster(String defaultMaster) {
 		String currentMaster = defaultMaster;
-		JavaSparkContext sc = SparkContexter.sparkContext.get(currentMaster);
-		if (sc == null) {
-			if (SparkContexter.sparkContext.size() != 0) {
-				currentMaster = (String) SparkContexter.sparkContext.keySet().toArray()[0];
-			}
+		if (sparkContext != null) {
+			return sparkContext.master();
 		}
 		return currentMaster;
 	}
