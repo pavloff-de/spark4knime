@@ -3,6 +3,7 @@
  */
 package de.pavloff.spark4knime;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.spark.api.java.JavaRDDLike;
@@ -29,16 +30,19 @@ import scala.Tuple2;
 
 /**
  * Common static class for communication between Spark nodes via
- * BufferedDataTable. Table contains a single RddCell with JavaRDDLike object.
+ * BufferedDataTable. Table contains an IntCell with uniq ID of RDD object and
+ * BooleanCell if it is a PairRDD.
  * <table>
- * <col width="25%"/> <col width="75%"/> <tbody>
+ * <col width="25%"/> <col width="25%"/> <tbody>
  * <tr>
  * <td></td>
- * <td>RDD</td>
+ * <td>ID</td>
+ * <td>isPairRDD</td>
  * </tr>
  * <tr>
  * <td>RDD</td>
- * <td>JavaRDDLike object</td>
+ * <td>Int</td>
+ * <td>bool</td>
  * </tr>
  * </tbody>
  * </table>
@@ -48,6 +52,34 @@ import scala.Tuple2;
  * @author Oleg Pavlov
  */
 public class TableCellUtils {
+
+	@SuppressWarnings("rawtypes")
+	private static HashMap<Integer, JavaRDDLike> RddReferences = new HashMap<Integer, JavaRDDLike>();
+
+	/**
+	 * Returns RDD on its ID
+	 * 
+	 * @param id
+	 *            uniq RDD id
+	 * @return <code>JavaRDDLike</code>
+	 */
+	@SuppressWarnings("rawtypes")
+	public static JavaRDDLike getRddReference(Integer id) {
+		return RddReferences.get(id);
+	}
+
+	/**
+	 * Save RDD Reference for future using
+	 * 
+	 * @param rdd
+	 *            <code>JavaRDDLike</code> to save reference of
+	 * @return ID of RDD
+	 */
+	@SuppressWarnings("rawtypes")
+	public static Integer setRddReference(JavaRDDLike rdd) {
+		RddReferences.put(rdd.id(), rdd);
+		return rdd.id();
+	}
 
 	/**
 	 * Save an RDD object in BufferedDataTable via ExecutionContext
@@ -65,13 +97,15 @@ public class TableCellUtils {
 		if (rdd == null) {
 			throw new NullPointerException("RDD shouldn't be null");
 		}
-		BufferedDataContainer c = exec.createDataContainer(new DataTableSpec(
-				new DataColumnSpecCreator("RDD", DataType
-						.getType(RddCell.class)).createSpec(),
-				new DataColumnSpecCreator("pairRDD", DataType
-						.getType(RddCell.class)).createSpec()));
-		c.addRowToTable(new DefaultRow(new RowKey("RDD"), new RddCell(rdd),
-				BooleanCell.get(isPairRDD)));
+		BufferedDataContainer c = exec
+				.createDataContainer(new DataTableSpec(
+						new DataColumnSpecCreator("ID", DataType
+								.getType(IntCell.class)).createSpec(),
+						new DataColumnSpecCreator("isPairRDD", DataType
+								.getType(BooleanCell.class)).createSpec()));
+		c.addRowToTable(new DefaultRow(new RowKey("RDD"), new IntCell(
+				TableCellUtils.setRddReference(rdd)), BooleanCell
+				.get(isPairRDD)));
 		c.close();
 
 		return c.getTable();
@@ -90,14 +124,14 @@ public class TableCellUtils {
 	public static JavaRDDLike getRDD(BufferedDataTable table) {
 		CloseableRowIterator it = table.iterator();
 		DataCell dc = it.next().getCell(0);
-		RddCell c;
+		IntCell c;
 		try {
-			c = (RddCell) dc;
+			c = (IntCell) dc;
 		} catch (Exception e) {
 			throw new ClassCastException(
 					"table contains non JavaRDDLike object");
 		}
-		return c.get_rdd();
+		return TableCellUtils.getRddReference(c.getIntValue());
 	}
 
 	/**
@@ -135,7 +169,7 @@ public class TableCellUtils {
 	 * @param element
 	 * @return <code>DataType</code> of element
 	 */
-	public static DataType getTypeOfElement(Object element) {
+	private static DataType getTypeOfElement(Object element) {
 		if (element instanceof Double) {
 			return DoubleCell.TYPE;
 		} else if (element instanceof Float) {
@@ -189,7 +223,7 @@ public class TableCellUtils {
 			container.addRowToTable(row);
 		}
 		container.close();
-		
+
 		return container.getTable();
 	}
 
