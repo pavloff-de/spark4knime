@@ -1,7 +1,7 @@
 /**
  * 
  */
-package de.pavloff.spark4knime;
+package de.pavloff.spark4knime.commons;
 
 import java.util.HashMap;
 import java.util.List;

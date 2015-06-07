@@ -6,7 +6,7 @@ import org.knime.core.node.defaultnodesettings.DialogComponentString;
 import org.knime.core.node.defaultnodesettings.SettingsModelColumnFilter2;
 import org.knime.core.node.defaultnodesettings.SettingsModelString;
 
-import de.pavloff.spark4knime.SparkContexter;
+import de.pavloff.spark4knime.commons.SparkContexter;
 
 /**
  * <code>NodeDialog</code> for the "TableToRDD" Node. Read a table and
