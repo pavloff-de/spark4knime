@@ -4,7 +4,17 @@ Bundle-Name: FileToRDD-Node extension for KNIME Workbench
 Bundle-SymbolicName: de.pavloff.spark4knime; singleton:=true
 Bundle-Version: 1.0.0
 Bundle-ClassPath: de.pavloff.spark4knime-0.0.1.jar,
- lib/spark-assembly-1.3.1-hadoop2.6.0.jar
+ lib/,
+ jars/spark-assembly-1.3.1-hadoop2.6.0.jar,
+ jars/autocomplete_2.5.3.jar,
+ jars/js-14.jar,
+ jars/org.eclipse.jdt.compiler.tool_1.0.100.v_B79_R37x.jar,
+ jars/org.eclipse.jdt.core_3.7.3.v20120119-1537.jar,
+ jars/org.knime.ext.sun_2.11.0.0043729.jar,
+ jars/rsta_language_support_2.5.3.jar,
+ jars/rsta_spellchecker_2.5.3.jar,
+ jars/rstaui_2.5.3.jar,
+ jars/rsyntaxtextarea_2.5.3.jar
 Bundle-Activator: de.pavloff.spark4knime.input.FileToRDDNodePlugin
 Bundle-Vendor: Oleg Pavlov
 Require-Bundle: org.eclipse.core.runtime,
