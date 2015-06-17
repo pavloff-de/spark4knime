@@ -3,57 +3,57 @@
  */
 package de.pavloff.spark4knime;
 
-import org.apache.spark.api.java.JavaRDD;
+import org.apache.spark.api.java.JavaPairRDD;
 import org.knime.core.data.DataCell;
 import org.knime.core.data.DataType;
 
 /**
- * Implementation of a DtaCell for saving an JavaRDD object into a
+ * Implementation of a DtaCell for saving an JavaPairRDD object into a
  * BufferedDataTable
  * 
  * @see DataCell
  * 
  * @author Oleg Pavlov
  */
-public class RddCell extends DataCell implements RddValue {
-
-	private static final long serialVersionUID = 2926662445712660558L;
-
+public class PairRddCell extends DataCell implements PairRddValue {
+	
+	private static final long serialVersionUID = -4679728041083699185L;
+	
 	/**
 	 * Convenience access member for
 	 * <code>DataType.getType(DoubleCell.class)</code>.
 	 * 
 	 * @see DataType#getType(Class)
 	 */
-	public static final DataType TYPE = DataType.getType(RddCell.class);
-
+	public static final DataType TYPE = DataType.getType(PairRddCell.class);
+	
 	@SuppressWarnings("rawtypes")
-	private final JavaRDD m_rdd;
-
+	private final JavaPairRDD m_rdd;
+	
 	/**
-	 * Creates a new cell for a Spark RDD.
+	 * Creates a new cell for a Spark PairRDD.
 	 * 
 	 * @param rdd
 	 *            The JavaRDD
 	 */
 	@SuppressWarnings("rawtypes")
-	public RddCell(final JavaRDD rdd) {
+	public PairRddCell(final JavaPairRDD rdd) {
 		m_rdd = rdd;
 	}
 
 	/**
-	 * Return Spark RDD from cell.
+	 * Return Spark PairRDD from cell.
 	 * 
 	 * @return JavaRDD
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public JavaRDD getRDDValue() {
+	public JavaPairRDD getPairRDDValue() {
 		return m_rdd;
 	}
 
 	/**
-	 * Represent Spark RDD as a String.
+	 * Represent Spark PairRDD as a String.
 	 */
 	@Override
 	public String toString() {
@@ -61,22 +61,22 @@ public class RddCell extends DataCell implements RddValue {
 	}
 
 	/**
-	 * Compare RDD from other DataCell.
+	 * Compare PairRDD from other DataCell.
 	 */
 	@Override
 	protected boolean equalsDataCell(DataCell dc) {
 		if (dc.getType() != TYPE) {
 			return false;
 		}
-		return m_rdd.equals(((RddCell) dc).getRDDValue());
+		return m_rdd.equals(((PairRddCell) dc).getPairRDDValue());
 	}
 
 	/**
-	 * Generate a hash code of RDD object.
+	 * Generate a hash code of PairRDD object.
 	 */
 	@Override
 	public int hashCode() {
 		return m_rdd.hashCode();
 	}
-	
+
 }

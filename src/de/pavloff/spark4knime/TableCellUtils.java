@@ -5,6 +5,8 @@ package de.pavloff.spark4knime;
 
 import java.util.List;
 
+import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaRDDLike;
 import org.knime.core.data.DataCell;
 import org.knime.core.data.DataColumnSpec;
@@ -13,7 +15,6 @@ import org.knime.core.data.DataRow;
 import org.knime.core.data.DataTableSpec;
 import org.knime.core.data.DataType;
 import org.knime.core.data.RowKey;
-import org.knime.core.data.container.CloseableRowIterator;
 import org.knime.core.data.def.BooleanCell;
 import org.knime.core.data.def.DefaultRow;
 import org.knime.core.data.def.DoubleCell;
@@ -61,20 +62,63 @@ public class TableCellUtils {
 	 * @return <code>BufferedDataTable</code> with a single Cell containing rdd
 	 */
 	public static BufferedDataTable setRDD(final ExecutionContext exec,
-			@SuppressWarnings("rawtypes") JavaRDDLike rdd, Boolean isPairRDD) {
+			@SuppressWarnings("rawtypes") JavaRDD rdd) {
 		if (rdd == null) {
 			throw new NullPointerException("RDD shouldn't be null");
 		}
 		BufferedDataContainer c = exec.createDataContainer(new DataTableSpec(
 				new DataColumnSpecCreator("RDD", DataType
-						.getType(RddCell.class)).createSpec(),
-				new DataColumnSpecCreator("pairRDD", DataType
 						.getType(RddCell.class)).createSpec()));
-		c.addRowToTable(new DefaultRow(new RowKey("RDD"), new RddCell(rdd),
-				BooleanCell.get(isPairRDD)));
+		c.addRowToTable(new DefaultRow(new RowKey("RDD"), new RddCell(rdd)));
 		c.close();
 
 		return c.getTable();
+	}
+	
+	/**
+	 * Save an RDD object in BufferedDataTable via ExecutionContext
+	 * 
+	 * @param exec
+	 *            <code>ExecutionContext</code>
+	 * @param rdd
+	 *            <code>JavaRDDLike</code> to save in table
+	 * @throws NullPointerException
+	 *             If rdd is null
+	 * @return <code>BufferedDataTable</code> with a single Cell containing rdd
+	 */
+	public static BufferedDataTable setRDD(final ExecutionContext exec,
+			@SuppressWarnings("rawtypes") JavaPairRDD rdd) {
+		if (rdd == null) {
+			throw new NullPointerException("PairRDD shouldn't be null");
+		}
+		BufferedDataContainer c = exec.createDataContainer(new DataTableSpec(
+				new DataColumnSpecCreator("PairRDD", DataType
+						.getType(RddCell.class)).createSpec()));
+		c.addRowToTable(new DefaultRow(new RowKey("RDD"), new PairRddCell(rdd)));
+		c.close();
+
+		return c.getTable();
+	}
+	
+	/**
+	 * Save an RDD object in BufferedDataTable via ExecutionContext
+	 * 
+	 * @param exec
+	 *            <code>ExecutionContext</code>
+	 * @param rdd
+	 *            <code>JavaRDDLike</code> to save in table
+	 * @throws NullPointerException
+	 *             If rdd is null
+	 * @return <code>BufferedDataTable</code> with a single Cell containing rdd
+	 */
+	@SuppressWarnings("rawtypes")
+	public static BufferedDataTable setRDD(final ExecutionContext exec,
+			JavaRDDLike rdd, Boolean isPairRDD) {
+		if (isPairRDD) {
+			return setRDD(exec, (JavaPairRDD) rdd);
+		} else {
+			return setRDD(exec, (JavaRDD) rdd);
+		}
 	}
 
 	/**
@@ -88,16 +132,15 @@ public class TableCellUtils {
 	 */
 	@SuppressWarnings("rawtypes")
 	public static JavaRDDLike getRDD(BufferedDataTable table) {
-		CloseableRowIterator it = table.iterator();
-		DataCell dc = it.next().getCell(0);
-		RddCell c;
-		try {
-			c = (RddCell) dc;
-		} catch (Exception e) {
+		DataCell dc =  table.iterator().next().getCell(0);
+		if (dc.getType() == RddCell.TYPE) {
+			return ((RddCell) dc).getRDDValue();
+		} else if (dc.getType() == PairRddCell.TYPE) {
+			return ((PairRddCell) dc).getPairRDDValue();
+		} else {
 			throw new ClassCastException(
 					"table contains non JavaRDDLike object");
 		}
-		return c.get_rdd();
 	}
 
 	/**
@@ -112,21 +155,16 @@ public class TableCellUtils {
 	 * @return
 	 */
 	public static Boolean isPairRDD(BufferedDataTable table) {
-		CloseableRowIterator it = table.iterator();
-		DataRow row = it.next();
-		if (row.getNumCells() != 2) {
+		String[] names = table.getSpec().getColumnNames();
+		if (names.length != 1) {
 			throw new IndexOutOfBoundsException(
-					"table should contain two cells");
+					"table should contain only one cells");
 		}
-		DataCell dc = row.getCell(1);
-		BooleanCell c;
-		try {
-			c = (BooleanCell) dc;
-		} catch (Exception e) {
-			throw new ClassCastException(
-					"table contains non JavaRDDLike object");
+		if (names[0].equals("RDD")) {
+			return false;
+		} else {
+			return true;
 		}
-		return c.getBooleanValue();
 	}
 
 	/**
@@ -189,7 +227,7 @@ public class TableCellUtils {
 			container.addRowToTable(row);
 		}
 		container.close();
-		
+
 		return container.getTable();
 	}
 
