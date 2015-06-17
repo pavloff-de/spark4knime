@@ -35,8 +35,8 @@ import org.knime.core.node.NodeSettingsWO;
 
 import scala.Tuple2;
 
-import de.pavloff.spark4knime.commons.SparkContexter;
-import de.pavloff.spark4knime.commons.TableCellUtils;
+import de.pavloff.spark4knime.TableCellUtils;
+import de.pavloff.spark4knime.SparkContexter;
 
 /**
  * This is the model implementation of TableToRDD. Read a table and parallelize

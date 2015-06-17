@@ -5,7 +5,7 @@ import org.knime.core.node.defaultnodesettings.DialogComponentFileChooser;
 import org.knime.core.node.defaultnodesettings.DialogComponentString;
 import org.knime.core.node.defaultnodesettings.SettingsModelString;
 
-import de.pavloff.spark4knime.commons.SparkContexter;
+import de.pavloff.spark4knime.SparkContexter;
 
 /**
  * <code>NodeDialog</code> for the "FileToRDD" Node. Read a text file and
