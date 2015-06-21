@@ -76,7 +76,7 @@ public class TableCellUtils {
 	}
 	
 	/**
-	 * Save an RDD object in BufferedDataTable via ExecutionContext
+	 * Save an PairRDD object in BufferedDataTable via ExecutionContext
 	 * 
 	 * @param exec
 	 *            <code>ExecutionContext</code>
@@ -93,7 +93,7 @@ public class TableCellUtils {
 		}
 		BufferedDataContainer c = exec.createDataContainer(new DataTableSpec(
 				new DataColumnSpecCreator("PairRDD", DataType
-						.getType(RddCell.class)).createSpec()));
+						.getType(PairRddCell.class)).createSpec()));
 		c.addRowToTable(new DefaultRow(new RowKey("RDD"), new PairRddCell(rdd)));
 		c.close();
 

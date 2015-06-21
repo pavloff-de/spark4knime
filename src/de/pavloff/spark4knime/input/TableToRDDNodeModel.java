@@ -121,10 +121,12 @@ public class TableToRDDNodeModel extends NodeModel {
 		JavaRDDLike rdd;
 		if (numColumns == 1) {
 			rdd = createRDD(data, colIndices);
-			return new BufferedDataTable[] { TableCellUtils.setRDD(exec, rdd, false) };
+			return new BufferedDataTable[] { TableCellUtils.setRDD(exec, rdd,
+					false) };
 		} else {
 			rdd = createPairRDD(data, colIndices);
-			return new BufferedDataTable[] { TableCellUtils.setRDD(exec, rdd, true) };
+			return new BufferedDataTable[] { TableCellUtils.setRDD(exec, rdd,
+					true) };
 		}
 
 	}
@@ -165,25 +167,17 @@ public class TableToRDDNodeModel extends NodeModel {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private JavaRDD createRDD(BufferedDataTable data, int[] colIndices) {
-		JavaRDD rdd;
+
+		ArrayList copyOfData = new ArrayList(data.getRowCount());
 		CloseableRowIterator rowIt = data.iterator();
-		DataCell firstCell = rowIt.next().getCell(colIndices[0]);
+		while (rowIt.hasNext()) {
+			DataRow nextRow = rowIt.next();
+			copyOfData.add(getCellValue(nextRow.getCell(colIndices[0])));
+		}
 
 		JavaSparkContext sparkContext = SparkContexter.getSparkContext(m_master
 				.getStringValue());
-		ArrayList toParallelize = new ArrayList(1);
-		toParallelize.add(getCellValue(firstCell));
-
-		rdd = sparkContext.parallelize(toParallelize);
-		ArrayList rest = new ArrayList();
-
-		while (rowIt.hasNext()) {
-			toParallelize = new ArrayList(1);
-			DataRow nextRow = rowIt.next();
-			toParallelize.add(getCellValue(nextRow.getCell(colIndices[0])));
-			rest.add(sparkContext.parallelize(toParallelize));
-		}
-		return sparkContext.union(rdd, rest);
+		return sparkContext.parallelize(copyOfData);
 	}
 
 	/**
@@ -197,31 +191,19 @@ public class TableToRDDNodeModel extends NodeModel {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private JavaPairRDD createPairRDD(BufferedDataTable data, int[] colIndices) {
-		JavaPairRDD rdd;
+		
 		CloseableRowIterator rowIt = data.iterator();
-		DataRow firstRow = rowIt.next();
+		ArrayList copyOfData = new ArrayList(data.getRowCount());
+		while (rowIt.hasNext()) {
+			DataRow nextRow = rowIt.next();
+			copyOfData.add(new Tuple2(getCellValue(nextRow
+					.getCell(colIndices[0])), getCellValue(nextRow
+					.getCell(colIndices[1]))));
+		}
 
 		JavaSparkContext sparkContext = SparkContexter.getSparkContext(m_master
 				.getStringValue());
-		ArrayList toParallelize = new ArrayList(1);
-		toParallelize.add(new Tuple2(getCellValue(firstRow
-				.getCell(colIndices[0])), getCellValue(firstRow
-				.getCell(colIndices[1]))));
-
-		rdd = JavaPairRDD.fromJavaRDD(sparkContext.parallelize(toParallelize));
-		ArrayList rest = new ArrayList();
-
-		while (rowIt.hasNext()) {
-			toParallelize = new ArrayList(1);
-			DataRow nextRow = rowIt.next();
-			toParallelize.add(new Tuple2(getCellValue(nextRow
-					.getCell(colIndices[0])), getCellValue(nextRow
-					.getCell(colIndices[1]))));
-			rest.add(JavaPairRDD.fromJavaRDD(sparkContext
-					.parallelize(toParallelize)));
-		}
-
-		return sparkContext.union(rdd, rest);
+		return JavaPairRDD.fromJavaRDD(sparkContext.parallelize(copyOfData));
 	}
 
 	/**
