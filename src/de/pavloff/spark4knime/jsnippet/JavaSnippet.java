@@ -950,7 +950,7 @@ public final class JavaSnippet {
                 // create JAR for Spark Executor
                 File m_snippetJar = createJSnippetJarForSpark(snippet, (Class<? extends AbstractJSnippet>)
                 		loader.loadClass("JSnippet$1"));
-                JavaSparkContext sc = SparkContexter.getSparkContext(SparkContexter.getCurrentMaster(null));
+                JavaSparkContext sc = SparkContexter.getSparkContext(SparkContexter.getMaster(null));
                 sc.addJar(m_snippetFile.getPath());
                 sc.addJar(m_snippetJar.getPath());
                 return snippet;

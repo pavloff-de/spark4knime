@@ -32,7 +32,7 @@ public class TableToRDDNodeDialog extends DefaultNodeSettingsPane {
 		addDialogComponent(new DialogComponentString(new SettingsModelString(
 				TableToRDDNodeModel.CFGKEY_MASTER,
 				SparkContexter
-						.getCurrentMaster(TableToRDDNodeModel.DEFAULT_MASTER)),
+						.getMaster(TableToRDDNodeModel.DEFAULT_MASTER)),
 				TableToRDDNodeModel.CFGKEY_MASTER, true, 15));
 
 		// column chooser
