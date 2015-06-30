@@ -22,9 +22,12 @@ import org.knime.core.data.def.IntCell;
 import org.knime.core.data.def.LongCell;
 import org.knime.core.data.def.StringCell;
 import org.knime.core.data.util.ObjectToDataCellConverter;
+import org.knime.core.internal.CorePlugin;
 import org.knime.core.node.BufferedDataContainer;
 import org.knime.core.node.BufferedDataTable;
 import org.knime.core.node.ExecutionContext;
+import org.knime.core.node.tableview.TableContentModel;
+import org.knime.core.node.tableview.TableView;
 
 import scala.Tuple2;
 
@@ -74,7 +77,7 @@ public class TableCellUtils {
 
 		return c.getTable();
 	}
-	
+
 	/**
 	 * Save an PairRDD object in BufferedDataTable via ExecutionContext
 	 * 
@@ -99,7 +102,7 @@ public class TableCellUtils {
 
 		return c.getTable();
 	}
-	
+
 	/**
 	 * Save an RDD object in BufferedDataTable via ExecutionContext
 	 * 
@@ -132,7 +135,7 @@ public class TableCellUtils {
 	 */
 	@SuppressWarnings("rawtypes")
 	public static JavaRDDLike getRDD(BufferedDataTable table) {
-		DataCell dc =  table.iterator().next().getCell(0);
+		DataCell dc = table.iterator().next().getCell(0);
 		if (dc.getType() == RddCell.TYPE) {
 			return ((RddCell) dc).getRDDValue();
 		} else if (dc.getType() == PairRddCell.TYPE) {
@@ -263,6 +266,42 @@ public class TableCellUtils {
 		container.close();
 
 		return container.getTable();
+	}
+
+	public static final class RddViewer {
+
+		private int takeSize = 10;
+		private final ExecutionContext m_exec;
+		private final BufferedDataTable m_table;
+
+		public RddViewer(final BufferedDataTable table,
+				final ExecutionContext exec) {
+			m_exec = exec;
+			m_table = table;
+		}
+
+		@SuppressWarnings("rawtypes")
+		private BufferedDataTable getTable() {
+			if (TableCellUtils.isPairRDD(m_table)) {
+				return TableCellUtils.listOfPairsToTable(
+						((JavaPairRDD) TableCellUtils.getRDD(m_table))
+								.take(takeSize), m_exec);
+
+			} else {
+				return TableCellUtils.listOfElementsToTable(
+						((JavaRDD) TableCellUtils.getRDD(m_table))
+								.take(takeSize), m_exec);
+			}
+		}
+
+		public TableView getTableView() {
+			TableView tableView = new TableView(new TableContentModel(
+					getTable()));
+			tableView.setWrapColumnHeader(CorePlugin.getInstance()
+					.isWrapColumnHeaderInTableViews());
+			tableView.setPreferredSizeDataDependent(true);
+			return tableView;
+		}
 	}
 
 }

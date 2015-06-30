@@ -17,6 +17,7 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
 import de.pavloff.spark4knime.TableCellUtils;
+import de.pavloff.spark4knime.TableCellUtils.RddViewer;
 
 /**
  * This is the model implementation of Collect. Collect all the elements of the
@@ -29,6 +30,8 @@ public class CollectNodeModel extends NodeModel {
 	// the logger instance
 	private static final NodeLogger logger = NodeLogger
 			.getLogger(CollectNodeModel.class);
+
+	private RddViewer rddViewer;
 
 	/**
 	 * Constructor for the node model.
@@ -47,15 +50,18 @@ public class CollectNodeModel extends NodeModel {
 	protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
 			final ExecutionContext exec) throws Exception {
 
+		rddViewer = new RddViewer(inData[0], exec);
+		
 		if (TableCellUtils.isPairRDD(inData[0])) {
-			return new BufferedDataTable[] { TableCellUtils.listOfPairsToTable(
-					((JavaPairRDD) TableCellUtils.getRDD(inData[0])).collect(),
-					exec) };
+			return new BufferedDataTable[] { TableCellUtils
+					.listOfPairsToTable(((JavaPairRDD) TableCellUtils
+							.getRDD(inData[0])).collect(), exec) };
 
 		} else {
 			return new BufferedDataTable[] { TableCellUtils
-					.listOfElementsToTable(((JavaRDD) TableCellUtils
-							.getRDD(inData[0])).collect(), exec) };
+					.listOfElementsToTable(
+							((JavaRDD) TableCellUtils.getRDD(inData[0])).collect(),
+							exec) };
 		}
 	}
 
@@ -67,6 +73,7 @@ public class CollectNodeModel extends NodeModel {
 		// TODO Code executed on reset.
 		// Models build during execute are cleared here.
 		// Also data handled in load/saveInternals will be erased here.
+		rddViewer = null;
 	}
 
 	/**
@@ -143,6 +150,10 @@ public class CollectNodeModel extends NodeModel {
 		// of). Save here only the other internals that need to be preserved
 		// (e.g. data used by the views).
 
+	}
+
+	public RddViewer getRddViewer() {
+		return rddViewer;
 	}
 
 }
