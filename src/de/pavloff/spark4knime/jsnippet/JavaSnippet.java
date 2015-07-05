@@ -60,6 +60,7 @@ import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -141,7 +142,6 @@ public final class JavaSnippet {
 
 	private static File jSnippetJar;
 	private String[] m_jarFiles;
-	private String m_sparkJar = "spark-assembly-1.3.1-hadoop2.6.0.jar";
 	// caches the jSnippetJar and the jarFiles.
 	private File[] m_jarFileCache;
 
@@ -246,19 +246,32 @@ public final class JavaSnippet {
 				jSnippetJar = createJSnippetJarFile();
 			}
 		}
-		
 		// find spark jar file
-		String currentClassPath = JavaSnippet.class.getPackage().getName().toString()
-				.replaceAll("\\.", File.separator)
+		String currentClassPath = JavaSnippet.class.getPackage().getName()
+				.toString().replaceAll("\\.", File.separator)
 				+ "/JavaSnippet.class";
-		String sparkPath = null;
 		File sparkJarFile = null;
 		try {
-			sparkPath = FileLocator
-					.resolve(
-							JavaSnippet.class.getClassLoader().getResource(
-									currentClassPath)).getPath().toString()
-					.replace("bin/" + currentClassPath, "jars/" + m_sparkJar);
+
+			URL cwd = FileLocator.resolve(JavaSnippet.class.getClassLoader()
+					.getResource(currentClassPath));
+			String sparkPath = cwd
+					.getPath()
+					.toString()
+					.replace(
+							"de.pavloff.spark4knime-0.0.1.jar!"
+									+ File.separator + currentClassPath,
+							"jars/spark-assembly-1.3.1-hadoop2.6.0.jar");
+			if (!sparkPath.endsWith(".jar"))
+				// for tests
+				sparkPath = cwd
+						.getPath()
+						.toString()
+						.replace(
+								"bin" + File.separator + currentClassPath,
+								"jars"
+										+ File.separator
+										+ "spark-assembly-1.3.1-hadoop2.6.0.jar");
 			sparkJarFile = JavaSnippetUtil.toFile(sparkPath);
 		} catch (IOException | InvalidSettingsException e) {
 			e.printStackTrace();
