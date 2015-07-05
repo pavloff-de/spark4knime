@@ -81,6 +81,7 @@ import javax.tools.JavaFileObject;
 import javax.tools.JavaFileObject.Kind;
 
 import org.apache.spark.api.java.JavaSparkContext;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jdt.internal.compiler.tool.EclipseFileObject;
 import org.fife.ui.rsyntaxtextarea.parser.Parser;
 
@@ -140,6 +141,7 @@ public final class JavaSnippet {
 
 	private static File jSnippetJar;
 	private String[] m_jarFiles;
+	private String m_sparkJar = "spark-assembly-1.3.1-hadoop2.6.0.jar";
 	// caches the jSnippetJar and the jarFiles.
 	private File[] m_jarFileCache;
 
@@ -244,6 +246,23 @@ public final class JavaSnippet {
 				jSnippetJar = createJSnippetJarFile();
 			}
 		}
+		
+		// find spark jar file
+		String currentClassPath = JavaSnippet.class.getPackage().getName().toString()
+				.replaceAll("\\.", File.separator)
+				+ "/JavaSnippet.class";
+		String sparkPath = null;
+		File sparkJarFile = null;
+		try {
+			sparkPath = FileLocator
+					.resolve(
+							JavaSnippet.class.getClassLoader().getResource(
+									currentClassPath)).getPath().toString()
+					.replace("bin/" + currentClassPath, "jars/" + m_sparkJar);
+			sparkJarFile = JavaSnippetUtil.toFile(sparkPath);
+		} catch (IOException | InvalidSettingsException e) {
+			e.printStackTrace();
+		}
 
 		if (null != m_jarFiles && m_jarFiles.length > 0) {
 			List<File> jarFiles = new ArrayList<File>();
@@ -256,9 +275,16 @@ public final class JavaSnippet {
 					// TODO how to react?
 				}
 			}
+			if (sparkJarFile != null) {
+				jarFiles.add(sparkJarFile);
+			}
 			m_jarFileCache = jarFiles.toArray(new File[jarFiles.size()]);
 		} else {
-			m_jarFileCache = new File[] { jSnippetJar };
+			if (sparkJarFile != null) {
+				m_jarFileCache = new File[] { jSnippetJar, sparkJarFile };
+			} else {
+				m_jarFileCache = new File[] { jSnippetJar };
+			}
 		}
 		return m_jarFileCache;
 	}
