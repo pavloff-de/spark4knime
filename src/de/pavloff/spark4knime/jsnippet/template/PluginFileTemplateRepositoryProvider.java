@@ -78,7 +78,7 @@ public class PluginFileTemplateRepositoryProvider
      * path "/jsnippets".
      */
     public PluginFileTemplateRepositoryProvider() {
-        this("org.knime.jsnippets", "jsnippets");
+        this("de.pavloff.spark4knime", "jsnippets");
     }
 
     /**

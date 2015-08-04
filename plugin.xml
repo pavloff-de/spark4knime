@@ -39,5 +39,11 @@
 <node category-path="/spark4knime/transformations" factory-class="de.pavloff.spark4knime.transformations.DistinctNodeFactory" id="de.pavloff.spark4knime.transformations.DistinctNodeFactory"/>
 <node category-path="/spark4knime/transformations" factory-class="de.pavloff.spark4knime.jsnippet.JavaSnippetForRDDNodeFactory" id="de.pavloff.spark4knime.jsnippet.JavaSnippetForRDDNodeFactory"/>
 </extension>
-   
+   <extension
+         point="org.knime.jsnippets.templaterepository">
+         <template-repository id="de.pavloff.spark4knime.jsnippet.template.DefaultFileTemplateRepositoryProvider" provider-class="de.pavloff.spark4knime.jsnippet.template.DefaultFileTemplateRepositoryProvider">
+         </template-repository>
+         <template-repository id="de.pavloff.spark4knime.jsnippet.template.PluginFileTemplateRepositoryProvider" provider-class="de.pavloff.spark4knime.jsnippet.template.PluginFileTemplateRepositoryProvider">
+         </template-repository>
+   </extension>
 </plugin>
