@@ -83,6 +83,8 @@ import javax.tools.JavaFileObject.Kind;
 
 import org.apache.spark.api.java.JavaSparkContext;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.internal.compiler.tool.EclipseFileObject;
 import org.fife.ui.rsyntaxtextarea.parser.Parser;
 
@@ -120,6 +122,7 @@ import org.knime.core.node.KNIMEConstants;
 import org.knime.core.node.NodeLogger;
 import org.knime.core.node.workflow.FlowVariable;
 import org.knime.core.util.FileUtil;
+import org.osgi.framework.Bundle;
 
 /**
  * The java snippet which can be controlled by changing the settings, fields and
@@ -247,33 +250,16 @@ public final class JavaSnippet {
 			}
 		}
 		// find spark jar file
-		String currentClassPath = JavaSnippet.class.getPackage().getName()
-				.toString().replaceAll("\\.", File.separator)
-				+ "/JavaSnippet.class";
 		File sparkJarFile = null;
 		try {
-
-			URL cwd = FileLocator.resolve(JavaSnippet.class.getClassLoader()
-					.getResource(currentClassPath));
-			String sparkPath = cwd
-					.getPath()
-					.toString()
-					.replace(
-							"de.pavloff.spark4knime-0.0.1.jar!"
-									+ File.separator + currentClassPath,
-							"jars/spark-assembly-1.3.1-hadoop2.6.0.jar");
-			if (!sparkPath.endsWith(".jar"))
-				// for tests
-				sparkPath = cwd
-						.getPath()
-						.toString()
-						.replace(
-								"bin" + File.separator + currentClassPath,
-								"jars"
-										+ File.separator
-										+ "spark-assembly-1.3.1-hadoop2.6.0.jar");
+			Bundle bundle = Platform.getBundle("de.pavloff.spark4knime");
+			URL url = FileLocator.find(bundle, new Path(
+					"jars/spark-assembly-1.3.1-hadoop2.6.0.jar"), null);
+			String sparkPath = FileUtil
+					.getFileFromURL(FileLocator.toFileURL(url)).getPath()
+					.toString();
 			sparkJarFile = JavaSnippetUtil.toFile(sparkPath);
-		} catch (IOException | InvalidSettingsException e) {
+		} catch (InvalidSettingsException e) {
 			e.printStackTrace();
 		}
 
