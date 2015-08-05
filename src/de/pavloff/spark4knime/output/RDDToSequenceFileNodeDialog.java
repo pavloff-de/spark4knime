@@ -9,7 +9,8 @@ import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
 import org.knime.core.node.defaultnodesettings.SettingsModelString;
 
 /**
- * <code>NodeDialog</code> for the "RDDToTextFile" Node. Save RDD to Text File
+ * <code>NodeDialog</code> for the "RDDToSequenceFile" Node. Save RDD as
+ * Sequence File
  * 
  * This node dialog derives from {@link DefaultNodeSettingsPane} which allows
  * creation of a simple dialog with standard components. If you need a more
@@ -18,25 +19,25 @@ import org.knime.core.node.defaultnodesettings.SettingsModelString;
  * 
  * @author Oleg Pavlov
  */
-public class RDDToTextFileNodeDialog extends DefaultNodeSettingsPane {
+public class RDDToSequenceFileNodeDialog extends DefaultNodeSettingsPane {
 
 	/**
-	 * New pane for configuring RDDToTextFile node dialog. This is just a
+	 * New pane for configuring RDDToSequenceFile node dialog. This is just a
 	 * suggestion to demonstrate possible default dialog components.
 	 */
-	protected RDDToTextFileNodeDialog() {
+	protected RDDToSequenceFileNodeDialog() {
 		super();
 
 		// text file
 		addDialogComponent(new DialogComponentFileChooser(
 				new SettingsModelString(RDDToTextFileNodeModel.CFGKEY_PATH,
-						RDDToTextFileNodeModel.DEFAULT_PATH),
-				"spark.file.writer", JFileChooser.OPEN_DIALOG, true));
+						RDDToSequenceFileNodeModel.DEFAULT_PATH),
+				"spark.sequencefile.writer", JFileChooser.OPEN_DIALOG, true));
 
 		// overwrite
 		addDialogComponent(new DialogComponentBoolean(new SettingsModelBoolean(
-				RDDToTextFileNodeModel.CFGKEY_OVERWRITE,
-				RDDToTextFileNodeModel.DEFAULT_OVERWRITE),
+				RDDToSequenceFileNodeModel.CFGKEY_OVERWRITE,
+				RDDToSequenceFileNodeModel.DEFAULT_OVERWRITE),
 				"Overwrite if the directory already exists ?"));
 
 	}

@@ -65,7 +65,7 @@ public class RDDToTextFileNodeModel extends NodeModel {
 	 * {@inheritDoc}
 	 * 
 	 * @throws IllegalArgumentException
-	 *             If path to text file is empty
+	 *             If path is empty
 	 */
 	@Override
 	protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
@@ -74,7 +74,7 @@ public class RDDToTextFileNodeModel extends NodeModel {
 		String path = m_path.getStringValue();
 		if (path.length() == 0) {
 			throw new IllegalArgumentException(
-					"Path to text file shouldn't be empty");
+					"Path shouldn't be empty");
 		}
 		
 		File f = new File(path);
