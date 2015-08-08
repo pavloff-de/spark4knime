@@ -20,6 +20,7 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
 import de.pavloff.spark4knime.TableCellUtils;
+import de.pavloff.spark4knime.TableCellUtils.RddViewer;
 
 /**
  * This is the model implementation of Sample. Sample operation on Spark RDD
@@ -31,6 +32,8 @@ public class SampleNodeModel extends NodeModel {
 	// the logger instance
 	private static final NodeLogger logger = NodeLogger
 			.getLogger(SampleNodeModel.class);
+	
+	private RddViewer rddViewer;
 
 	/**
 	 * the settings key which is used to retrieve and store the settings (from
@@ -77,18 +80,21 @@ public class SampleNodeModel extends NodeModel {
 			final ExecutionContext exec) throws Exception {
 
 		JavaRDDLike rdd;
+		BufferedDataTable[] out;
 		if (TableCellUtils.isPairRDD(inData[0])) {
 			rdd = ((JavaPairRDD) TableCellUtils.getRDD(inData[0])).sample(
 					m_replacement.getBooleanValue(),
 					m_fraction.getIntValue() / 100.0, m_seed.getIntValue());
-			return new BufferedDataTable[] { TableCellUtils.setRDD(exec, rdd, true) };
+			out = new BufferedDataTable[] { TableCellUtils.setRDD(exec, rdd, true) };
 
 		} else {
 			rdd = ((JavaRDD) TableCellUtils.getRDD(inData[0])).sample(
 					m_replacement.getBooleanValue(),
 					m_fraction.getIntValue() / 100.0, m_seed.getIntValue());
-			return new BufferedDataTable[] { TableCellUtils.setRDD(exec, rdd, false) };
+			out = new BufferedDataTable[] { TableCellUtils.setRDD(exec, rdd, false) };
 		}
+		rddViewer = new RddViewer(out[0], exec);
+		return out;
 	}
 
 	/**
@@ -99,6 +105,7 @@ public class SampleNodeModel extends NodeModel {
 		// TODO Code executed on reset.
 		// Models build during execute are cleared here.
 		// Also data handled in load/saveInternals will be erased here.
+		rddViewer = null;
 	}
 
 	/**
@@ -195,6 +202,10 @@ public class SampleNodeModel extends NodeModel {
 		// of). Save here only the other internals that need to be preserved
 		// (e.g. data used by the views).
 
+	}
+	
+	public RddViewer getRddViewer() {
+		return rddViewer;
 	}
 
 }
