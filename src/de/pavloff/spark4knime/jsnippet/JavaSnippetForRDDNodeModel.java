@@ -64,6 +64,8 @@ import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.workflow.FlowVariable;
 import org.knime.core.node.workflow.FlowVariable.Type;
 
+import de.pavloff.spark4knime.TableCellUtils.RddViewer;
+
 
 /**
  * The node model of the java snippet node.
@@ -75,6 +77,7 @@ public class JavaSnippetForRDDNodeModel extends NodeModel {
     private JavaSnippet m_snippet;
     private static final NodeLogger LOGGER = NodeLogger.getLogger(
         "Java Snippet");
+    private RddViewer rddViewer;
     /**
      * Create a new instance.
      */
@@ -142,6 +145,7 @@ public class JavaSnippetForRDDNodeModel extends NodeModel {
                 pushFlowVariableString(var.getName(), var.getStringValue());
             }
         }
+        rddViewer = new RddViewer(output, exec);
         return new BufferedDataTable[] {output};
     }
 
@@ -178,7 +182,7 @@ public class JavaSnippetForRDDNodeModel extends NodeModel {
      */
     @Override
     protected void reset() {
-        // no internals, nothing to reset.
+    	rddViewer = null;
     }
 
 
@@ -201,4 +205,8 @@ public class JavaSnippetForRDDNodeModel extends NodeModel {
             throws IOException, CanceledExecutionException {
         // no internals.
     }
+    
+    public RddViewer getRddViewer() {
+		return rddViewer;
+	}
 }

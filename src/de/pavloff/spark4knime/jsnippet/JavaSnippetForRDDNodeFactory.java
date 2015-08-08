@@ -71,7 +71,7 @@ public class JavaSnippetForRDDNodeFactory extends NodeFactory<JavaSnippetForRDDN
      */
     @Override
     public int getNrNodeViews() {
-        return 0;
+        return 1;
     }
 
     /**
@@ -80,7 +80,7 @@ public class JavaSnippetForRDDNodeFactory extends NodeFactory<JavaSnippetForRDDN
     @Override
     public NodeView<JavaSnippetForRDDNodeModel> createNodeView(final int viewIndex,
             final JavaSnippetForRDDNodeModel nodeModel) {
-        throw new IndexOutOfBoundsException();
+    	return new JavaSnippetForRDDNodeView(nodeModel);
     }
 
     /**
