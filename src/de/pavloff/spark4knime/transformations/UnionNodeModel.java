@@ -18,6 +18,7 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
 import de.pavloff.spark4knime.TableCellUtils;
+import de.pavloff.spark4knime.TableCellUtils.RddViewer;
 
 /**
  * This is the model implementation of Union. Creates a new RDD that contains
@@ -30,6 +31,8 @@ public class UnionNodeModel extends NodeModel {
 	// the logger instance
 	private static final NodeLogger logger = NodeLogger
 			.getLogger(UnionNodeModel.class);
+	
+	private RddViewer rddViewer;
 
 	/**
 	 * Constructor for the node model.
@@ -53,10 +56,11 @@ public class UnionNodeModel extends NodeModel {
 		}
 		
 		JavaRDDLike rdd;
+		BufferedDataTable[] out;
 		if (TableCellUtils.isPairRDD(inData[0])) {
 			if (TableCellUtils.isPairRDD(inData[1])) {
 				rdd = ((JavaPairRDD) TableCellUtils.getRDD(inData[0])).union((JavaPairRDD) TableCellUtils.getRDD(inData[1]));
-				return new BufferedDataTable[] { TableCellUtils.setRDD(exec, rdd, true) };
+				out = new BufferedDataTable[] { TableCellUtils.setRDD(exec, rdd, true) };
 			} else {
 				throw new IllegalArgumentException("RDD's must be of same type");
 			}
@@ -65,9 +69,11 @@ public class UnionNodeModel extends NodeModel {
 				throw new IllegalArgumentException("RDD's must be of same type");
 			} else {
 				rdd = ((JavaRDD) TableCellUtils.getRDD(inData[0])).union((JavaRDD) TableCellUtils.getRDD(inData[1]));
-				return new BufferedDataTable[] { TableCellUtils.setRDD(exec, rdd, false) };
+				out = new BufferedDataTable[] { TableCellUtils.setRDD(exec, rdd, false) };
 			}
 		}
+		rddViewer = new RddViewer(out[0], exec);
+		return out;
 	}
 
 	/**
@@ -78,6 +84,7 @@ public class UnionNodeModel extends NodeModel {
 		// TODO Code executed on reset.
 		// Models build during execute are cleared here.
 		// Also data handled in load/saveInternals will be erased here.
+		rddViewer = null;
 	}
 
 	/**
@@ -154,6 +161,10 @@ public class UnionNodeModel extends NodeModel {
 		// of). Save here only the other internals that need to be preserved
 		// (e.g. data used by the views).
 
+	}
+	
+	public RddViewer getRddViewer() {
+		return rddViewer;
 	}
 
 }
