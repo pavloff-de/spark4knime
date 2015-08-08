@@ -287,15 +287,20 @@ public class TableCellUtils {
 
 		@SuppressWarnings("rawtypes")
 		private BufferedDataTable getTable(int numRows) {
-			if (TableCellUtils.isPairRDD(m_table)) {
-				return TableCellUtils.listOfPairsToTable(
-						((JavaPairRDD) TableCellUtils.getRDD(m_table))
-								.take(numRows), m_exec);
-
-			} else {
-				return TableCellUtils.listOfElementsToTable(
-						((JavaRDD) TableCellUtils.getRDD(m_table))
-								.take(numRows), m_exec);
+			try {
+				if (TableCellUtils.isPairRDD(m_table)) {
+					return TableCellUtils.listOfPairsToTable(
+							((JavaPairRDD) TableCellUtils.getRDD(m_table))
+							.take(numRows), m_exec);
+					
+				} else {
+					return TableCellUtils.listOfElementsToTable(
+							((JavaRDD) TableCellUtils.getRDD(m_table))
+							.take(numRows), m_exec);
+				}
+			} catch (Exception e) {
+				// try to show nonRDD table
+				return m_table;
 			}
 		}
 
