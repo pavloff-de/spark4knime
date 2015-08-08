@@ -17,6 +17,7 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
 import de.pavloff.spark4knime.TableCellUtils;
+import de.pavloff.spark4knime.TableCellUtils.RddViewer;
 
 /**
  * This is the model implementation of SortByKey. returns a dataset of (K, V)
@@ -29,6 +30,8 @@ public class SortByKeyNodeModel extends NodeModel {
 	// the logger instance
 	private static final NodeLogger logger = NodeLogger
 			.getLogger(SortByKeyNodeModel.class);
+	
+	private RddViewer rddViewer;
 
 	/**
 	 * the settings key which is used to retrieve and store the settings (from
@@ -63,10 +66,12 @@ public class SortByKeyNodeModel extends NodeModel {
 			final ExecutionContext exec) throws Exception {
 
 		if (TableCellUtils.isPairRDD(inData[0])) {
-
-			return new BufferedDataTable[] { TableCellUtils.setRDD(exec,
+			BufferedDataTable[] out;
+			out = new BufferedDataTable[] { TableCellUtils.setRDD(exec,
 					((JavaPairRDD) TableCellUtils.getRDD(inData[0]))
 							.sortByKey(m_order.getBooleanValue()), true) };
+			rddViewer = new RddViewer(out[0], exec);
+			return out;
 
 		} else {
 			throw new IllegalArgumentException(
@@ -82,6 +87,7 @@ public class SortByKeyNodeModel extends NodeModel {
 		// TODO Code executed on reset.
 		// Models build during execute are cleared here.
 		// Also data handled in load/saveInternals will be erased here.
+		rddViewer = null;
 	}
 
 	/**
@@ -175,6 +181,10 @@ public class SortByKeyNodeModel extends NodeModel {
 		// of). Save here only the other internals that need to be preserved
 		// (e.g. data used by the views).
 
+	}
+	
+	public RddViewer getRddViewer() {
+		return rddViewer;
 	}
 
 }
