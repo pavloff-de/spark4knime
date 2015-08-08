@@ -40,6 +40,7 @@
 <node category-path="/spark4knime/transformations" factory-class="de.pavloff.spark4knime.jsnippet.JavaSnippetForRDDNodeFactory" id="de.pavloff.spark4knime.jsnippet.JavaSnippetForRDDNodeFactory"/>
 <node category-path="/spark4knime/output" factory-class="de.pavloff.spark4knime.output.RDDToTextFileNodeFactory" id="de.pavloff.spark4knime.output.RDDToTextFileNodeFactory"/>
 <node category-path="/spark4knime/output" factory-class="de.pavloff.spark4knime.output.RDDToSequenceFileNodeFactory" id="de.pavloff.spark4knime.output.RDDToSequenceFileNodeFactory"/>
+<node category-path="/spark4knime/transformations" factory-class="de.pavloff.spark4knime.transformations.SortByKeyNodeFactory" id="de.pavloff.spark4knime.transformations.SortByKeyNodeFactory"/>
 </extension>
    <extension point="org.knime.jsnippets.templaterepository">
          <template-repository id="de.pavloff.spark4knime.jsnippet.template.DefaultFileTemplateRepositoryProvider" provider-class="de.pavloff.spark4knime.jsnippet.template.DefaultFileTemplateRepositoryProvider">
