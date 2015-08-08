@@ -2,6 +2,8 @@ package de.pavloff.spark4knime.transformations;
 
 import org.knime.core.node.NodeView;
 
+import de.pavloff.spark4knime.TableCellUtils.RddViewer;
+
 /**
  * <code>NodeView</code> for the "Distinct" Node.
  * Creates a new RDD that contains the distinct elements of the source RDD's
@@ -54,7 +56,12 @@ public class DistinctNodeView extends NodeView<DistinctNodeModel> {
     @Override
     protected void onOpen() {
 
-        // TODO things to do when opening the view
+        // things to do when opening the view
+    	DistinctNodeModel nodeModel = (DistinctNodeModel) getNodeModel();
+		assert nodeModel != null;
+		RddViewer view = nodeModel.getRddViewer();
+		assert (view != null);
+		setComponent(view.getTableView());
     }
 
 }

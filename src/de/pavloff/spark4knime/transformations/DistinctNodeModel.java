@@ -17,6 +17,7 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
 import de.pavloff.spark4knime.TableCellUtils;
+import de.pavloff.spark4knime.TableCellUtils.RddViewer;
 
 /**
  * This is the model implementation of Distinct. Creates a new RDD that contains
@@ -29,6 +30,8 @@ public class DistinctNodeModel extends NodeModel {
 	// the logger instance
 	private static final NodeLogger logger = NodeLogger
 			.getLogger(DistinctNodeModel.class);
+	
+	private RddViewer rddViewer;
 
 	/**
 	 * Constructor for the node model.
@@ -46,6 +49,8 @@ public class DistinctNodeModel extends NodeModel {
 	@Override
 	protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
 			final ExecutionContext exec) throws Exception {
+		
+		rddViewer = new RddViewer(inData[0], exec);
 
 		if (TableCellUtils.isPairRDD(inData[0])) {
 			return new BufferedDataTable[] { TableCellUtils
@@ -67,6 +72,7 @@ public class DistinctNodeModel extends NodeModel {
 		// TODO Code executed on reset.
 		// Models build during execute are cleared here.
 		// Also data handled in load/saveInternals will be erased here.
+		rddViewer = null;
 	}
 
 	/**
@@ -154,6 +160,10 @@ public class DistinctNodeModel extends NodeModel {
 		// of). Save here only the other internals that need to be preserved
 		// (e.g. data used by the views).
 
+	}
+	
+	public RddViewer getRddViewer() {
+		return rddViewer;
 	}
 
 }
