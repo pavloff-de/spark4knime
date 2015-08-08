@@ -1,5 +1,6 @@
 package de.pavloff.spark4knime;
 
+import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
 
 /**
@@ -35,7 +36,10 @@ public class SparkContexter {
 			if (master == null) {
 				throw new NullPointerException("Master should be not null");
 			}
-			sparkContext = new JavaSparkContext(master, "KnimeSparkApplication");
+			SparkConf conf = new SparkConf().setMaster(master)
+		             .setAppName("KnimeSparkApplication")
+		             .set("spark.files.overwrite", "true");
+			sparkContext = new JavaSparkContext(conf);
 		}
 		return sparkContext;
 	}
