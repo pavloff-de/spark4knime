@@ -18,6 +18,7 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
 import de.pavloff.spark4knime.TableCellUtils;
+import de.pavloff.spark4knime.TableCellUtils.RddViewer;
 
 /**
  * This is the model implementation of Intersection. Create an Intersection of
@@ -30,6 +31,8 @@ public class IntersectionNodeModel extends NodeModel {
 	// the logger instance
 	private static final NodeLogger logger = NodeLogger
 			.getLogger(IntersectionNodeModel.class);
+	
+	private RddViewer rddViewer;
 
 	/**
 	 * Constructor for the node model.
@@ -54,12 +57,13 @@ public class IntersectionNodeModel extends NodeModel {
 		}
 
 		JavaRDDLike rdd;
+		BufferedDataTable[] out;
 		if (TableCellUtils.isPairRDD(inData[0])) {
 			if (TableCellUtils.isPairRDD(inData[1])) {
 				rdd = ((JavaPairRDD) TableCellUtils.getRDD(inData[0]))
 						.intersection((JavaPairRDD) TableCellUtils
 								.getRDD(inData[1]));
-				return new BufferedDataTable[] { TableCellUtils.setRDD(exec,
+				out = new BufferedDataTable[] { TableCellUtils.setRDD(exec,
 						rdd, true) };
 			} else {
 				throw new IllegalArgumentException("RDD's must be of same type");
@@ -71,10 +75,12 @@ public class IntersectionNodeModel extends NodeModel {
 				rdd = ((JavaRDD) TableCellUtils.getRDD(inData[0]))
 						.intersection((JavaRDD) TableCellUtils
 								.getRDD(inData[1]));
-				return new BufferedDataTable[] { TableCellUtils.setRDD(exec,
+				out = new BufferedDataTable[] { TableCellUtils.setRDD(exec,
 						rdd, false) };
 			}
 		}
+		rddViewer = new RddViewer(out[0], exec);
+		return out;
 	}
 
 	/**
@@ -85,6 +91,7 @@ public class IntersectionNodeModel extends NodeModel {
 		// TODO Code executed on reset.
 		// Models build during execute are cleared here.
 		// Also data handled in load/saveInternals will be erased here.
+		rddViewer = null;
 	}
 
 	/**
@@ -172,6 +179,10 @@ public class IntersectionNodeModel extends NodeModel {
 		// of). Save here only the other internals that need to be preserved
 		// (e.g. data used by the views).
 
+	}
+	
+	public RddViewer getRddViewer() {
+		return rddViewer;
 	}
 
 }
