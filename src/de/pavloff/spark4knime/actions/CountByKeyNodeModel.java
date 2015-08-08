@@ -20,6 +20,7 @@ import org.knime.core.node.NodeSettingsWO;
 import scala.Tuple2;
 
 import de.pavloff.spark4knime.TableCellUtils;
+import de.pavloff.spark4knime.TableCellUtils.RddViewer;
 
 /**
  * This is the model implementation of CountByKey. Make a hash map of count for
@@ -32,6 +33,8 @@ public class CountByKeyNodeModel extends NodeModel {
 	// the logger instance
 	private static final NodeLogger logger = NodeLogger
 			.getLogger(CountByKeyNodeModel.class);
+
+	private RddViewer rddViewer;
 
 	/**
 	 * Constructor for the node model.
@@ -58,9 +61,10 @@ public class CountByKeyNodeModel extends NodeModel {
 			for (Object o : countMap.keySet()) {
 				l.add(new Tuple2(o, ((Long) countMap.get(o)).intValue()));
 			}
-
-			return new BufferedDataTable[] { TableCellUtils.listOfPairsToTable(
-					l, exec) };
+			BufferedDataTable[] out = new BufferedDataTable[] { TableCellUtils
+					.listOfPairsToTable(l, exec) };
+			rddViewer = new RddViewer(out[0], exec);
+			return out;
 
 		} else {
 			throw new IllegalArgumentException(
@@ -76,6 +80,7 @@ public class CountByKeyNodeModel extends NodeModel {
 		// TODO Code executed on reset.
 		// Models build during execute are cleared here.
 		// Also data handled in load/saveInternals will be erased here.
+		rddViewer = null;
 	}
 
 	/**
@@ -163,6 +168,10 @@ public class CountByKeyNodeModel extends NodeModel {
 		// of). Save here only the other internals that need to be preserved
 		// (e.g. data used by the views).
 
+	}
+	
+	public RddViewer getRddViewer() {
+		return rddViewer;
 	}
 
 }
