@@ -27,6 +27,8 @@
     <ports>
         <inPort index="0" name="In-Port name">Description of first input port...</inPort>
         <!-- possibly more input ports here-->
+        <inPort index="1" name="In-Port name">Description of second input port...</inPort>
+        <!-- possibly more input ports here-->
         <outPort index="0" name="Out-Port name">Description of first output port...</outPort>
         <!-- possibly more output ports here-->
     </ports>    
