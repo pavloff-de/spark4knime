@@ -18,6 +18,7 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
 import de.pavloff.spark4knime.TableCellUtils;
+import de.pavloff.spark4knime.TableCellUtils.RddViewer;
 
 /**
  * This is the model implementation of Take. Take first n elements of RDD
@@ -29,6 +30,8 @@ public class TakeNodeModel extends NodeModel {
 	// the logger instance
 	private static final NodeLogger logger = NodeLogger
 			.getLogger(TakeNodeModel.class);
+	
+	private RddViewer rddViewer;
 
 	/**
 	 * the settings key which is used to retrieve and store the settings (from
@@ -65,17 +68,20 @@ public class TakeNodeModel extends NodeModel {
 	protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
 			final ExecutionContext exec) throws Exception {
 
+		BufferedDataTable[] out;
 		if (TableCellUtils.isPairRDD(inData[0])) {
-			return new BufferedDataTable[] { TableCellUtils.listOfPairsToTable(
+			out = new BufferedDataTable[] { TableCellUtils.listOfPairsToTable(
 					((JavaPairRDD) TableCellUtils.getRDD(inData[0]))
 							.take(m_count.getIntValue()), exec) };
 
 		} else {
-			return new BufferedDataTable[] { TableCellUtils
+			out = new BufferedDataTable[] { TableCellUtils
 					.listOfElementsToTable(((JavaRDD) TableCellUtils
 							.getRDD(inData[0])).take(m_count.getIntValue()),
 							exec) };
 		}
+		rddViewer = new RddViewer(out[0], exec);
+		return out;
 	}
 
 	/**
@@ -86,6 +92,7 @@ public class TakeNodeModel extends NodeModel {
 		// TODO Code executed on reset.
 		// Models build during execute are cleared here.
 		// Also data handled in load/saveInternals will be erased here.
+		rddViewer = null;
 	}
 
 	/**
@@ -179,6 +186,10 @@ public class TakeNodeModel extends NodeModel {
 		// of). Save here only the other internals that need to be preserved
 		// (e.g. data used by the views).
 
+	}
+	
+	public RddViewer getRddViewer() {
+		return rddViewer;
 	}
 
 }
