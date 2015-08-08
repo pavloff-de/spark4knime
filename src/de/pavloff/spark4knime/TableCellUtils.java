@@ -190,7 +190,9 @@ public class TableCellUtils {
 		} else if (element instanceof Long) {
 			return LongCell.TYPE;
 		} else {
-			return null;
+			throw new UnsupportedOperationException("Class "
+					+ element.getClass().getName()
+					+ " is not supported for this operation");
 		}
 	}
 
@@ -217,6 +219,9 @@ public class TableCellUtils {
 				.createDataContainer(new DataTableSpec(new DataColumnSpec[] {
 						new DataColumnSpecCreator("Column 0", TableCellUtils
 								.getTypeOfElement(t._1)).createSpec(),
+						// TODO: handle iterable objects
+						// scala.collection.convert.Wrappers$IterableWrapper
+						// list can be written in columns
 						new DataColumnSpecCreator("Column 1", TableCellUtils
 								.getTypeOfElement(t._2)).createSpec() }));
 		ObjectToDataCellConverter cellFactory = ObjectToDataCellConverter.INSTANCE;
