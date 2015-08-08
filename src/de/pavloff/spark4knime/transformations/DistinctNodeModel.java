@@ -50,18 +50,20 @@ public class DistinctNodeModel extends NodeModel {
 	protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
 			final ExecutionContext exec) throws Exception {
 		
-		rddViewer = new RddViewer(inData[0], exec);
+		BufferedDataTable[] out;
 
 		if (TableCellUtils.isPairRDD(inData[0])) {
-			return new BufferedDataTable[] { TableCellUtils
+			out = new BufferedDataTable[] { TableCellUtils
 					.setRDD(exec, ((JavaPairRDD) TableCellUtils
 							.getRDD(inData[0])).distinct(), true) };
 
 		} else {
-			return new BufferedDataTable[] { TableCellUtils.setRDD(exec,
+			out = new BufferedDataTable[] { TableCellUtils.setRDD(exec,
 					((JavaRDD) TableCellUtils.getRDD(inData[0])).distinct(),
 					false) };
 		}
+		rddViewer = new RddViewer(out[0], exec);
+		return out;
 	}
 
 	/**
