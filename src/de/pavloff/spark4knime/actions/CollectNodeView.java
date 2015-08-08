@@ -58,7 +58,7 @@ public class CollectNodeView extends NodeView<CollectNodeModel> {
 		assert nodeModel != null;
 		RddViewer view = nodeModel.getRddViewer();
 		assert (view != null);
-		setComponent(view.getTableView());
+		setComponent(view.getTableView(Integer.MAX_VALUE));
 	}
 
 }

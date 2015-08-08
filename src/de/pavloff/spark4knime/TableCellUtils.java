@@ -286,22 +286,26 @@ public class TableCellUtils {
 		}
 
 		@SuppressWarnings("rawtypes")
-		private BufferedDataTable getTable() {
+		private BufferedDataTable getTable(int numRows) {
 			if (TableCellUtils.isPairRDD(m_table)) {
 				return TableCellUtils.listOfPairsToTable(
 						((JavaPairRDD) TableCellUtils.getRDD(m_table))
-								.take(takeSize), m_exec);
+								.take(numRows), m_exec);
 
 			} else {
 				return TableCellUtils.listOfElementsToTable(
 						((JavaRDD) TableCellUtils.getRDD(m_table))
-								.take(takeSize), m_exec);
+								.take(numRows), m_exec);
 			}
 		}
 
 		public TableView getTableView() {
+			return getTableView(takeSize);
+		}
+		
+		public TableView getTableView(int numRows) {
 			TableView tableView = new TableView(new TableContentModel(
-					getTable()));
+					getTable(numRows)));
 			tableView.setWrapColumnHeader(CorePlugin.getInstance()
 					.isWrapColumnHeaderInTableViews());
 			tableView.setPreferredSizeDataDependent(true);
