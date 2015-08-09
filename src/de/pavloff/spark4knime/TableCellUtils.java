@@ -3,6 +3,7 @@
  */
 package de.pavloff.spark4knime;
 
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.spark.api.java.JavaPairRDD;
@@ -197,6 +198,76 @@ public class TableCellUtils {
 	}
 
 	/**
+	 * Makes a BufferedDataTable from a List of pairs with an Iterable object as
+	 * value. Value should contain objects of one type.
+	 * 
+	 * @param l
+	 *            <code>List</code> of Tuple2 objects
+	 * @param exec
+	 *            <code>ExecutionContext</code> of KNIME
+	 * @return <code>BufferedDataTable</code>
+	 */
+	@SuppressWarnings({ "rawtypes", "deprecation" })
+	public static BufferedDataTable listOfIterablePairsToTable(List l,
+			final ExecutionContext exec) {
+
+		Tuple2 t = (Tuple2) l.get(0);
+		ObjectToDataCellConverter cellFactory = ObjectToDataCellConverter.INSTANCE;
+
+		// find maximum length
+		int l_max = 0;
+		DataType dt = null;
+		for (Object s : l) {
+			t = (Tuple2) s;
+			Iterator it = ((Iterable) t._2).iterator();
+			int l_cur = 0;
+			for (; it.hasNext(); l_cur++) {
+				// find inner type
+				Object n = it.next();
+				if (dt == null) {
+					dt = getTypeOfElement(n);
+				}
+			}
+			if (l_max < l_cur) {
+				l_max = l_cur;
+			}
+		}
+
+		// create specs
+		DataColumnSpec[] specs = new DataColumnSpec[l_max + 1];
+		specs[0] = new DataColumnSpecCreator("Key", getTypeOfElement(t._1))
+				.createSpec();
+		for (int i = 1; i <= l_max; i++) {
+			specs[i] = new DataColumnSpecCreator("Value " + i, dt).createSpec();
+		}
+
+		// create container
+		BufferedDataContainer container = exec
+				.createDataContainer(new DataTableSpec(specs));
+
+		// fill rows
+		int i = 0;
+		for (Object s : l) {
+			t = (Tuple2) s;
+
+			DataCell[] cells = new DataCell[l_max + 1];
+			cells[0] = cellFactory.createDataCell(t._1);
+
+			Iterator it = ((Iterable) t._2).iterator();
+			int c_cur = 1;
+			while (it.hasNext()) {
+				cells[c_cur] = cellFactory.createDataCell(it.next());
+				c_cur++;
+			}
+			container.addRowToTable(new DefaultRow(new RowKey("Row " + i++),
+					cells));
+		}
+		container.close();
+		return container.getTable();
+
+	}
+
+	/**
 	 * Makes a BufferedDataTable from a List of pairs
 	 * 
 	 * @param l
@@ -214,17 +285,22 @@ public class TableCellUtils {
 		}
 
 		Tuple2 t = (Tuple2) l.get(0);
+		ObjectToDataCellConverter cellFactory = ObjectToDataCellConverter.INSTANCE;
+
+		// handle iterable objects
+		// scala.collection.convert.Wrappers$IterableWrapper
+		// list can be written in columns
+		if (t._2 instanceof Iterable) {
+			return listOfIterablePairsToTable(l, exec);
+		}
 
 		BufferedDataContainer container = exec
-				.createDataContainer(new DataTableSpec(new DataColumnSpec[] {
-						new DataColumnSpecCreator("Column 0", TableCellUtils
-								.getTypeOfElement(t._1)).createSpec(),
-						// TODO: handle iterable objects
-						// scala.collection.convert.Wrappers$IterableWrapper
-						// list can be written in columns
-						new DataColumnSpecCreator("Column 1", TableCellUtils
-								.getTypeOfElement(t._2)).createSpec() }));
-		ObjectToDataCellConverter cellFactory = ObjectToDataCellConverter.INSTANCE;
+				.createDataContainer(new DataTableSpec(
+						new DataColumnSpec[] {
+								new DataColumnSpecCreator("Key",
+										getTypeOfElement(t._1)).createSpec(),
+								new DataColumnSpecCreator("Value",
+										getTypeOfElement(t._2)).createSpec() }));
 
 		int i = 0;
 		for (Object s : l) {
@@ -259,8 +335,8 @@ public class TableCellUtils {
 		BufferedDataContainer container = exec
 				.createDataContainer(new DataTableSpec(
 						new DataColumnSpec[] { new DataColumnSpecCreator(
-								"Column 0", TableCellUtils.getTypeOfElement(l
-										.get(0))).createSpec() }));
+								"Column 0", getTypeOfElement(l.get(0)))
+								.createSpec() }));
 		ObjectToDataCellConverter cellFactory = ObjectToDataCellConverter.INSTANCE;
 
 		int i = 0;
@@ -288,15 +364,14 @@ public class TableCellUtils {
 		@SuppressWarnings("rawtypes")
 		private BufferedDataTable getTable(int numRows) {
 			try {
-				if (TableCellUtils.isPairRDD(m_table)) {
-					return TableCellUtils.listOfPairsToTable(
-							((JavaPairRDD) TableCellUtils.getRDD(m_table))
-							.take(numRows), m_exec);
-					
+				if (isPairRDD(m_table)) {
+					return listOfPairsToTable(
+							((JavaPairRDD) getRDD(m_table)).take(numRows),
+							m_exec);
+
 				} else {
-					return TableCellUtils.listOfElementsToTable(
-							((JavaRDD) TableCellUtils.getRDD(m_table))
-							.take(numRows), m_exec);
+					return listOfElementsToTable(
+							((JavaRDD) getRDD(m_table)).take(numRows), m_exec);
 				}
 			} catch (Exception e) {
 				// try to show nonRDD table
@@ -307,7 +382,7 @@ public class TableCellUtils {
 		public TableView getTableView() {
 			return getTableView(takeSize);
 		}
-		
+
 		public TableView getTableView(int numRows) {
 			TableView tableView = new TableView(new TableContentModel(
 					getTable(numRows)));
