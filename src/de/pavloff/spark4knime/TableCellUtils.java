@@ -16,6 +16,7 @@ import org.knime.core.data.DataRow;
 import org.knime.core.data.DataTableSpec;
 import org.knime.core.data.DataType;
 import org.knime.core.data.RowKey;
+import org.knime.core.data.container.CloseableRowIterator;
 import org.knime.core.data.def.BooleanCell;
 import org.knime.core.data.def.DefaultRow;
 import org.knime.core.data.def.DoubleCell;
@@ -164,9 +165,13 @@ public class TableCellUtils {
 			throw new IndexOutOfBoundsException(
 					"table should contain only one cells");
 		}
-		if (names[0].equals("RDD")) {
+		CloseableRowIterator it = table.iterator();
+		DataRow firstRow = it.next();
+		try {
+			RddCell rddCell = (RddCell) firstRow.getCell(0);
 			return false;
-		} else {
+		} catch (Exception e) {
+			PairRddCell pairRddCell = (PairRddCell) firstRow.getCell(0);
 			return true;
 		}
 	}
