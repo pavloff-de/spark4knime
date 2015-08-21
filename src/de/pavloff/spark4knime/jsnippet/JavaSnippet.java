@@ -88,6 +88,8 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.jdt.internal.compiler.tool.EclipseFileObject;
 import org.fife.ui.rsyntaxtextarea.parser.Parser;
 
+import de.pavloff.spark4knime.PairRddCell;
+import de.pavloff.spark4knime.RddCell;
 import de.pavloff.spark4knime.SparkContexter;
 import de.pavloff.spark4knime.jsnippet.JavaField.InCol;
 import de.pavloff.spark4knime.jsnippet.JavaField.InVar;
@@ -108,8 +110,10 @@ import de.pavloff.spark4knime.jsnippet.type.data.DataValueToJava;
 import de.pavloff.spark4knime.jsnippet.ui.JSnippetParser;
 import org.knime.core.data.DataCell;
 import org.knime.core.data.DataColumnSpec;
+import org.knime.core.data.DataColumnSpecCreator;
 import org.knime.core.data.DataRow;
 import org.knime.core.data.DataTableSpec;
+import org.knime.core.data.DataType;
 import org.knime.core.data.RowKey;
 import org.knime.core.data.container.CellFactory;
 import org.knime.core.data.container.ColumnRearranger;
@@ -813,6 +817,21 @@ public final class JavaSnippet {
 			throws InvalidSettingsException {
 		DataTableSpec outSpec = createRearranger(spec, flowVariableRepository,
 				-1).createSpec();
+		
+		// create outspec for RDDLikeObject
+		OutColList outCols = m_fields.getOutColFields();
+		if (outCols.size() == 1) {
+			DataType t = outCols.get(0).getKnimeType();
+			if (t == PairRddCell.TYPE) {
+				outSpec = new DataTableSpec(
+						new DataColumnSpecCreator("PairRDD", DataType
+								.getType(PairRddCell.class)).createSpec());
+			} else if (t == RddCell.TYPE) {
+				outSpec = new DataTableSpec(new DataColumnSpecCreator("RDD",
+						DataType.getType(RddCell.class)).createSpec());
+			}
+		}
+		
 		// populate flowVariableRepository with new flow variables having
 		// default values
 		for (OutVar outVar : m_fields.getOutVarFields()) {

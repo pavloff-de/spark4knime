@@ -175,6 +175,38 @@ public class TableCellUtils {
 			return true;
 		}
 	}
+	
+	/**
+	 * Returns true if table contain JavaRDDLike and false otherwise
+	 * 
+	 * @param table
+	 *            <code>BufferedDataTable</code>
+	 * @return
+	 */
+	public static Boolean isRDDTable(BufferedDataTable table) {
+		String[] names = table.getSpec().getColumnNames();
+		if (names.length != 1) {
+			// RDD table should contain just one column
+			return false;
+		}
+		CloseableRowIterator it = table.iterator();
+		DataRow firstRow = it.next();
+		if (it.hasNext()) {
+			// RDD table should contain just one row
+			return false;
+		}
+		try {
+			RddCell rddCell = (RddCell) firstRow.getCell(0);
+			return true;
+		} catch (Exception e) {
+			try {
+				PairRddCell pairRddCell = (PairRddCell) firstRow.getCell(0);
+				return true;
+			} catch (Exception ee) {
+				return false;
+			}
+		}
+	}
 
 	/**
 	 * Find out type of element

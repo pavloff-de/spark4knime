@@ -51,6 +51,8 @@ import java.io.File;
 import java.io.IOException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaRDD;
 import org.knime.core.data.DataTableSpec;
 import org.knime.core.node.BufferedDataTable;
 import org.knime.core.node.CanceledExecutionException;
@@ -64,149 +66,161 @@ import org.knime.core.node.NodeSettingsWO;
 import org.knime.core.node.workflow.FlowVariable;
 import org.knime.core.node.workflow.FlowVariable.Type;
 
+import de.pavloff.spark4knime.TableCellUtils;
 import de.pavloff.spark4knime.TableCellUtils.RddViewer;
-
 
 /**
  * The node model of the java snippet node.
- *
+ * 
  * @author Heiko Hofer
  */
 public class JavaSnippetForRDDNodeModel extends NodeModel {
-    private JavaSnippetSettings m_settings;
-    private JavaSnippet m_snippet;
-    private static final NodeLogger LOGGER = NodeLogger.getLogger(
-        "Java Snippet");
-    private RddViewer rddViewer;
-    /**
-     * Create a new instance.
-     */
-    public JavaSnippetForRDDNodeModel() {
-        super(1, 1);
-        m_settings = new JavaSnippetSettings();
-        m_snippet = new JavaSnippet();
-        m_snippet.attachLogger(LOGGER);
-    }
+	private JavaSnippetSettings m_settings;
+	private JavaSnippet m_snippet;
+	private static final NodeLogger LOGGER = NodeLogger
+			.getLogger("Java Snippet");
+	private RddViewer rddViewer;
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected DataTableSpec[] configure(final DataTableSpec[] inSpecs)
-            throws InvalidSettingsException {
-        m_snippet.setSettings(m_settings);
-        FlowVariableRepository flowVarRepository =
-            new FlowVariableRepository(getAvailableInputFlowVariables());
-        ValidationReport report = m_snippet.validateSettings(inSpecs[0],
-                flowVarRepository);
-        if (report.hasWarnings()) {
-            setWarningMessage(StringUtils.join(report.getWarnings(), "\n"));
-        }
-        if (report.hasErrors()) {
-            throw new InvalidSettingsException(
-                    StringUtils.join(report.getErrors(), "\n"));
-        }
+	/**
+	 * Create a new instance.
+	 */
+	public JavaSnippetForRDDNodeModel() {
+		super(1, 1);
+		m_settings = new JavaSnippetSettings();
+		m_snippet = new JavaSnippet();
+		m_snippet.attachLogger(LOGGER);
+	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected DataTableSpec[] configure(final DataTableSpec[] inSpecs)
+			throws InvalidSettingsException {
+		m_snippet.setSettings(m_settings);
+		FlowVariableRepository flowVarRepository = new FlowVariableRepository(
+				getAvailableInputFlowVariables());
+		ValidationReport report = m_snippet.validateSettings(inSpecs[0],
+				flowVarRepository);
+		if (report.hasWarnings()) {
+			setWarningMessage(StringUtils.join(report.getWarnings(), "\n"));
+		}
+		if (report.hasErrors()) {
+			throw new InvalidSettingsException(StringUtils.join(
+					report.getErrors(), "\n"));
+		}
 
-        DataTableSpec outSpec = m_snippet.configure(inSpecs[0],
-                flowVarRepository);
-        for (FlowVariable flowVar : flowVarRepository.getModified()) {
-            if (flowVar.getType().equals(Type.INTEGER)) {
-                pushFlowVariableInt(flowVar.getName(), flowVar.getIntValue());
-            } else if (flowVar.getType().equals(Type.DOUBLE)) {
-                pushFlowVariableDouble(flowVar.getName(),
-                        flowVar.getDoubleValue());
-            } else {
-                pushFlowVariableString(flowVar.getName(),
-                        flowVar.getStringValue());
-            }
-        }
-        return new DataTableSpec[] {outSpec};
-    }
+		DataTableSpec outSpec = m_snippet.configure(inSpecs[0],
+				flowVarRepository);
+		for (FlowVariable flowVar : flowVarRepository.getModified()) {
+			if (flowVar.getType().equals(Type.INTEGER)) {
+				pushFlowVariableInt(flowVar.getName(), flowVar.getIntValue());
+			} else if (flowVar.getType().equals(Type.DOUBLE)) {
+				pushFlowVariableDouble(flowVar.getName(),
+						flowVar.getDoubleValue());
+			} else {
+				pushFlowVariableString(flowVar.getName(),
+						flowVar.getStringValue());
+			}
+		}
+		return new DataTableSpec[] { outSpec };
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
-            final ExecutionContext exec) throws Exception {
-        m_snippet.setSettings(m_settings);
-        FlowVariableRepository flowVarRepo =
-            new FlowVariableRepository(getAvailableInputFlowVariables());
-        BufferedDataTable output = m_snippet.execute(inData[0],
-                flowVarRepo, exec);
-        for (FlowVariable var : flowVarRepo.getModified()) {
-            Type type = var.getType();
-            if (type.equals(Type.INTEGER)) {
-                pushFlowVariableInt(var.getName(), var.getIntValue());
-            } else if (type.equals(Type.DOUBLE)) {
-                pushFlowVariableDouble(var.getName(), var.getDoubleValue());
-            } else { // case: type.equals(Type.STRING)
-                pushFlowVariableString(var.getName(), var.getStringValue());
-            }
-        }
-        rddViewer = new RddViewer(output, exec);
-        return new BufferedDataTable[] {output};
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
+			final ExecutionContext exec) throws Exception {
+		m_snippet.setSettings(m_settings);
+		FlowVariableRepository flowVarRepo = new FlowVariableRepository(
+				getAvailableInputFlowVariables());
+		BufferedDataTable output = m_snippet.execute(inData[0], flowVarRepo,
+				exec);
+		for (FlowVariable var : flowVarRepo.getModified()) {
+			Type type = var.getType();
+			if (type.equals(Type.INTEGER)) {
+				pushFlowVariableInt(var.getName(), var.getIntValue());
+			} else if (type.equals(Type.DOUBLE)) {
+				pushFlowVariableDouble(var.getName(), var.getDoubleValue());
+			} else { // case: type.equals(Type.STRING)
+				pushFlowVariableString(var.getName(), var.getStringValue());
+			}
+		}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void saveSettingsTo(final NodeSettingsWO settings) {
-        m_settings.saveSettings(settings);
-    }
+		// overwrite RDD table
+		BufferedDataTable rddOut = output;
+		if (TableCellUtils.isRDDTable(output)) {
+			if (TableCellUtils.isPairRDD(output)) {
+				rddOut = TableCellUtils.setRDD(exec,
+						((JavaPairRDD) TableCellUtils.getRDD(output)), true);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void validateSettings(final NodeSettingsRO settings)
-            throws InvalidSettingsException {
-        JavaSnippetSettings s = new JavaSnippetSettings();
-        s.loadSettings(settings);
-        // TODO: Check settings
-    }
+			} else {
+				rddOut = TableCellUtils.setRDD(exec,
+						((JavaRDD) TableCellUtils.getRDD(output)), false);
+			}
+		}
+		rddViewer = new RddViewer(rddOut, exec);
+		return new BufferedDataTable[] { rddOut };
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
-            throws InvalidSettingsException {
-        m_settings.loadSettings(settings);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void saveSettingsTo(final NodeSettingsWO settings) {
+		m_settings.saveSettings(settings);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void reset() {
-    	rddViewer = null;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void validateSettings(final NodeSettingsRO settings)
+			throws InvalidSettingsException {
+		JavaSnippetSettings s = new JavaSnippetSettings();
+		s.loadSettings(settings);
+		// TODO: Check settings
+	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
+			throws InvalidSettingsException {
+		m_settings.loadSettings(settings);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void loadInternals(final File nodeInternDir,
-            final ExecutionMonitor exec)
-            throws IOException, CanceledExecutionException {
-        // no internals.
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void reset() {
+		rddViewer = null;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    protected void saveInternals(final File nodeInternDir,
-            final ExecutionMonitor exec)
-            throws IOException, CanceledExecutionException {
-        // no internals.
-    }
-    
-    public RddViewer getRddViewer() {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void loadInternals(final File nodeInternDir,
+			final ExecutionMonitor exec) throws IOException,
+			CanceledExecutionException {
+		// no internals.
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	protected void saveInternals(final File nodeInternDir,
+			final ExecutionMonitor exec) throws IOException,
+			CanceledExecutionException {
+		// no internals.
+	}
+
+	public RddViewer getRddViewer() {
 		return rddViewer;
 	}
 }
