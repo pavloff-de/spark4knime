@@ -169,6 +169,9 @@ public final class JavaSnippet {
 
 	private NodeLogger m_logger;
 
+	private static long idCounter = 0;
+	private final String m_uid;
+
 	/**
 	 * Create a new snippet.
 	 */
@@ -185,6 +188,11 @@ public final class JavaSnippet {
 			tempDir = new File(KNIMEConstants.getKNIMETempDir());
 		}
 		m_tempClassPathDir = tempDir;
+		m_uid = createID();
+	}
+
+	public static synchronized String createID() {
+		return String.valueOf(idCounter++);
 	}
 
 	/**
@@ -392,7 +400,7 @@ public final class JavaSnippet {
 	 * Create the java-file of the snippet.
 	 */
 	private JavaFileObject createJSnippetFile() throws IOException {
-		m_snippetFile = new File(m_tempClassPathDir, "JSnippet.java");
+		m_snippetFile = new File(m_tempClassPathDir, "JSnippet" + m_uid + ".java");
 		FileOutputStream fos = new FileOutputStream(m_snippetFile);
 		OutputStreamWriter out = new OutputStreamWriter(fos,
 				Charset.forName("UTF-8"));
@@ -408,7 +416,7 @@ public final class JavaSnippet {
 			out.close();
 		}
 
-		return new EclipseFileObject("JSnippet", m_snippetFile.toURI(),
+		return new EclipseFileObject("JSnippet" + m_uid, m_snippetFile.toURI(),
 				Kind.SOURCE, Charset.defaultCharset());
 	}
 
@@ -604,7 +612,7 @@ public final class JavaSnippet {
 	private String createFieldsSection() {
 		StringBuilder out = new StringBuilder();
 		out.append("// system variables\n");
-		out.append("public class JSnippet extends AbstractJSnippet implements Serializable{\n");
+		out.append("public class JSnippet" + m_uid + " extends AbstractJSnippet implements Serializable{\n");
 		if (m_fields.getInColFields().size() > 0) {
 			out.append("  // Fields for input columns\n");
 			for (InCol field : m_fields.getInColFields()) {
@@ -817,7 +825,7 @@ public final class JavaSnippet {
 			throws InvalidSettingsException {
 		DataTableSpec outSpec = createRearranger(spec, flowVariableRepository,
 				-1).createSpec();
-		
+
 		// create outspec for RDDLikeObject
 		OutColList outCols = m_fields.getOutColFields();
 		if (outCols.size() == 1) {
@@ -831,7 +839,7 @@ public final class JavaSnippet {
 						DataType.getType(RddCell.class)).createSpec());
 			}
 		}
-		
+
 		// populate flowVariableRepository with new flow variables having
 		// default values
 		for (OutVar outVar : m_fields.getOutVarFields()) {
@@ -1019,7 +1027,7 @@ public final class JavaSnippet {
 				// create JAR for Spark Executor
 				createJSnippetJarForSpark(loader);
 				return (Class<? extends AbstractJSnippet>) loader
-						.loadClass("JSnippet");
+						.loadClass("JSnippet" + m_uid);
 			} catch (ClassNotFoundException e) {
 				throw new IllegalStateException("Could not load class file.", e);
 			} catch (IOException e) {
