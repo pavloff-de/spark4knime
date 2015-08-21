@@ -1,7 +1,15 @@
 package de.pavloff.spark4knime;
 
+import java.io.IOException;
+import java.net.URL;
+
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.knime.core.util.FileUtil;
+import org.osgi.framework.Bundle;
 
 /**
  * Create SparkContexts.
@@ -36,14 +44,27 @@ public class SparkContexter {
 			if (master == null) {
 				throw new NullPointerException("Master should be not null");
 			}
+			if (System.getProperty("hadoop.home.dir") == null) {
+				try {
+					System.setProperty(
+							"hadoop.home.dir",
+							FileUtil.getFileFromURL(
+									FileLocator.toFileURL(FileLocator.find(
+											Platform.getBundle("de.pavloff.spark4knime"),
+											new Path("hadoop"), null)))
+									.getPath().toString());
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 			SparkConf conf = new SparkConf().setMaster(master)
-		             .setAppName("KnimeSparkApplication")
-		             .set("spark.files.overwrite", "true");
+					.setAppName("KnimeSparkApplication")
+					.set("spark.files.overwrite", "true");
 			sparkContext = new JavaSparkContext(conf);
 		}
 		return sparkContext;
 	}
-	
+
 	/**
 	 * Return Spark Master which is used before
 	 * 
