@@ -26,7 +26,7 @@ public class FileToRDDNodeFactory extends NodeFactory<FileToRDDNodeModel> {
 	@Override
 	public int getNrNodeViews() {
 		// take and visualize first entries of RDD
-		return 1;
+		return 0;
 	}
 
 	/**
