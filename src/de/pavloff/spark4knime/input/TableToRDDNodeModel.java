@@ -40,11 +40,13 @@ import de.pavloff.spark4knime.SparkContexter;
 import de.pavloff.spark4knime.TableCellUtils.RddViewer;
 
 /**
- * This is the model implementation of TableToRDD. Read a table and parallelize
- * data by rows. Node model returns a Spark RDD which contains data from table
- * columns. PairRDD is returned if more than 1 column selected. Maximally first
- * two columns will be used. Columns should contain data of following types:
- * String, Double, Integer, Long, Boolean.
+ * This is the model implementation of TableToRDD. Read a table from previous
+ * node as input and parallelize data by rows.
+ * 
+ * Model returns a Spark RDD which contains data from table columns. PairRDD is
+ * returned if more than 1 column selected. Maximally first two columns will be
+ * used. Columns should contain data of following types: String, Double,
+ * Integer, Long, Boolean.
  * 
  * @author Oleg Pavlov, University of Heidelberg
  */
@@ -53,7 +55,8 @@ public class TableToRDDNodeModel extends NodeModel {
 	// the logger instance
 	private static final NodeLogger logger = NodeLogger
 			.getLogger(TableToRDDNodeModel.class);
-	
+
+	// viewer instance
 	private RddViewer rddViewer;
 
 	/**
@@ -65,7 +68,7 @@ public class TableToRDDNodeModel extends NodeModel {
 	static final String CFG_COLUMNS = "Columns to parallelize";
 
 	/** initial default count value. */
-	static final String DEFAULT_MASTER = "local[2]";
+	static final String DEFAULT_MASTER = "local[*]";
 
 	private final SettingsModelString m_master = new SettingsModelString(
 			TableToRDDNodeModel.CFGKEY_MASTER,
@@ -77,8 +80,8 @@ public class TableToRDDNodeModel extends NodeModel {
 	 * Constructor for the node model.
 	 */
 	protected TableToRDDNodeModel() {
-		// input: some BufferedDataTable with data
-		// output: BufferedDataTable with JavaRDD
+		// input: BufferedDataTable with data from previous node
+		// output: BufferedDataTable with JavaRDD or JavaPairRDD
 		super(1, 1);
 	}
 
@@ -95,20 +98,21 @@ public class TableToRDDNodeModel extends NodeModel {
 	protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
 			final ExecutionContext exec) throws Exception {
 
+		// read input table
 		BufferedDataTable data = inData[0];
 		DataTableSpec dataSpec = data.getDataTableSpec();
 
+		// apply column filter
 		FilterResult filterResult = m_columns.applyTo(dataSpec);
 		List<String> includes = Arrays.asList(filterResult.getIncludes());
 		int numColumns = includes.size();
 		String[] names = includes.toArray(new String[numColumns]);
 
 		if (numColumns == 0) {
-			throw new IndexOutOfBoundsException(
-					"Number of columns should'n be zero");
+			throw new IndexOutOfBoundsException("Number of columns is 0");
 		}
 		if (numColumns > 2) {
-			setWarningMessage("Only two first columns will be used");
+			setWarningMessage("Only two first columns will be used as key-value pair");
 		}
 
 		final int[] colIndices = new int[names.length];
@@ -121,6 +125,7 @@ public class TableToRDDNodeModel extends NodeModel {
 			colIndices[i] = index;
 		}
 
+		// create RDD
 		JavaRDDLike rdd;
 		BufferedDataTable[] out;
 		if (numColumns == 1) {
@@ -133,17 +138,21 @@ public class TableToRDDNodeModel extends NodeModel {
 					true) };
 		}
 
+		// update viewer
 		rddViewer = new RddViewer(out[0], exec);
+
 		return out;
 
 	}
 
 	/**
-	 * Returns a DataCell value
+	 * Extract value from cell. Supported types: <code>String</code>,
+	 * <code>Double</code>, <code>Integer</code>, <code>Long</code>,
+	 * <code>Boolean</code>.
 	 * 
 	 * @param cell
 	 *            <code>DataCell</code>
-	 * @return <code>Object</code> saved in cell
+	 * @return <code>Object</code> saved in cell or null
 	 */
 	private Object getCellValue(DataCell cell) {
 		DataType type = cell.getType();
@@ -174,7 +183,7 @@ public class TableToRDDNodeModel extends NodeModel {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private JavaRDD createRDD(BufferedDataTable data, int[] colIndices) {
-
+		// make a copy of data
 		ArrayList copyOfData = new ArrayList(data.getRowCount());
 		CloseableRowIterator rowIt = data.iterator();
 		while (rowIt.hasNext()) {
@@ -182,6 +191,7 @@ public class TableToRDDNodeModel extends NodeModel {
 			copyOfData.add(getCellValue(nextRow.getCell(colIndices[0])));
 		}
 
+		// create sparkContext and parallelize collection
 		JavaSparkContext sparkContext = SparkContexter.getSparkContext(m_master
 				.getStringValue());
 		return sparkContext.parallelize(copyOfData);
@@ -198,16 +208,18 @@ public class TableToRDDNodeModel extends NodeModel {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private JavaPairRDD createPairRDD(BufferedDataTable data, int[] colIndices) {
-
-		CloseableRowIterator rowIt = data.iterator();
+		// make a copy of data
 		ArrayList copyOfData = new ArrayList(data.getRowCount());
+		CloseableRowIterator rowIt = data.iterator();
 		while (rowIt.hasNext()) {
 			DataRow nextRow = rowIt.next();
+			// Scala Tuple2 as key-value pair
 			copyOfData.add(new Tuple2(getCellValue(nextRow
 					.getCell(colIndices[0])), getCellValue(nextRow
 					.getCell(colIndices[1]))));
 		}
-
+		
+		// create sparkContext and parallelize collection
 		JavaSparkContext sparkContext = SparkContexter.getSparkContext(m_master
 				.getStringValue());
 		return JavaPairRDD.fromJavaRDD(sparkContext.parallelize(copyOfData));
@@ -218,9 +230,9 @@ public class TableToRDDNodeModel extends NodeModel {
 	 */
 	@Override
 	protected void reset() {
-		// TODO Code executed on reset.
-		// Models build during execute are cleared here.
+		// Code executed on reset. Models build during execute are cleared here.
 		// Also data handled in load/saveInternals will be erased here.
+
 		rddViewer = null;
 	}
 
@@ -230,12 +242,11 @@ public class TableToRDDNodeModel extends NodeModel {
 	@Override
 	protected DataTableSpec[] configure(final DataTableSpec[] inSpecs)
 			throws InvalidSettingsException {
-
-		// TODO: check if user settings are available, fit to the incoming
-		// table structure, and the incoming types are feasible for the node
-		// to execute. If the node can execute in its current state return
-		// the spec of its output data table(s) (if you can, otherwise an array
-		// with null elements), or throw an exception with a useful user message
+		// check if user settings are available, fit to the incoming table
+		// structure, and the incoming types are feasible for the node to
+		// execute. If the node can execute in its current state return the spec
+		// of its output data table(s) (if you can, otherwise an array with null
+		// elements), or throw an exception with a useful user message
 
 		return new DataTableSpec[] { null };
 	}
@@ -245,8 +256,7 @@ public class TableToRDDNodeModel extends NodeModel {
 	 */
 	@Override
 	protected void saveSettingsTo(final NodeSettingsWO settings) {
-
-		// TODO save user settings to the config object.
+		// save user settings to the config object.
 
 		m_master.saveSettingsTo(settings);
 		m_columns.saveSettingsTo(settings);
@@ -258,10 +268,8 @@ public class TableToRDDNodeModel extends NodeModel {
 	@Override
 	protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
 			throws InvalidSettingsException {
-
-		// TODO load (valid) settings from the config object.
-		// It can be safely assumed that the settings are valided by the
-		// method below.
+		// load (valid) settings from the config object. It can be safely
+		// assumed that the settings are valided by the method below.
 
 		m_master.loadSettingsFrom(settings);
 		m_columns.loadSettingsFrom(settings);
@@ -273,11 +281,9 @@ public class TableToRDDNodeModel extends NodeModel {
 	@Override
 	protected void validateSettings(final NodeSettingsRO settings)
 			throws InvalidSettingsException {
-
-		// TODO check if the settings could be applied to our model
-		// e.g. if the count is in a certain range (which is ensured by the
-		// SettingsModel).
-		// Do not actually set any values of any member variables.
+		// check if the settings could be applied to our model e.g. if the count
+		// is in a certain range (which is ensured by the SettingsModel). Do not
+		// actually set any values of any member variables.
 
 		m_master.validateSettings(settings);
 		m_columns.validateSettings(settings);
@@ -290,14 +296,11 @@ public class TableToRDDNodeModel extends NodeModel {
 	protected void loadInternals(final File internDir,
 			final ExecutionMonitor exec) throws IOException,
 			CanceledExecutionException {
-
-		// TODO load internal data.
-		// Everything handed to output ports is loaded automatically (data
-		// returned by the execute method, models loaded in loadModelContent,
-		// and user settings set through loadSettingsFrom - is all taken care
-		// of). Load here only the other internals that need to be restored
-		// (e.g. data used by the views).
-
+		// load internal data. Everything handed to output ports is loaded
+		// automatically (data returned by the execute method, models loaded in
+		// loadModelContent, and user settings set through loadSettingsFrom - is
+		// all taken care of). Load here only the other internals that need to
+		// be restored (e.g. data used by the views).
 	}
 
 	/**
@@ -307,16 +310,16 @@ public class TableToRDDNodeModel extends NodeModel {
 	protected void saveInternals(final File internDir,
 			final ExecutionMonitor exec) throws IOException,
 			CanceledExecutionException {
-
-		// TODO save internal models.
-		// Everything written to output ports is saved automatically (data
-		// returned by the execute method, models saved in the saveModelContent,
-		// and user settings saved through saveSettingsTo - is all taken care
-		// of). Save here only the other internals that need to be preserved
-		// (e.g. data used by the views).
-
+		// save internal models. Everything written to output ports is saved
+		// automatically (data returned by the execute method, models saved in
+		// the saveModelContent, and user settings saved through saveSettingsTo
+		// - is all taken care of). Save here only the other internals that need
+		// to be preserved (e.g. data used by the views).
 	}
 
+	/**
+	 * @return <code>RddViewer</code> of the model
+	 */
 	public RddViewer getRddViewer() {
 		return rddViewer;
 	}

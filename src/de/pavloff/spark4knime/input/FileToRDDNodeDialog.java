@@ -30,8 +30,7 @@ public class FileToRDDNodeDialog extends DefaultNodeSettingsPane {
 		// master
 		addDialogComponent(new DialogComponentString(new SettingsModelString(
 				FileToRDDNodeModel.CFGKEY_MASTER,
-				SparkContexter
-						.getMaster(FileToRDDNodeModel.DEFAULT_MASTER)),
+				SparkContexter.getMaster(FileToRDDNodeModel.DEFAULT_MASTER)),
 				FileToRDDNodeModel.CFGKEY_MASTER, true, 15));
 
 		// text file

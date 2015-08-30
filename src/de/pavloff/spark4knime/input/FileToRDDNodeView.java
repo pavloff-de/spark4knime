@@ -8,6 +8,9 @@ import de.pavloff.spark4knime.TableCellUtils.RddViewer;
  * <code>NodeView</code> for the "FileToRDD" Node. Creates view and show first
  * entries of an JavaRDD object.
  * 
+ * Viewer is handled by NodeModel. Only during onOpen() the data will be taken
+ * from RDD and showed.
+ * 
  * @author Oleg Pavlov, University of Heidelberg
  */
 public class FileToRDDNodeView extends NodeView<FileToRDDNodeModel> {
@@ -20,8 +23,7 @@ public class FileToRDDNodeView extends NodeView<FileToRDDNodeModel> {
 	 */
 	protected FileToRDDNodeView(final FileToRDDNodeModel nodeModel) {
 		super(nodeModel);
-
-		// TODO: take and visualize first entries of RDD
+		// instantiate the components of the view here.
 	}
 
 	/**
@@ -29,15 +31,12 @@ public class FileToRDDNodeView extends NodeView<FileToRDDNodeModel> {
 	 */
 	@Override
 	protected void modelChanged() {
-
-		// TODO retrieve the new model from your nodemodel and
-		// update the view.
+		// retrieve the new model from your nodemodel and update the view.
 		FileToRDDNodeModel nodeModel = (FileToRDDNodeModel) getNodeModel();
 		assert nodeModel != null;
 
 		// be aware of a possibly not executed nodeModel! The data you retrieve
 		// from your nodemodel could be null, emtpy, or invalid in any kind.
-
 	}
 
 	/**
@@ -45,8 +44,7 @@ public class FileToRDDNodeView extends NodeView<FileToRDDNodeModel> {
 	 */
 	@Override
 	protected void onClose() {
-
-		// TODO things to do when closing the view
+		// things to do when closing the view
 	}
 
 	/**
@@ -54,12 +52,12 @@ public class FileToRDDNodeView extends NodeView<FileToRDDNodeModel> {
 	 */
 	@Override
 	protected void onOpen() {
-
 		// things to do when opening the view
 		FileToRDDNodeModel nodeModel = (FileToRDDNodeModel) getNodeModel();
 		assert nodeModel != null;
 		RddViewer view = nodeModel.getRddViewer();
 		assert (view != null);
+
 		setComponent(view.getTableView());
 	}
 

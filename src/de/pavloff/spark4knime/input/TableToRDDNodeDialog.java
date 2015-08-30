@@ -9,8 +9,8 @@ import org.knime.core.node.defaultnodesettings.SettingsModelString;
 import de.pavloff.spark4knime.SparkContexter;
 
 /**
- * <code>NodeDialog</code> for the "TableToRDD" Node. Read a table and
- * parallelize data by lines
+ * <code>NodeDialog</code> for the "TableToRDD" Node. Read a table from previous
+ * node as input and parallelize data by rows.
  * 
  * This node dialog derives from {@link DefaultNodeSettingsPane} which allows
  * creation of a simple dialog with standard components. If you need a more
@@ -22,8 +22,9 @@ import de.pavloff.spark4knime.SparkContexter;
 public class TableToRDDNodeDialog extends DefaultNodeSettingsPane {
 
 	/**
-	 * New pane for configuring TableToRDD node dialog. This is just a
-	 * suggestion to demonstrate possible default dialog components.
+	 * New pane for configuring TableToRDD node dialog. Spark master is
+	 * required. Column chooser is used to filter out the columns, that will be
+	 * parallelized.
 	 */
 	protected TableToRDDNodeDialog() {
 		super();
@@ -31,8 +32,7 @@ public class TableToRDDNodeDialog extends DefaultNodeSettingsPane {
 		// master
 		addDialogComponent(new DialogComponentString(new SettingsModelString(
 				TableToRDDNodeModel.CFGKEY_MASTER,
-				SparkContexter
-						.getMaster(TableToRDDNodeModel.DEFAULT_MASTER)),
+				SparkContexter.getMaster(TableToRDDNodeModel.DEFAULT_MASTER)),
 				TableToRDDNodeModel.CFGKEY_MASTER, true, 15));
 
 		// column chooser
