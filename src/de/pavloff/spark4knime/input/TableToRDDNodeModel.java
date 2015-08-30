@@ -37,6 +37,7 @@ import scala.Tuple2;
 
 import de.pavloff.spark4knime.TableCellUtils;
 import de.pavloff.spark4knime.SparkContexter;
+import de.pavloff.spark4knime.TableCellUtils.RddViewer;
 
 /**
  * This is the model implementation of TableToRDD. Read a table and parallelize
@@ -45,13 +46,15 @@ import de.pavloff.spark4knime.SparkContexter;
  * two columns will be used. Columns should contain data of following types:
  * String, Double, Integer, Long, Boolean.
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class TableToRDDNodeModel extends NodeModel {
 
 	// the logger instance
 	private static final NodeLogger logger = NodeLogger
 			.getLogger(TableToRDDNodeModel.class);
+	
+	private RddViewer rddViewer;
 
 	/**
 	 * the settings key which is used to retrieve and store the settings (from
@@ -119,15 +122,19 @@ public class TableToRDDNodeModel extends NodeModel {
 		}
 
 		JavaRDDLike rdd;
+		BufferedDataTable[] out;
 		if (numColumns == 1) {
 			rdd = createRDD(data, colIndices);
-			return new BufferedDataTable[] { TableCellUtils.setRDD(exec, rdd,
+			out = new BufferedDataTable[] { TableCellUtils.setRDD(exec, rdd,
 					false) };
 		} else {
 			rdd = createPairRDD(data, colIndices);
-			return new BufferedDataTable[] { TableCellUtils.setRDD(exec, rdd,
+			out = new BufferedDataTable[] { TableCellUtils.setRDD(exec, rdd,
 					true) };
 		}
+
+		rddViewer = new RddViewer(out[0], exec);
+		return out;
 
 	}
 
@@ -191,7 +198,7 @@ public class TableToRDDNodeModel extends NodeModel {
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private JavaPairRDD createPairRDD(BufferedDataTable data, int[] colIndices) {
-		
+
 		CloseableRowIterator rowIt = data.iterator();
 		ArrayList copyOfData = new ArrayList(data.getRowCount());
 		while (rowIt.hasNext()) {
@@ -214,6 +221,7 @@ public class TableToRDDNodeModel extends NodeModel {
 		// TODO Code executed on reset.
 		// Models build during execute are cleared here.
 		// Also data handled in load/saveInternals will be erased here.
+		rddViewer = null;
 	}
 
 	/**
@@ -307,6 +315,10 @@ public class TableToRDDNodeModel extends NodeModel {
 		// of). Save here only the other internals that need to be preserved
 		// (e.g. data used by the views).
 
+	}
+
+	public RddViewer getRddViewer() {
+		return rddViewer;
 	}
 
 }

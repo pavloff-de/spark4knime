@@ -3,7 +3,6 @@ package de.pavloff.spark4knime.input;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
 import org.knime.core.data.DataTableSpec;
 import org.knime.core.node.BufferedDataTable;
@@ -19,18 +18,21 @@ import org.knime.core.node.NodeSettingsWO;
 
 import de.pavloff.spark4knime.TableCellUtils;
 import de.pavloff.spark4knime.SparkContexter;
+import de.pavloff.spark4knime.TableCellUtils.RddViewer;
 
 /**
  * This is the model implementation of FileToRDD. Read a text file and
  * parallelize data by lines
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class FileToRDDNodeModel extends NodeModel {
 
 	// the logger instance
 	private static final NodeLogger logger = NodeLogger
 			.getLogger(FileToRDDNodeModel.class);
+
+	private RddViewer rddViewer;
 
 	/**
 	 * the settings key which is used to retrieve and store the settings (from
@@ -78,9 +80,12 @@ public class FileToRDDNodeModel extends NodeModel {
 			throw new IllegalArgumentException(
 					"Path to text file shouldn't be empty");
 		}
-		JavaRDD<String> rdd = sparkContext.textFile(m_path.getStringValue());
+		BufferedDataTable[] out = new BufferedDataTable[] { TableCellUtils
+				.setRDD(exec, sparkContext.textFile(m_path.getStringValue()),
+						false) };
+		rddViewer = new RddViewer(out[0], exec);
 
-		return new BufferedDataTable[] { TableCellUtils.setRDD(exec, rdd, false) };
+		return out;
 	}
 
 	/**
@@ -91,6 +96,7 @@ public class FileToRDDNodeModel extends NodeModel {
 		// TODO Code executed on reset.
 		// Models build during execute are cleared here.
 		// Also data handled in load/saveInternals will be erased here.
+		rddViewer = null;
 	}
 
 	/**
@@ -181,6 +187,10 @@ public class FileToRDDNodeModel extends NodeModel {
 		// of). Save here only the other internals that need to be preserved
 		// (e.g. data used by the views).
 
+	}
+	
+	public RddViewer getRddViewer() {
+		return rddViewer;
 	}
 
 }

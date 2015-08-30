@@ -8,7 +8,7 @@ import org.knime.core.node.NodeView;
  * <code>NodeFactory</code> for the "FileToRDD" Node. Read a text file and
  * parallelize data by lines
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class FileToRDDNodeFactory extends NodeFactory<FileToRDDNodeModel> {
 
@@ -26,7 +26,7 @@ public class FileToRDDNodeFactory extends NodeFactory<FileToRDDNodeModel> {
 	@Override
 	public int getNrNodeViews() {
 		// take and visualize first entries of RDD
-		return 0;
+		return 1;
 	}
 
 	/**

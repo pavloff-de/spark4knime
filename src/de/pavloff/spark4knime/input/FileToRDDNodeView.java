@@ -2,11 +2,13 @@ package de.pavloff.spark4knime.input;
 
 import org.knime.core.node.NodeView;
 
+import de.pavloff.spark4knime.TableCellUtils.RddViewer;
+
 /**
  * <code>NodeView</code> for the "FileToRDD" Node. Creates view and show first
  * entries of an JavaRDD object.
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class FileToRDDNodeView extends NodeView<FileToRDDNodeModel> {
 
@@ -53,7 +55,12 @@ public class FileToRDDNodeView extends NodeView<FileToRDDNodeModel> {
 	@Override
 	protected void onOpen() {
 
-		// TODO things to do when opening the view
+		// things to do when opening the view
+		FileToRDDNodeModel nodeModel = (FileToRDDNodeModel) getNodeModel();
+		assert nodeModel != null;
+		RddViewer view = nodeModel.getRddViewer();
+		assert (view != null);
+		setComponent(view.getTableView());
 	}
 
 }

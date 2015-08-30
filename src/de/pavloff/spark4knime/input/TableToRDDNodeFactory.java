@@ -8,7 +8,7 @@ import org.knime.core.node.NodeView;
  * <code>NodeFactory</code> for the "TableToRDD" Node.
  * Read a table and parallelize data by lines
  *
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class TableToRDDNodeFactory 
         extends NodeFactory<TableToRDDNodeModel> {
@@ -26,7 +26,7 @@ public class TableToRDDNodeFactory
      */
     @Override
     public int getNrNodeViews() {
-        return 0;
+        return 1;
     }
 
     /**
