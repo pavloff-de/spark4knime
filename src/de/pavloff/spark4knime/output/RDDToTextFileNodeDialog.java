@@ -9,7 +9,8 @@ import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
 import org.knime.core.node.defaultnodesettings.SettingsModelString;
 
 /**
- * <code>NodeDialog</code> for the "RDDToTextFile" Node. Save RDD to Text File
+ * <code>NodeDialog</code> for the "RDDToTextFile" Node. Save elements of the
+ * RDD as text file.
  * 
  * This node dialog derives from {@link DefaultNodeSettingsPane} which allows
  * creation of a simple dialog with standard components. If you need a more
@@ -21,8 +22,9 @@ import org.knime.core.node.defaultnodesettings.SettingsModelString;
 public class RDDToTextFileNodeDialog extends DefaultNodeSettingsPane {
 
 	/**
-	 * New pane for configuring RDDToTextFile node dialog. This is just a
-	 * suggestion to demonstrate possible default dialog components.
+	 * New pane for configuring RDDToTextFile node dialog. Path to a non
+	 * existing folder is required. Overwrite parameter removes an existing
+	 * folder before write.
 	 */
 	protected RDDToTextFileNodeDialog() {
 		super();
