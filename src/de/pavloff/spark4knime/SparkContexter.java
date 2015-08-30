@@ -1,7 +1,6 @@
 package de.pavloff.spark4knime;
 
 import java.io.IOException;
-import java.net.URL;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -9,18 +8,18 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.knime.core.util.FileUtil;
-import org.osgi.framework.Bundle;
 
 /**
- * Create SparkContexts.
+ * Singleton class creates SparkContext
  * 
- * @author Oleg Pavlov
+ * @use SparkContexter.getSparkContext(MASTER)
  * 
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class SparkContexter {
 
 	/**
-	 * SparkContext objects in a current JVM cached
+	 * SparkContext objects cached in a current JVM
 	 */
 	private static JavaSparkContext sparkContext;
 
@@ -29,7 +28,7 @@ public class SparkContexter {
 	}
 
 	/**
-	 * Create new SparkContext. No multiple contexts allowed.
+	 * Create new SparkContext if not already created and cache it for next use.
 	 * 
 	 * @see SPARK-2243 Only one SparkContext may be running in this JVM. To
 	 *      ignore this error, set spark.driver.allowMultipleContexts = true
@@ -46,6 +45,8 @@ public class SparkContexter {
 			}
 			if (System.getProperty("hadoop.home.dir") == null) {
 				try {
+					// some operations need Apache Hadoop
+					// HADOOP_HOME is set if not exists
 					System.setProperty(
 							"hadoop.home.dir",
 							FileUtil.getFileFromURL(
@@ -59,6 +60,7 @@ public class SparkContexter {
 			}
 			SparkConf conf = new SparkConf().setMaster(master)
 					.setAppName("KnimeSparkApplication")
+					// need to overwrite JSnippet classes
 					.set("spark.files.overwrite", "true");
 			sparkContext = new JavaSparkContext(conf);
 		}
@@ -66,7 +68,7 @@ public class SparkContexter {
 	}
 
 	/**
-	 * Return Spark Master which is used before
+	 * Spark Master connected to
 	 * 
 	 * @param defaultMaster
 	 * @return master used before or defaultMaster
@@ -78,4 +80,5 @@ public class SparkContexter {
 		}
 		return currentMaster;
 	}
+	
 }

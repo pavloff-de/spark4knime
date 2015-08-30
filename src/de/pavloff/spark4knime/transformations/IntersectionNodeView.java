@@ -8,7 +8,7 @@ import de.pavloff.spark4knime.TableCellUtils.RddViewer;
  * <code>NodeView</code> for the "Intersection" Node. Create an Intersection of
  * two RDD's
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class IntersectionNodeView extends NodeView<IntersectionNodeModel> {
 

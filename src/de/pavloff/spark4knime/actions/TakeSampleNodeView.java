@@ -8,7 +8,7 @@ import de.pavloff.spark4knime.TableCellUtils.RddViewer;
  * <code>NodeView</code> for the "TakeSample" Node. Returns a sample of RDD as
  * list
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class TakeSampleNodeView extends NodeView<TakeSampleNodeModel> {
 

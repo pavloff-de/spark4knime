@@ -8,7 +8,7 @@ import de.pavloff.spark4knime.TableCellUtils.RddViewer;
  * <code>NodeView</code> for the "CountByKey" Node. Make a hash map of count for
  * each key. Only for pairRDD available
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class CountByKeyNodeView extends NodeView<CountByKeyNodeModel> {
 

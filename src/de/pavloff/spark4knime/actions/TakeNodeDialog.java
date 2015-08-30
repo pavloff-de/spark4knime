@@ -12,7 +12,7 @@ import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
  * complex dialog please derive directly from
  * {@link org.knime.core.node.NodeDialogPane}.
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class TakeNodeDialog extends DefaultNodeSettingsPane {
 

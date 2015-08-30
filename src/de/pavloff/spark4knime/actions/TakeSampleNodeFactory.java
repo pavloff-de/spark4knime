@@ -8,7 +8,7 @@ import org.knime.core.node.NodeView;
  * <code>NodeFactory</code> for the "TakeSample" Node.
  * Returns a sample of RDD as list
  *
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class TakeSampleNodeFactory 
         extends NodeFactory<TakeSampleNodeModel> {

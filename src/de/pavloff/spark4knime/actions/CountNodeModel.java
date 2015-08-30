@@ -25,7 +25,7 @@ import de.pavloff.spark4knime.TableCellUtils;
 /**
  * This is the model implementation of Count. Counting elements of RDD
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class CountNodeModel extends NodeModel {
 

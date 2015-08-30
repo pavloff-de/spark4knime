@@ -24,7 +24,7 @@ import de.pavloff.spark4knime.TableCellUtils.RddViewer;
  * This is the model implementation of Union. Creates a new RDD that contains
  * the union of two RDD's
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class UnionNodeModel extends NodeModel {
 

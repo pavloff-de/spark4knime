@@ -23,7 +23,7 @@ import de.pavloff.spark4knime.TableCellUtils.RddViewer;
  * This is the model implementation of SortByKey. returns a dataset of (K, V)
  * pairs sorted by keys in ascending or descending order
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class SortByKeyNodeModel extends NodeModel {
 

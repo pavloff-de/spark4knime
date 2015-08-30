@@ -23,7 +23,7 @@ import de.pavloff.spark4knime.TableCellUtils.RddViewer;
  * This is the model implementation of Collect. Collect all the elements of the
  * RDD as a table
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class CollectNodeModel extends NodeModel {
 

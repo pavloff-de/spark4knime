@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.pavloff.spark4knime;
 
 import org.apache.spark.api.java.JavaPairRDD;
@@ -8,17 +5,17 @@ import org.knime.core.data.DataCell;
 import org.knime.core.data.DataType;
 
 /**
- * Implementation of a DtaCell for saving an JavaPairRDD object into a
+ * Implementation of a DataCell for saving an JavaPairRDD object into
  * BufferedDataTable
  * 
  * @see DataCell
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class PairRddCell extends DataCell implements PairRddValue {
-	
+
 	private static final long serialVersionUID = -4679728041083699185L;
-	
+
 	/**
 	 * Convenience access member for
 	 * <code>DataType.getType(DoubleCell.class)</code>.
@@ -26,12 +23,12 @@ public class PairRddCell extends DataCell implements PairRddValue {
 	 * @see DataType#getType(Class)
 	 */
 	public static final DataType TYPE = DataType.getType(PairRddCell.class);
-	
+
 	@SuppressWarnings("rawtypes")
 	private final JavaPairRDD m_rdd;
-	
+
 	/**
-	 * Creates a new cell for a Spark PairRDD.
+	 * Creates a new cell for a PairRDD.
 	 * 
 	 * @param rdd
 	 *            The JavaRDD
@@ -42,7 +39,7 @@ public class PairRddCell extends DataCell implements PairRddValue {
 	}
 
 	/**
-	 * Return Spark PairRDD from cell.
+	 * Extract PairRDD object from cell.
 	 * 
 	 * @return JavaRDD
 	 */
@@ -53,7 +50,7 @@ public class PairRddCell extends DataCell implements PairRddValue {
 	}
 
 	/**
-	 * Represent Spark PairRDD as a String.
+	 * Represent PairRDD as a String.
 	 */
 	@Override
 	public String toString() {
@@ -61,7 +58,7 @@ public class PairRddCell extends DataCell implements PairRddValue {
 	}
 
 	/**
-	 * Compare PairRDD from other DataCell.
+	 * Compare PairRDD with other DataCell.
 	 */
 	@Override
 	protected boolean equalsDataCell(DataCell dc) {

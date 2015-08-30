@@ -7,7 +7,7 @@ import de.pavloff.spark4knime.TableCellUtils.RddViewer;
 /**
  * <code>NodeView</code> for the "Take" Node. Take first n elements of RDD
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class TakeNodeView extends NodeView<TakeNodeModel> {
 

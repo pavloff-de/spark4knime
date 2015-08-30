@@ -8,7 +8,7 @@ import org.knime.core.node.NodeView;
  * <code>NodeFactory</code> for the "Intersection" Node.
  * Create an Intersection of two RDD's
  *
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class IntersectionNodeFactory 
         extends NodeFactory<IntersectionNodeModel> {

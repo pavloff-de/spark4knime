@@ -22,7 +22,7 @@ import de.pavloff.spark4knime.TableCellUtils;
 /**
  * This is the model implementation of RDDToTextFile. Save RDD to Text File
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class RDDToTextFileNodeModel extends NodeModel {
 

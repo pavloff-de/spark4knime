@@ -8,7 +8,7 @@ import org.knime.core.node.NodeView;
  * <code>NodeFactory</code> for the "CountByKey" Node.
  * Make a hash map of count for each key. Only for pairRDD available
  *
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class CountByKeyNodeFactory 
         extends NodeFactory<CountByKeyNodeModel> {

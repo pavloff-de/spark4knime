@@ -23,7 +23,7 @@ import de.pavloff.spark4knime.TableCellUtils.RddViewer;
  * This is the model implementation of Distinct. Creates a new RDD that contains
  * the distinct elements of the source RDD's
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class DistinctNodeModel extends NodeModel {
 

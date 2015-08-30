@@ -9,7 +9,7 @@ import org.knime.core.data.DataCell;
 import de.pavloff.spark4knime.RddCell;
 
 /**
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  *
  */
 public class JavaToRddCell extends JavaToDataCell {

@@ -8,7 +8,7 @@ import org.knime.core.node.NodeView;
  * <code>NodeFactory</code> for the "Distinct" Node.
  * Creates a new RDD that contains the distinct elements of the source RDD's
  *
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class DistinctNodeFactory 
         extends NodeFactory<DistinctNodeModel> {

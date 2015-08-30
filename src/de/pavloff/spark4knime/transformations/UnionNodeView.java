@@ -8,7 +8,7 @@ import de.pavloff.spark4knime.TableCellUtils.RddViewer;
  * <code>NodeView</code> for the "Union" Node. Creates a new RDD that contains
  * the union of two RDD's
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class UnionNodeView extends NodeView<UnionNodeModel> {
 

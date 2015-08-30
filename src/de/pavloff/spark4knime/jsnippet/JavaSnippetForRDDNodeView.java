@@ -8,7 +8,7 @@ import de.pavloff.spark4knime.TableCellUtils.RddViewer;
  * <code>NodeView</code> for the "JavaSnippetForRDD" Node.
  * 
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class JavaSnippetForRDDNodeView extends
 		NodeView<JavaSnippetForRDDNodeModel> {

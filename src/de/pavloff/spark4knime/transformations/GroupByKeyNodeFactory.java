@@ -8,7 +8,7 @@ import org.knime.core.node.NodeView;
  * <code>NodeFactory</code> for the "GroupByKey" Node.
  * When called on a dataset of (K, V) pairs, returns a dataset of (K, Iterable<V>) pairs
  *
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class GroupByKeyNodeFactory 
         extends NodeFactory<GroupByKeyNodeModel> {

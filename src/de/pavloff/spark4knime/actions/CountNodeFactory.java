@@ -8,7 +8,7 @@ import org.knime.core.node.NodeView;
  * <code>NodeFactory</code> for the "Count" Node.
  * Counting elements of RDD
  *
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class CountNodeFactory 
         extends NodeFactory<CountNodeModel> {

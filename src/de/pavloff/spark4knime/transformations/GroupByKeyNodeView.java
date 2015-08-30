@@ -8,7 +8,7 @@ import de.pavloff.spark4knime.TableCellUtils.RddViewer;
  * <code>NodeView</code> for the "GroupByKey" Node. When called on a dataset of
  * (K, V) pairs, returns a dataset of (K, Iterable<V>) pairs
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class GroupByKeyNodeView extends NodeView<GroupByKeyNodeModel> {
 

@@ -6,7 +6,7 @@ import org.knime.core.node.NodeView;
  * <code>NodeView</code> for the "RDDToSequenceFile" Node.
  * Save RDD as Sequence File
  *
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class RDDToSequenceFileNodeView extends NodeView<RDDToSequenceFileNodeModel> {
 

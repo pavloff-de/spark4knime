@@ -22,7 +22,7 @@ import de.pavloff.spark4knime.TableCellUtils.RddViewer;
  * This is the model implementation of GroupByKey. When called on a dataset of
  * (K, V) pairs, returns a dataset of (K, Iterable<V>) pairs
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class GroupByKeyNodeModel extends NodeModel {
 

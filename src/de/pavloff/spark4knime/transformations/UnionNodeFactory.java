@@ -8,7 +8,7 @@ import org.knime.core.node.NodeView;
  * <code>NodeFactory</code> for the "Union" Node.
  * Creates a new RDD that contains the union of two RDD's
  *
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class UnionNodeFactory 
         extends NodeFactory<UnionNodeModel> {

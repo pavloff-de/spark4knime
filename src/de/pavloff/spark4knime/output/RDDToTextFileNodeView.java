@@ -6,7 +6,7 @@ import org.knime.core.node.NodeView;
  * <code>NodeView</code> for the "RDDToTextFile" Node.
  * Save RDD to Text File
  *
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class RDDToTextFileNodeView extends NodeView<RDDToTextFileNodeModel> {
 

@@ -10,7 +10,7 @@ import de.pavloff.spark4knime.PairRddCell;
 import de.pavloff.spark4knime.jsnippet.expression.TypeException;
 
 /**
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  *
  */
 public class PairRDDValueToJava extends DataValueToJava {

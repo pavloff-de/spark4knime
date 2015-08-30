@@ -8,7 +8,7 @@ import org.knime.core.node.NodeView;
  * <code>NodeFactory</code> for the "Sample" Node.
  * Sample operation on Spark RDD
  *
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class SampleNodeFactory 
         extends NodeFactory<SampleNodeModel> {

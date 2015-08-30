@@ -25,7 +25,7 @@ import de.pavloff.spark4knime.TableCellUtils.RddViewer;
  * This is the model implementation of TakeSample. Returns a sample of RDD as
  * list
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class TakeSampleNodeModel extends NodeModel {
 

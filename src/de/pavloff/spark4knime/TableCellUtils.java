@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.pavloff.spark4knime;
 
 import java.util.Iterator;
@@ -35,36 +32,26 @@ import scala.Tuple2;
 
 /**
  * Common static class for communication between Spark nodes via
- * BufferedDataTable. Table contains a single RddCell with JavaRDDLike object.
- * <table>
- * <col width="25%"/> <col width="75%"/> <tbody>
- * <tr>
- * <td></td>
- * <td>RDD</td>
- * </tr>
- * <tr>
- * <td>RDD</td>
- * <td>JavaRDDLike object</td>
- * </tr>
- * </tbody>
- * </table>
+ * BufferedDataTable. RddTables contain a single RddCell with JavaRDDLike
+ * object.
  * 
  * @see BufferedDataTable
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class TableCellUtils {
 
 	/**
-	 * Save an RDD object in BufferedDataTable via ExecutionContext
+	 * Save RDD object in BufferedDataTable via ExecutionContext
 	 * 
 	 * @param exec
-	 *            <code>ExecutionContext</code>
+	 *            <code>ExecutionContext</code> of KNIME
 	 * @param rdd
 	 *            <code>JavaRDDLike</code> to save in table
 	 * @throws NullPointerException
-	 *             If rdd is null
-	 * @return <code>BufferedDataTable</code> with a single Cell containing rdd
+	 *             If <code>rdd</code> is null
+	 * @return <code>BufferedDataTable</code> with a single Cell containing
+	 *         <code>rdd</code>
 	 */
 	public static BufferedDataTable setRDD(final ExecutionContext exec,
 			@SuppressWarnings("rawtypes") JavaRDD rdd) {
@@ -81,15 +68,16 @@ public class TableCellUtils {
 	}
 
 	/**
-	 * Save an PairRDD object in BufferedDataTable via ExecutionContext
+	 * Save PairRDD object in BufferedDataTable via ExecutionContext
 	 * 
 	 * @param exec
-	 *            <code>ExecutionContext</code>
+	 *            <code>ExecutionContext</code> of KNIME
 	 * @param rdd
 	 *            <code>JavaRDDLike</code> to save in table
 	 * @throws NullPointerException
-	 *             If rdd is null
-	 * @return <code>BufferedDataTable</code> with a single Cell containing rdd
+	 *             If <code>rdd</code> is null
+	 * @return <code>BufferedDataTable</code> with a single Cell containing
+	 *         <code>rdd</code>
 	 */
 	public static BufferedDataTable setRDD(final ExecutionContext exec,
 			@SuppressWarnings("rawtypes") JavaPairRDD rdd) {
@@ -106,15 +94,16 @@ public class TableCellUtils {
 	}
 
 	/**
-	 * Save an RDD object in BufferedDataTable via ExecutionContext
+	 * Save RDDLike object in BufferedDataTable via ExecutionContext
 	 * 
 	 * @param exec
-	 *            <code>ExecutionContext</code>
+	 *            <code>ExecutionContext</code> of KNIME
 	 * @param rdd
 	 *            <code>JavaRDDLike</code> to save in table
 	 * @throws NullPointerException
-	 *             If rdd is null
-	 * @return <code>BufferedDataTable</code> with a single Cell containing rdd
+	 *             If <code>rdd</code> is null
+	 * @return <code>BufferedDataTable</code> with a single Cell containing
+	 *         <code>rdd</code>
 	 */
 	@SuppressWarnings("rawtypes")
 	public static BufferedDataTable setRDD(final ExecutionContext exec,
@@ -132,8 +121,8 @@ public class TableCellUtils {
 	 * @param table
 	 *            <code>BufferedDataTable</code>
 	 * @throws ClassCastException
-	 *             If table contains non JavaRDDLike
-	 * @return <code>JavaRDDLike</code> saved in table
+	 *             If <code>table</code> doesn't contain JavaRDDLike object
+	 * @return <code>JavaRDDLike</code> saved in <code>table</code>
 	 */
 	@SuppressWarnings("rawtypes")
 	public static JavaRDDLike getRDD(BufferedDataTable table) {
@@ -149,14 +138,15 @@ public class TableCellUtils {
 	}
 
 	/**
-	 * Returns true if table contain JavaPairRDD and false if it is JavaRDD
+	 * Check if table contain JavaPairRDD object. Only for RddTables. Other
+	 * tables will throw a ClassCastException.
 	 * 
 	 * @param table
 	 *            <code>BufferedDataTable</code>
 	 * @throws IndexOutOfBoundsException
-	 *             If table doesn't contain two cells
+	 *             If <code>table</code> contains more than one cell
 	 * @throws ClassCastException
-	 *             If second cell is not of type Boolean
+	 *             If <code>table</code> isn't a RddTable
 	 * @return
 	 */
 	public static Boolean isPairRDD(BufferedDataTable table) {
@@ -170,14 +160,14 @@ public class TableCellUtils {
 		try {
 			RddCell rddCell = (RddCell) firstRow.getCell(0);
 			return false;
-		} catch (Exception e) {
+		} catch (ClassCastException e) {
 			PairRddCell pairRddCell = (PairRddCell) firstRow.getCell(0);
 			return true;
 		}
 	}
-	
+
 	/**
-	 * Returns true if table contain JavaRDDLike and false otherwise
+	 * Check if table contains JavaRDDLike object
 	 * 
 	 * @param table
 	 *            <code>BufferedDataTable</code>
@@ -331,6 +321,7 @@ public class TableCellUtils {
 			return listOfIterablePairsToTable(l, exec);
 		}
 
+		// create specs
 		BufferedDataContainer container = exec
 				.createDataContainer(new DataTableSpec(
 						new DataColumnSpec[] {
@@ -339,6 +330,7 @@ public class TableCellUtils {
 								new DataColumnSpecCreator("Value",
 										getTypeOfElement(t._2)).createSpec() }));
 
+		// fill rows
 		int i = 0;
 		for (Object s : l) {
 			t = (Tuple2) s;
@@ -369,6 +361,7 @@ public class TableCellUtils {
 			return null;
 		}
 
+		// create specs
 		BufferedDataContainer container = exec
 				.createDataContainer(new DataTableSpec(
 						new DataColumnSpec[] { new DataColumnSpecCreator(
@@ -376,6 +369,7 @@ public class TableCellUtils {
 								.createSpec() }));
 		ObjectToDataCellConverter cellFactory = ObjectToDataCellConverter.INSTANCE;
 
+		// fill rows
 		int i = 0;
 		for (Object s : l) {
 			container.addRowToTable(new DefaultRow(new RowKey("Row " + i++),
@@ -386,9 +380,16 @@ public class TableCellUtils {
 		return container.getTable();
 	}
 
+	/**
+	 * TableViewer represents RDD as a table of its entries.
+	 * 
+	 */
 	public static final class RddViewer {
-
+		
+		// default number of first rows taken from RDD
 		private int takeSize = 10;
+		
+		// references of context and table
 		private final ExecutionContext m_exec;
 		private final BufferedDataTable m_table;
 
@@ -398,6 +399,15 @@ public class TableCellUtils {
 			m_table = table;
 		}
 
+		/**
+		 * Take <code>numRows</code> first entries of RDD.
+		 * 
+		 * WARNING! take() function of RDD is an action. This means, that ALL
+		 * transformations until this view will be compute.
+		 * 
+		 * @param numRows
+		 * @return
+		 */
 		@SuppressWarnings("rawtypes")
 		private BufferedDataTable getTable(int numRows) {
 			try {
@@ -416,10 +426,21 @@ public class TableCellUtils {
 			}
 		}
 
+		/**
+		 * View first <code>takeSize</code> entries of RDD
+		 * 
+		 * @return <code>BufferedDataTable</code>
+		 */
 		public TableView getTableView() {
 			return getTableView(takeSize);
 		}
 
+		/**
+		 * View first <code>numRows</code> entries of RDD
+		 * 
+		 * @param numRows
+		 * @return <code>BufferedDataTable</code>
+		 */
 		public TableView getTableView(int numRows) {
 			TableView tableView = new TableView(new TableContentModel(
 					getTable(numRows)));

@@ -8,7 +8,7 @@ import org.knime.core.node.NodeView;
  * <code>NodeFactory</code> for the "Take" Node.
  * Take first n elements of RDD
  *
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class TakeNodeFactory 
         extends NodeFactory<TakeNodeModel> {

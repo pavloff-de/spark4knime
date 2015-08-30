@@ -25,7 +25,7 @@ import de.pavloff.spark4knime.TableCellUtils.RddViewer;
 /**
  * This is the model implementation of Sample. Sample operation on Spark RDD
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class SampleNodeModel extends NodeModel {
 

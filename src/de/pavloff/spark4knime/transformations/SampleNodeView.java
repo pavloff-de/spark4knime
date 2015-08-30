@@ -7,7 +7,7 @@ import de.pavloff.spark4knime.TableCellUtils.RddViewer;
 /**
  * <code>NodeView</code> for the "Sample" Node. Sample operation on Spark RDD
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class SampleNodeView extends NodeView<SampleNodeModel> {
 

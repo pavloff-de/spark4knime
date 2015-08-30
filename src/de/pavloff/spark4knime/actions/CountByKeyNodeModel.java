@@ -26,7 +26,7 @@ import de.pavloff.spark4knime.TableCellUtils.RddViewer;
  * This is the model implementation of CountByKey. Make a hash map of count for
  * each key. Only for pairRDD available
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class CountByKeyNodeModel extends NodeModel {
 

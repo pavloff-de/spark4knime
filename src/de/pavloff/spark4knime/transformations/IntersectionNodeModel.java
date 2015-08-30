@@ -24,7 +24,7 @@ import de.pavloff.spark4knime.TableCellUtils.RddViewer;
  * This is the model implementation of Intersection. Create an Intersection of
  * two RDD's
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class IntersectionNodeModel extends NodeModel {
 

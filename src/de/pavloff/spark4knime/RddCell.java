@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.pavloff.spark4knime;
 
 import org.apache.spark.api.java.JavaRDD;
@@ -8,12 +5,12 @@ import org.knime.core.data.DataCell;
 import org.knime.core.data.DataType;
 
 /**
- * Implementation of a DtaCell for saving an JavaRDD object into a
+ * Implementation of a DataCell for saving an JavaRDD object into
  * BufferedDataTable
  * 
  * @see DataCell
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class RddCell extends DataCell implements RddValue {
 
@@ -31,7 +28,7 @@ public class RddCell extends DataCell implements RddValue {
 	private final JavaRDD m_rdd;
 
 	/**
-	 * Creates a new cell for a Spark RDD.
+	 * Creates a new cell for RDD.
 	 * 
 	 * @param rdd
 	 *            The JavaRDD
@@ -42,7 +39,7 @@ public class RddCell extends DataCell implements RddValue {
 	}
 
 	/**
-	 * Return Spark RDD from cell.
+	 * Return RDD from cell.
 	 * 
 	 * @return JavaRDD
 	 */
@@ -53,7 +50,7 @@ public class RddCell extends DataCell implements RddValue {
 	}
 
 	/**
-	 * Represent Spark RDD as a String.
+	 * Represent RDD as a String.
 	 */
 	@Override
 	public String toString() {
@@ -61,7 +58,7 @@ public class RddCell extends DataCell implements RddValue {
 	}
 
 	/**
-	 * Compare RDD from other DataCell.
+	 * Compare RDD with other DataCell.
 	 */
 	@Override
 	protected boolean equalsDataCell(DataCell dc) {
@@ -78,5 +75,5 @@ public class RddCell extends DataCell implements RddValue {
 	public int hashCode() {
 		return m_rdd.hashCode();
 	}
-	
+
 }

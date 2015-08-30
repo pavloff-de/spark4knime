@@ -8,7 +8,7 @@ import org.knime.core.node.NodeView;
  * <code>NodeFactory</code> for the "SortByKey" Node.
  * returns a dataset of (K, V) pairs sorted by keys in ascending or descending order
  *
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class SortByKeyNodeFactory 
         extends NodeFactory<SortByKeyNodeModel> {

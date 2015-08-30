@@ -8,7 +8,7 @@ import de.pavloff.spark4knime.TableCellUtils.RddViewer;
  * <code>NodeView</code> for the "SortByKey" Node. returns a dataset of (K, V)
  * pairs sorted by keys in ascending or descending order
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class SortByKeyNodeView extends NodeView<SortByKeyNodeModel> {
 

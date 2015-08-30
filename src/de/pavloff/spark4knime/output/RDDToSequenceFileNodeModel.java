@@ -27,7 +27,7 @@ import de.pavloff.spark4knime.TableCellUtils;
  * This is the model implementation of RDDToSequenceFile. Save RDD as Sequence
  * File
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class RDDToSequenceFileNodeModel extends NodeModel {
 

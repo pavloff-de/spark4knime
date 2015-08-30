@@ -8,7 +8,7 @@ import org.knime.core.node.NodeView;
  * <code>NodeFactory</code> for the "Collect" Node.
  * Collect all the elements of the RDD as a table
  *
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class CollectNodeFactory 
         extends NodeFactory<CollectNodeModel> {

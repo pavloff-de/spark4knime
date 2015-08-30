@@ -13,7 +13,7 @@ import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
  * complex dialog please derive directly from
  * {@link org.knime.core.node.NodeDialogPane}.
  * 
- * @author Oleg Pavlov
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public class SortByKeyNodeDialog extends DefaultNodeSettingsPane {
 
