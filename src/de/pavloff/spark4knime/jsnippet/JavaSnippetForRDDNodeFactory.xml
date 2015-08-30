@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE knimeNode PUBLIC "-//UNIKN//DTD KNIME Node 2.0//EN" "http://www.knime.org/Node.dtd">
-<knimeNode icon="./java_snippet.png" type="Manipulator">
+<knimeNode icon="./java_snippet_rdd.png" type="Manipulator">
     <name>Java Snippet For RDD</name>
     <shortDescription>Calculates a new columns or flow variables based on 
     java code snippets.</shortDescription>

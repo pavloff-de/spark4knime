@@ -30,7 +30,7 @@ public interface RddValue extends DataValue {
     class RDDUtilityFactory extends ExtensibleUtilityFactory {
         /** Singleton icon to be used to display this cell type. */
         private static final Icon ICON = loadIcon(
-        		RddValue.class, "/icon/rddicon.png");
+        		RddValue.class, "/rdd.png");
 
         /** Only subclasses are allowed to instantiate this class. */
         protected RDDUtilityFactory() {

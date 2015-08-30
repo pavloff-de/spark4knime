@@ -3,13 +3,13 @@
    <extension point="org.knime.workbench.repository.categories">
       <category icon="img/spark-logo.png" level-id="spark4knime" locked="false" name="Spark Nodes" path="/">
       </category>
-      <category icon="img/default.png" level-id="input" locked="true" name="Input" path="/spark4knime">
+      <category icon="img/input.png" level-id="input" locked="true" name="Input" path="/spark4knime">
       </category>
-      <category icon="img/default.png" level-id="transformations" locked="false" name="Transformations" path="/spark4knime">
+      <category icon="img/transformation.png" level-id="transformations" locked="false" name="Transformations" path="/spark4knime">
       </category>
-      <category icon="img/default.png" level-id="actions" locked="false" name="Actions" path="/spark4knime">
+      <category icon="img/action.png" level-id="actions" locked="false" name="Actions" path="/spark4knime">
       </category>
-      <category icon="img/default.png" level-id="output" locked="false" name="Output" path="/spark4knime">
+      <category icon="img/output.png" level-id="output" locked="false" name="Output" path="/spark4knime">
       </category>
    </extension>
 
