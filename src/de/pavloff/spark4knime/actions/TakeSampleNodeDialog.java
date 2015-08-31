@@ -7,8 +7,8 @@ import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
 import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
 
 /**
- * <code>NodeDialog</code> for the "TakeSample" Node. Returns a sample of RDD as
- * list
+ * <code>NodeDialog</code> for the "TakeSample" Node. Returns a random sample of
+ * RDD as list
  * 
  * This node dialog derives from {@link DefaultNodeSettingsPane} which allows
  * creation of a simple dialog with standard components. If you need a more
@@ -20,8 +20,9 @@ import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
 public class TakeSampleNodeDialog extends DefaultNodeSettingsPane {
 
 	/**
-	 * New pane for configuring TakeSample node dialog. This is just a
-	 * suggestion to demonstrate possible default dialog components.
+	 * New pane for configuring TakeSample node dialog. Number of elements to
+	 * take with or without replacement. A random number generator seed is
+	 * optional.
 	 */
 	protected TakeSampleNodeDialog() {
 		super();

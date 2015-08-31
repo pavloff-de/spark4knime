@@ -30,7 +30,8 @@ public class TakeNodeModel extends NodeModel {
 	// the logger instance
 	private static final NodeLogger logger = NodeLogger
 			.getLogger(TakeNodeModel.class);
-	
+
+	// viewer instance
 	private RddViewer rddViewer;
 
 	/**
@@ -54,7 +55,6 @@ public class TakeNodeModel extends NodeModel {
 	 * Constructor for the node model.
 	 */
 	protected TakeNodeModel() {
-
 		// input: BufferedDataTables with JavaRDDLike
 		// output: BufferedDataTable with first n elements
 		super(1, 1);
@@ -69,6 +69,8 @@ public class TakeNodeModel extends NodeModel {
 			final ExecutionContext exec) throws Exception {
 
 		BufferedDataTable[] out;
+
+		// take elements and generate a list of its elements
 		if (TableCellUtils.isPairRDD(inData[0])) {
 			out = new BufferedDataTable[] { TableCellUtils.listOfPairsToTable(
 					((JavaPairRDD) TableCellUtils.getRDD(inData[0]))
@@ -80,7 +82,10 @@ public class TakeNodeModel extends NodeModel {
 							.getRDD(inData[0])).take(m_count.getIntValue()),
 							exec) };
 		}
+
+		// update viewer
 		rddViewer = new RddViewer(out[0], exec);
+
 		return out;
 	}
 
@@ -89,9 +94,9 @@ public class TakeNodeModel extends NodeModel {
 	 */
 	@Override
 	protected void reset() {
-		// TODO Code executed on reset.
-		// Models build during execute are cleared here.
+		// Code executed on reset. Models build during execute are cleared here.
 		// Also data handled in load/saveInternals will be erased here.
+
 		rddViewer = null;
 	}
 
@@ -101,12 +106,11 @@ public class TakeNodeModel extends NodeModel {
 	@Override
 	protected DataTableSpec[] configure(final DataTableSpec[] inSpecs)
 			throws InvalidSettingsException {
-
-		// TODO: check if user settings are available, fit to the incoming
-		// table structure, and the incoming types are feasible for the node
-		// to execute. If the node can execute in its current state return
-		// the spec of its output data table(s) (if you can, otherwise an array
-		// with null elements), or throw an exception with a useful user message
+		// check if user settings are available, fit to the incoming table
+		// structure, and the incoming types are feasible for the node to
+		// execute. If the node can execute in its current state return the spec
+		// of its output data table(s) (if you can, otherwise an array with null
+		// elements), or throw an exception with a useful user message
 
 		return new DataTableSpec[] { null };
 	}
@@ -116,11 +120,9 @@ public class TakeNodeModel extends NodeModel {
 	 */
 	@Override
 	protected void saveSettingsTo(final NodeSettingsWO settings) {
-
-		// TODO save user settings to the config object.
+		// save user settings to the config object.
 
 		m_count.saveSettingsTo(settings);
-
 	}
 
 	/**
@@ -129,13 +131,10 @@ public class TakeNodeModel extends NodeModel {
 	@Override
 	protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
 			throws InvalidSettingsException {
-
-		// TODO load (valid) settings from the config object.
-		// It can be safely assumed that the settings are valided by the
-		// method below.
+		// load (valid) settings from the config object. It can be safely
+		// assumed that the settings are valided by the method below.
 
 		m_count.loadSettingsFrom(settings);
-
 	}
 
 	/**
@@ -144,14 +143,11 @@ public class TakeNodeModel extends NodeModel {
 	@Override
 	protected void validateSettings(final NodeSettingsRO settings)
 			throws InvalidSettingsException {
-
-		// TODO check if the settings could be applied to our model
-		// e.g. if the count is in a certain range (which is ensured by the
-		// SettingsModel).
-		// Do not actually set any values of any member variables.
+		// check if the settings could be applied to our model e.g. if the count
+		// is in a certain range (which is ensured by the SettingsModel). Do not
+		// actually set any values of any member variables.
 
 		m_count.validateSettings(settings);
-
 	}
 
 	/**
@@ -161,14 +157,11 @@ public class TakeNodeModel extends NodeModel {
 	protected void loadInternals(final File internDir,
 			final ExecutionMonitor exec) throws IOException,
 			CanceledExecutionException {
-
-		// TODO load internal data.
-		// Everything handed to output ports is loaded automatically (data
-		// returned by the execute method, models loaded in loadModelContent,
-		// and user settings set through loadSettingsFrom - is all taken care
-		// of). Load here only the other internals that need to be restored
-		// (e.g. data used by the views).
-
+		// load internal data. Everything handed to output ports is loaded
+		// automatically (data returned by the execute method, models loaded in
+		// loadModelContent, and user settings set through loadSettingsFrom - is
+		// all taken care of). Load here only the other internals that need to
+		// be restored (e.g. data used by the views).
 	}
 
 	/**
@@ -178,16 +171,16 @@ public class TakeNodeModel extends NodeModel {
 	protected void saveInternals(final File internDir,
 			final ExecutionMonitor exec) throws IOException,
 			CanceledExecutionException {
-
-		// TODO save internal models.
-		// Everything written to output ports is saved automatically (data
-		// returned by the execute method, models saved in the saveModelContent,
-		// and user settings saved through saveSettingsTo - is all taken care
-		// of). Save here only the other internals that need to be preserved
-		// (e.g. data used by the views).
-
+		// save internal models. Everything written to output ports is saved
+		// automatically (data returned by the execute method, models saved in
+		// the saveModelContent, and user settings saved through saveSettingsTo
+		// - is all taken care of). Save here only the other internals that need
+		// to be preserved (e.g. data used by the views).
 	}
-	
+
+	/**
+	 * @return <code>RddViewer</code> of the model
+	 */
 	public RddViewer getRddViewer() {
 		return rddViewer;
 	}

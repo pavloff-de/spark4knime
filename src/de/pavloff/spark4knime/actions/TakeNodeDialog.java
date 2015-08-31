@@ -17,12 +17,12 @@ import org.knime.core.node.defaultnodesettings.SettingsModelIntegerBounded;
 public class TakeNodeDialog extends DefaultNodeSettingsPane {
 
 	/**
-	 * New pane for configuring Take node dialog. This is just a suggestion to
-	 * demonstrate possible default dialog components.
+	 * New pane for configuring Take node dialog. Number of elements to take.
 	 */
 	protected TakeNodeDialog() {
 		super();
 
+		// count
 		addDialogComponent(new DialogComponentNumber(
 				new SettingsModelIntegerBounded(TakeNodeModel.CFGKEY_COUNT,
 						TakeNodeModel.DEFAULT_COUNT, 1, Integer.MAX_VALUE),

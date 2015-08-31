@@ -3,15 +3,16 @@
     <name>TakeSample</name>
     
     <shortDescription>
-        Returns a sample of RDD as list
+        Random sample of RDD as list.
     </shortDescription>
     
     <fullDescription>
         <intro>Insert long description here...</intro>
         
         
-        <option name="short name of first option (like in the dialog)">description of first option</option>
-        <option name="short name of second option (like in the dialog)">description of second option</option>
+        <option name="Number of data">Sample of N elements</option>
+        <option name="Replacement">Sampling with or witout replacement</option>
+        <option name="Random seed">Used to initialize a pseudorandom number generator</option>
         <!-- possibly more options that can also be grouped by tabs -->
         <!--
         <tab name="Standard Options">
@@ -25,13 +26,14 @@
     </fullDescription>
     
     <ports>
-        <inPort index="0" name="In-Port name">Description of first input port...</inPort>
+        <inPort index="0" name="Spark RDD">RDD to generate sample from</inPort>
         <!-- possibly more input ports here-->
-        <outPort index="0" name="Out-Port name">Description of first output port...</outPort>
+        <outPort index="0" name="Samples">List of sample elements from RDD</outPort>
         <!-- possibly more output ports here-->
-    </ports>    
+    </ports>
+
     <views>
-        <view index="0" name="name of first view">Description of first view...</view>
+        <view index="0" name="Samples">Sample elements of RDD</view>
         <!--view index="1" name="name of second view">Description of second view...</view-->
     </views>
 </knimeNode>

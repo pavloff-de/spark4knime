@@ -5,7 +5,8 @@ import org.knime.core.node.NodeView;
 import de.pavloff.spark4knime.TableCellUtils.RddViewer;
 
 /**
- * <code>NodeView</code> for the "Take" Node. Take first n elements of RDD
+ * <code>NodeView</code> for the "Take" Node. Take first n elements of RDD. View
+ * contains all this elements.
  * 
  * @author Oleg Pavlov, University of Heidelberg
  */
@@ -19,9 +20,7 @@ public class TakeNodeView extends NodeView<TakeNodeModel> {
 	 */
 	protected TakeNodeView(final TakeNodeModel nodeModel) {
 		super(nodeModel);
-
-		// TODO instantiate the components of the view here.
-
+		// instantiate the components of the view here.
 	}
 
 	/**
@@ -29,15 +28,12 @@ public class TakeNodeView extends NodeView<TakeNodeModel> {
 	 */
 	@Override
 	protected void modelChanged() {
-
-		// TODO retrieve the new model from your nodemodel and
-		// update the view.
+		// retrieve the new model from your nodemodel and update the view.
 		TakeNodeModel nodeModel = (TakeNodeModel) getNodeModel();
 		assert nodeModel != null;
 
 		// be aware of a possibly not executed nodeModel! The data you retrieve
 		// from your nodemodel could be null, emtpy, or invalid in any kind.
-
 	}
 
 	/**
@@ -45,8 +41,7 @@ public class TakeNodeView extends NodeView<TakeNodeModel> {
 	 */
 	@Override
 	protected void onClose() {
-
-		// TODO things to do when closing the view
+		// things to do when closing the view
 	}
 
 	/**
@@ -54,12 +49,12 @@ public class TakeNodeView extends NodeView<TakeNodeModel> {
 	 */
 	@Override
 	protected void onOpen() {
-
 		// things to do when opening the view
 		TakeNodeModel nodeModel = (TakeNodeModel) getNodeModel();
 		assert nodeModel != null;
 		RddViewer view = nodeModel.getRddViewer();
 		assert (view != null);
+		
 		setComponent(view.getTableView());
 	}
 

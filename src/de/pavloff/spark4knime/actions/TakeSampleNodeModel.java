@@ -32,7 +32,8 @@ public class TakeSampleNodeModel extends NodeModel {
 	// the logger instance
 	private static final NodeLogger logger = NodeLogger
 			.getLogger(TakeSampleNodeModel.class);
-	
+
+	// viewer instance
 	private RddViewer rddViewer;
 
 	/**
@@ -42,7 +43,7 @@ public class TakeSampleNodeModel extends NodeModel {
 	 */
 	static final String CFGKEY_REPLACEMENT = "With replacement";
 	static final String CFGKEY_COUNT = "Number of data";
-	static final String CFGKEY_SEED = "Random number generator";
+	static final String CFGKEY_SEED = "Random seed";
 
 	/** initial default count value. */
 	static final Boolean DEFAULT_REPLACEMENT = false;
@@ -80,12 +81,14 @@ public class TakeSampleNodeModel extends NodeModel {
 			final ExecutionContext exec) throws Exception {
 
 		BufferedDataTable[] out;
+
+		// take random sample and generate a list of its elements
 		if (TableCellUtils.isPairRDD(inData[0])) {
-			out = new BufferedDataTable[] { TableCellUtils.listOfPairsToTable(
-					((JavaPairRDD) TableCellUtils.getRDD(inData[0]))
-							.takeSample(m_replacement.getBooleanValue(),
-									m_count.getIntValue(),
-									m_seed.getIntValue()), exec) };
+			out = new BufferedDataTable[] { TableCellUtils
+					.listOfPairsToTable(((JavaPairRDD) TableCellUtils
+							.getRDD(inData[0])).takeSample(
+							m_replacement.getBooleanValue(),
+							m_count.getIntValue(), m_seed.getIntValue()), exec) };
 
 		} else {
 			out = new BufferedDataTable[] { TableCellUtils
@@ -94,7 +97,10 @@ public class TakeSampleNodeModel extends NodeModel {
 							m_replacement.getBooleanValue(),
 							m_count.getIntValue(), m_seed.getIntValue()), exec) };
 		}
+
+		// update viewer
 		rddViewer = new RddViewer(out[0], exec);
+
 		return out;
 	}
 
@@ -103,9 +109,9 @@ public class TakeSampleNodeModel extends NodeModel {
 	 */
 	@Override
 	protected void reset() {
-		// TODO Code executed on reset.
-		// Models build during execute are cleared here.
+		// Code executed on reset. Models build during execute are cleared here.
 		// Also data handled in load/saveInternals will be erased here.
+
 		rddViewer = null;
 	}
 
@@ -115,12 +121,11 @@ public class TakeSampleNodeModel extends NodeModel {
 	@Override
 	protected DataTableSpec[] configure(final DataTableSpec[] inSpecs)
 			throws InvalidSettingsException {
-
-		// TODO: check if user settings are available, fit to the incoming
-		// table structure, and the incoming types are feasible for the node
-		// to execute. If the node can execute in its current state return
-		// the spec of its output data table(s) (if you can, otherwise an array
-		// with null elements), or throw an exception with a useful user message
+		// check if user settings are available, fit to the incoming table
+		// structure, and the incoming types are feasible for the node to
+		// execute. If the node can execute in its current state return the spec
+		// of its output data table(s) (if you can, otherwise an array with null
+		// elements), or throw an exception with a useful user message
 
 		return new DataTableSpec[] { null };
 	}
@@ -130,6 +135,7 @@ public class TakeSampleNodeModel extends NodeModel {
 	 */
 	@Override
 	protected void saveSettingsTo(final NodeSettingsWO settings) {
+		// save user settings to the config object.
 
 		m_replacement.saveSettingsTo(settings);
 		m_count.saveSettingsTo(settings);
@@ -143,6 +149,8 @@ public class TakeSampleNodeModel extends NodeModel {
 	@Override
 	protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
 			throws InvalidSettingsException {
+		// load (valid) settings from the config object. It can be safely
+		// assumed that the settings are valided by the method below.
 
 		m_replacement.loadSettingsFrom(settings);
 		m_count.loadSettingsFrom(settings);
@@ -156,6 +164,9 @@ public class TakeSampleNodeModel extends NodeModel {
 	@Override
 	protected void validateSettings(final NodeSettingsRO settings)
 			throws InvalidSettingsException {
+		// check if the settings could be applied to our model e.g. if the count
+		// is in a certain range (which is ensured by the SettingsModel). Do not
+		// actually set any values of any member variables.
 
 		m_replacement.validateSettings(settings);
 		m_count.validateSettings(settings);
@@ -170,14 +181,11 @@ public class TakeSampleNodeModel extends NodeModel {
 	protected void loadInternals(final File internDir,
 			final ExecutionMonitor exec) throws IOException,
 			CanceledExecutionException {
-
-		// TODO load internal data.
-		// Everything handed to output ports is loaded automatically (data
-		// returned by the execute method, models loaded in loadModelContent,
-		// and user settings set through loadSettingsFrom - is all taken care
-		// of). Load here only the other internals that need to be restored
-		// (e.g. data used by the views).
-
+		// load internal data. Everything handed to output ports is loaded
+		// automatically (data returned by the execute method, models loaded in
+		// loadModelContent, and user settings set through loadSettingsFrom - is
+		// all taken care of). Load here only the other internals that need to
+		// be restored (e.g. data used by the views).
 	}
 
 	/**
@@ -187,16 +195,16 @@ public class TakeSampleNodeModel extends NodeModel {
 	protected void saveInternals(final File internDir,
 			final ExecutionMonitor exec) throws IOException,
 			CanceledExecutionException {
-
-		// TODO save internal models.
-		// Everything written to output ports is saved automatically (data
-		// returned by the execute method, models saved in the saveModelContent,
-		// and user settings saved through saveSettingsTo - is all taken care
-		// of). Save here only the other internals that need to be preserved
-		// (e.g. data used by the views).
-
+		// save internal models. Everything written to output ports is saved
+		// automatically (data returned by the execute method, models saved in
+		// the saveModelContent, and user settings saved through saveSettingsTo
+		// - is all taken care of). Save here only the other internals that need
+		// to be preserved (e.g. data used by the views).
 	}
-	
+
+	/**
+	 * @return <code>RddViewer</code> of the model
+	 */
 	public RddViewer getRddViewer() {
 		return rddViewer;
 	}

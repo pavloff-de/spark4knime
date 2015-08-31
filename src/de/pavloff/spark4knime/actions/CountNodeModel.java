@@ -21,9 +21,10 @@ import org.knime.core.node.NodeSettingsRO;
 import org.knime.core.node.NodeSettingsWO;
 
 import de.pavloff.spark4knime.TableCellUtils;
+import de.pavloff.spark4knime.TableCellUtils.RddViewer;
 
 /**
- * This is the model implementation of Count. Counting elements of RDD
+ * This is the model implementation of Count. Count elements of RDD
  * 
  * @author Oleg Pavlov, University of Heidelberg
  */
@@ -33,13 +34,15 @@ public class CountNodeModel extends NodeModel {
 	private static final NodeLogger logger = NodeLogger
 			.getLogger(CountNodeModel.class);
 
+	// viewer instance
+	private RddViewer rddViewer;
+
 	/**
 	 * Constructor for the node model.
 	 */
 	protected CountNodeModel() {
-
 		// input: BufferedDataTables with JavaRDDLike
-		// output: BufferedDataTable with count elements
+		// output: BufferedDataTable with number of elements
 		super(1, 1);
 	}
 
@@ -50,16 +53,24 @@ public class CountNodeModel extends NodeModel {
 	protected BufferedDataTable[] execute(final BufferedDataTable[] inData,
 			final ExecutionContext exec) throws Exception {
 
+		// create output table
 		BufferedDataContainer container = exec
 				.createDataContainer(new DataTableSpec(
 						new DataColumnSpec[] { new DataColumnSpecCreator(
 								"Column 0", LongCell.TYPE).createSpec() }));
 
+		// add row with count
 		container.addRowToTable(new DefaultRow(new RowKey("Row 0"),
 				new LongCell[] { new LongCell(TableCellUtils.getRDD(inData[0])
 						.count()) }));
 		container.close();
-		return new BufferedDataTable[] { container.getTable() };
+
+		BufferedDataTable out = container.getTable();
+
+		// update viewer
+		rddViewer = new RddViewer(out, exec);
+
+		return new BufferedDataTable[] { out };
 	}
 
 	/**
@@ -67,9 +78,10 @@ public class CountNodeModel extends NodeModel {
 	 */
 	@Override
 	protected void reset() {
-		// TODO Code executed on reset.
-		// Models build during execute are cleared here.
+		// Code executed on reset. Models build during execute are cleared here.
 		// Also data handled in load/saveInternals will be erased here.
+
+		rddViewer = null;
 	}
 
 	/**
@@ -78,12 +90,11 @@ public class CountNodeModel extends NodeModel {
 	@Override
 	protected DataTableSpec[] configure(final DataTableSpec[] inSpecs)
 			throws InvalidSettingsException {
-
-		// TODO: check if user settings are available, fit to the incoming
-		// table structure, and the incoming types are feasible for the node
-		// to execute. If the node can execute in its current state return
-		// the spec of its output data table(s) (if you can, otherwise an array
-		// with null elements), or throw an exception with a useful user message
+		// check if user settings are available, fit to the incoming table
+		// structure, and the incoming types are feasible for the node to
+		// execute. If the node can execute in its current state return the spec
+		// of its output data table(s) (if you can, otherwise an array with null
+		// elements), or throw an exception with a useful user message
 
 		return new DataTableSpec[] { null };
 	}
@@ -93,8 +104,7 @@ public class CountNodeModel extends NodeModel {
 	 */
 	@Override
 	protected void saveSettingsTo(final NodeSettingsWO settings) {
-
-		// TODO save user settings to the config object.
+		// save user settings to the config object.
 	}
 
 	/**
@@ -103,10 +113,8 @@ public class CountNodeModel extends NodeModel {
 	@Override
 	protected void loadValidatedSettingsFrom(final NodeSettingsRO settings)
 			throws InvalidSettingsException {
-
-		// TODO load (valid) settings from the config object.
-		// It can be safely assumed that the settings are valided by the
-		// method below.
+		// load (valid) settings from the config object. It can be safely
+		// assumed that the settings are valided by the method below.
 	}
 
 	/**
@@ -115,11 +123,9 @@ public class CountNodeModel extends NodeModel {
 	@Override
 	protected void validateSettings(final NodeSettingsRO settings)
 			throws InvalidSettingsException {
-
-		// TODO check if the settings could be applied to our model
-		// e.g. if the count is in a certain range (which is ensured by the
-		// SettingsModel).
-		// Do not actually set any values of any member variables.
+		// check if the settings could be applied to our model e.g. if the count
+		// is in a certain range (which is ensured by the SettingsModel). Do not
+		// actually set any values of any member variables.
 	}
 
 	/**
@@ -129,14 +135,11 @@ public class CountNodeModel extends NodeModel {
 	protected void loadInternals(final File internDir,
 			final ExecutionMonitor exec) throws IOException,
 			CanceledExecutionException {
-
-		// TODO load internal data.
-		// Everything handed to output ports is loaded automatically (data
-		// returned by the execute method, models loaded in loadModelContent,
-		// and user settings set through loadSettingsFrom - is all taken care
-		// of). Load here only the other internals that need to be restored
-		// (e.g. data used by the views).
-
+		// load internal data. Everything handed to output ports is loaded
+		// automatically (data returned by the execute method, models loaded in
+		// loadModelContent, and user settings set through loadSettingsFrom - is
+		// all taken care of). Load here only the other internals that need to
+		// be restored (e.g. data used by the views).
 	}
 
 	/**
@@ -146,14 +149,18 @@ public class CountNodeModel extends NodeModel {
 	protected void saveInternals(final File internDir,
 			final ExecutionMonitor exec) throws IOException,
 			CanceledExecutionException {
+		// save internal models. Everything written to output ports is saved
+		// automatically (data returned by the execute method, models saved in
+		// the saveModelContent, and user settings saved through saveSettingsTo
+		// - is all taken care of). Save here only the other internals that need
+		// to be preserved (e.g. data used by the views).
+	}
 
-		// TODO save internal models.
-		// Everything written to output ports is saved automatically (data
-		// returned by the execute method, models saved in the saveModelContent,
-		// and user settings saved through saveSettingsTo - is all taken care
-		// of). Save here only the other internals that need to be preserved
-		// (e.g. data used by the views).
-
+	/**
+	 * @return <code>RddViewer</code> of the model
+	 */
+	public RddViewer getRddViewer() {
+		return rddViewer;
 	}
 
 }

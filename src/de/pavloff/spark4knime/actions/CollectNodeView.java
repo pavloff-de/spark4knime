@@ -6,12 +6,12 @@ import de.pavloff.spark4knime.TableCellUtils.RddViewer;
 
 /**
  * <code>NodeView</code> for the "Collect" Node. Collect all the elements of the
- * RDD as a table
+ * RDD as a table. View contains all the elements.
  * 
  * @author Oleg Pavlov, University of Heidelberg
  */
 public class CollectNodeView extends NodeView<CollectNodeModel> {
-	
+
 	/**
 	 * Creates a new view.
 	 * 
@@ -20,7 +20,7 @@ public class CollectNodeView extends NodeView<CollectNodeModel> {
 	 */
 	protected CollectNodeView(final CollectNodeModel nodeModel) {
 		super(nodeModel);
-		
+
 	}
 
 	/**
@@ -28,15 +28,12 @@ public class CollectNodeView extends NodeView<CollectNodeModel> {
 	 */
 	@Override
 	protected void modelChanged() {
-
-		// retrieve the new model from your nodemodel and
-		// update the view.
+		// retrieve the new model from your nodemodel and update the view.
 		CollectNodeModel nodeModel = (CollectNodeModel) getNodeModel();
 		assert nodeModel != null;
-		
+
 		// be aware of a possibly not executed nodeModel! The data you retrieve
 		// from your nodemodel could be null, emtpy, or invalid in any kind.
-
 	}
 
 	/**
@@ -44,8 +41,7 @@ public class CollectNodeView extends NodeView<CollectNodeModel> {
 	 */
 	@Override
 	protected void onClose() {
-		
-		// TODO things to do when closing the view
+		// things to do when closing the view
 	}
 
 	/**
@@ -58,6 +54,7 @@ public class CollectNodeView extends NodeView<CollectNodeModel> {
 		assert nodeModel != null;
 		RddViewer view = nodeModel.getRddViewer();
 		assert (view != null);
+		
 		setComponent(view.getTableView(Integer.MAX_VALUE));
 	}
 
