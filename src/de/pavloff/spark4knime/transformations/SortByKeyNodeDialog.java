@@ -5,8 +5,8 @@ import org.knime.core.node.defaultnodesettings.DialogComponentBoolean;
 import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
 
 /**
- * <code>NodeDialog</code> for the "SortByKey" Node. returns a dataset of (K, V)
- * pairs sorted by keys in ascending or descending order
+ * <code>NodeDialog</code> for the "SortByKey" Node. Returns RDD of (K, V) pairs
+ * sorted by keys in ascending or descending order
  * 
  * This node dialog derives from {@link DefaultNodeSettingsPane} which allows
  * creation of a simple dialog with standard components. If you need a more
@@ -18,12 +18,12 @@ import org.knime.core.node.defaultnodesettings.SettingsModelBoolean;
 public class SortByKeyNodeDialog extends DefaultNodeSettingsPane {
 
 	/**
-	 * New pane for configuring SortByKey node dialog. This is just a suggestion
-	 * to demonstrate possible default dialog components.
+	 * New pane for configuring SortByKey node dialog. Order to sort.
 	 */
 	protected SortByKeyNodeDialog() {
 		super();
 
+		// order
 		addDialogComponent(new DialogComponentBoolean(new SettingsModelBoolean(
 				SortByKeyNodeModel.CFGKEY_ORDER,
 				SortByKeyNodeModel.DEFAULT_ORDER), "descending order"));

@@ -11,7 +11,7 @@
         
         
         <option name="Number of data">Sample of N elements</option>
-        <option name="Replacement">Sampling with or witout replacement</option>
+        <option name="Replacement">Sampling with or without replacement</option>
         <option name="Random seed">Used to initialize a pseudorandom number generator</option>
         <!-- possibly more options that can also be grouped by tabs -->
         <!--

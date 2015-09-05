@@ -5,7 +5,8 @@ import org.knime.core.node.NodeView;
 import de.pavloff.spark4knime.TableCellUtils.RddViewer;
 
 /**
- * <code>NodeView</code> for the "Sample" Node. Sample operation on Spark RDD
+ * <code>NodeView</code> for the "Sample" Node. Returns a random sample of RDD
+ * as new RDD
  * 
  * @author Oleg Pavlov, University of Heidelberg
  */
@@ -19,9 +20,7 @@ public class SampleNodeView extends NodeView<SampleNodeModel> {
 	 */
 	protected SampleNodeView(final SampleNodeModel nodeModel) {
 		super(nodeModel);
-
-		// TODO instantiate the components of the view here.
-
+		// instantiate the components of the view here.
 	}
 
 	/**
@@ -29,15 +28,12 @@ public class SampleNodeView extends NodeView<SampleNodeModel> {
 	 */
 	@Override
 	protected void modelChanged() {
-
-		// TODO retrieve the new model from your nodemodel and
-		// update the view.
+		// retrieve the new model from your nodemodel and update the view.
 		SampleNodeModel nodeModel = (SampleNodeModel) getNodeModel();
 		assert nodeModel != null;
 
 		// be aware of a possibly not executed nodeModel! The data you retrieve
 		// from your nodemodel could be null, emtpy, or invalid in any kind.
-
 	}
 
 	/**
@@ -45,8 +41,7 @@ public class SampleNodeView extends NodeView<SampleNodeModel> {
 	 */
 	@Override
 	protected void onClose() {
-
-		// TODO things to do when closing the view
+		// things to do when closing the view
 	}
 
 	/**
@@ -54,12 +49,12 @@ public class SampleNodeView extends NodeView<SampleNodeModel> {
 	 */
 	@Override
 	protected void onOpen() {
-
 		// things to do when opening the view
 		SampleNodeModel nodeModel = (SampleNodeModel) getNodeModel();
 		assert nodeModel != null;
 		RddViewer view = nodeModel.getRddViewer();
 		assert (view != null);
+
 		setComponent(view.getTableView());
 	}
 
