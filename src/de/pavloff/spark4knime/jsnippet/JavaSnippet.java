@@ -266,7 +266,7 @@ public final class JavaSnippet {
 		try {
 			Bundle bundle = Platform.getBundle("de.pavloff.spark4knime");
 			URL url = FileLocator.find(bundle, new Path(
-					"jars/spark-assembly-1.3.1-hadoop2.6.0.jar"), null);
+					"lib/spark-assembly-1.3.1-hadoop2.6.0.jar"), null);
 			String sparkPath = FileUtil
 					.getFileFromURL(FileLocator.toFileURL(url)).getPath()
 					.toString();
