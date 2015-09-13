@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <?eclipse version="3.0"?><plugin>
    <extension point="org.knime.workbench.repository.categories">
-      <category icon="img/spark-logo.png" level-id="spark4knime" locked="false" name="Spark Nodes" path="/">
+      <category icon="img/spark-logo.png" level-id="spark4knime" locked="false" name="Spark" path="/">
       </category>
       <category icon="img/input.png" level-id="input" locked="true" name="Input" path="/spark4knime">
       </category>
