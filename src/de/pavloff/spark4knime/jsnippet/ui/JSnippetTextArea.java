@@ -51,7 +51,8 @@ import java.awt.Color;
 
 import org.fife.ui.rsyntaxtextarea.Token;
 import org.fife.ui.rsyntaxtextarea.folding.FoldParserManager;
-import de.pavloff.spark4knime.util.KnimeSyntaxTextArea;
+import org.knime.base.node.util.KnimeSyntaxTextArea;
+
 import de.pavloff.spark4knime.jsnippet.JavaSnippet;
 import de.pavloff.spark4knime.jsnippet.JavaSnippetDocument;
 import de.pavloff.spark4knime.jsnippet.guarded.GuardedDocument;

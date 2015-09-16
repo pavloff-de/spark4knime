@@ -26,27 +26,27 @@
    -->
    
    <extension point="org.knime.workbench.repository.nodes">
-      <node category-path="/spark4knime/input" factory-class="de.pavloff.spark4knime.input.FileToRDDNodeFactory" id="de.pavloff.spark4knime.FileToRDDNodeFactory"/>
-   <node category-path="/spark4knime/input" factory-class="de.pavloff.spark4knime.input.TableToRDDNodeFactory" id="de.pavloff.spark4knime.input.TableToRDDNodeFactory"/>
-<node category-path="/spark4knime/transformations" factory-class="de.pavloff.spark4knime.transformations.SampleNodeFactory" id="de.pavloff.spark4knime.transformations.SampleNodeFactory"/>
-<node category-path="/spark4knime/transformations" factory-class="de.pavloff.spark4knime.transformations.UnionNodeFactory" id="de.pavloff.spark4knime.transformations.UnionNodeFactory"/>
-<node category-path="/spark4knime/actions" factory-class="de.pavloff.spark4knime.actions.CollectNodeFactory" id="de.pavloff.spark4knime.actions.CollectNodeFactory"/>
-<node category-path="/spark4knime/actions" factory-class="de.pavloff.spark4knime.actions.CountNodeFactory" id="de.pavloff.spark4knime.actions.CountNodeFactory"/>
-<node category-path="/spark4knime/actions" factory-class="de.pavloff.spark4knime.actions.TakeNodeFactory" id="de.pavloff.spark4knime.actions.TakeNodeFactory"/>
-<node category-path="/spark4knime/actions" factory-class="de.pavloff.spark4knime.actions.TakeSampleNodeFactory" id="de.pavloff.spark4knime.actions.TakeSampleNodeFactory"/>
-<node category-path="/spark4knime/actions" factory-class="de.pavloff.spark4knime.actions.CountByKeyNodeFactory" id="de.pavloff.spark4knime.actions.CountByKeyNodeFactory"/>
-<node category-path="/spark4knime/transformations" factory-class="de.pavloff.spark4knime.transformations.IntersectionNodeFactory" id="de.pavloff.spark4knime.transformations.IntersectionNodeFactory"/>
-<node category-path="/spark4knime/transformations" factory-class="de.pavloff.spark4knime.transformations.DistinctNodeFactory" id="de.pavloff.spark4knime.transformations.DistinctNodeFactory"/>
-<node category-path="/spark4knime/transformations" factory-class="de.pavloff.spark4knime.jsnippet.JavaSnippetForRDDNodeFactory" id="de.pavloff.spark4knime.jsnippet.JavaSnippetForRDDNodeFactory"/>
-<node category-path="/spark4knime/output" factory-class="de.pavloff.spark4knime.output.RDDToTextFileNodeFactory" id="de.pavloff.spark4knime.output.RDDToTextFileNodeFactory"/>
-<node category-path="/spark4knime/output" factory-class="de.pavloff.spark4knime.output.RDDToSequenceFileNodeFactory" id="de.pavloff.spark4knime.output.RDDToSequenceFileNodeFactory"/>
-<node category-path="/spark4knime/transformations" factory-class="de.pavloff.spark4knime.transformations.SortByKeyNodeFactory" id="de.pavloff.spark4knime.transformations.SortByKeyNodeFactory"/>
-<node category-path="/spark4knime/transformations" factory-class="de.pavloff.spark4knime.transformations.GroupByKeyNodeFactory" id="de.pavloff.spark4knime.transformations.GroupByKeyNodeFactory"/>
-</extension>
+   	<node category-path="/spark4knime/input" factory-class="de.pavloff.spark4knime.input.FileToRDDNodeFactory" id="de.pavloff.spark4knime.input.FileToRDDNodeFactory"/>
+   	<node category-path="/spark4knime/input" factory-class="de.pavloff.spark4knime.input.TableToRDDNodeFactory" id="de.pavloff.spark4knime.input.TableToRDDNodeFactory"/>
+	<node category-path="/spark4knime/transformations" factory-class="de.pavloff.spark4knime.transformations.UnionNodeFactory" id="de.pavloff.spark4knime.transformations.UnionNodeFactory"/>
+	<node category-path="/spark4knime/transformations" factory-class="de.pavloff.spark4knime.transformations.IntersectionNodeFactory" id="de.pavloff.spark4knime.transformations.IntersectionNodeFactory"/>
+	<node category-path="/spark4knime/transformations" factory-class="de.pavloff.spark4knime.transformations.SampleNodeFactory" id="de.pavloff.spark4knime.transformations.SampleNodeFactory"/>
+	<node category-path="/spark4knime/transformations" factory-class="de.pavloff.spark4knime.transformations.DistinctNodeFactory" id="de.pavloff.spark4knime.transformations.DistinctNodeFactory"/>
+	<node category-path="/spark4knime/transformations" factory-class="de.pavloff.spark4knime.jsnippet.JavaSnippetForRDDNodeFactory" id="de.pavloff.spark4knime.jsnippet.JavaSnippetForRDDNodeFactory"/>
+	<node category-path="/spark4knime/transformations" factory-class="de.pavloff.spark4knime.transformations.SortByKeyNodeFactory" id="de.pavloff.spark4knime.transformations.SortByKeyNodeFactory"/>
+	<node category-path="/spark4knime/transformations" factory-class="de.pavloff.spark4knime.transformations.GroupByKeyNodeFactory" id="de.pavloff.spark4knime.transformations.GroupByKeyNodeFactory"/>
+	<node category-path="/spark4knime/actions" factory-class="de.pavloff.spark4knime.actions.CollectNodeFactory" id="de.pavloff.spark4knime.actions.CollectNodeFactory"/>
+	<node category-path="/spark4knime/actions" factory-class="de.pavloff.spark4knime.actions.CountNodeFactory" id="de.pavloff.spark4knime.actions.CountNodeFactory"/>
+	<node category-path="/spark4knime/actions" factory-class="de.pavloff.spark4knime.actions.TakeNodeFactory" id="de.pavloff.spark4knime.actions.TakeNodeFactory"/>
+	<node category-path="/spark4knime/actions" factory-class="de.pavloff.spark4knime.actions.TakeSampleNodeFactory" id="de.pavloff.spark4knime.actions.TakeSampleNodeFactory"/>
+	<node category-path="/spark4knime/actions" factory-class="de.pavloff.spark4knime.actions.CountByKeyNodeFactory" id="de.pavloff.spark4knime.actions.CountByKeyNodeFactory"/>
+	<node category-path="/spark4knime/output" factory-class="de.pavloff.spark4knime.output.RDDToTextFileNodeFactory" id="de.pavloff.spark4knime.output.RDDToTextFileNodeFactory"/>
+	<node category-path="/spark4knime/output" factory-class="de.pavloff.spark4knime.output.RDDToSequenceFileNodeFactory" id="de.pavloff.spark4knime.output.RDDToSequenceFileNodeFactory"/>
+   </extension>
    <extension point="org.knime.jsnippets.templaterepository">
-         <template-repository id="de.pavloff.spark4knime.jsnippet.template.DefaultFileTemplateRepositoryProvider" provider-class="de.pavloff.spark4knime.jsnippet.template.DefaultFileTemplateRepositoryProvider">
-         </template-repository>
-         <template-repository id="de.pavloff.spark4knime.jsnippet.template.PluginFileTemplateRepositoryProvider" provider-class="de.pavloff.spark4knime.jsnippet.template.PluginFileTemplateRepositoryProvider">
-         </template-repository>
+    <template-repository id="de.pavloff.spark4knime.jsnippet.template.DefaultFileTemplateRepositoryProvider" provider-class="de.pavloff.spark4knime.jsnippet.template.DefaultFileTemplateRepositoryProvider">
+    </template-repository>
+    <template-repository id="de.pavloff.spark4knime.jsnippet.template.PluginFileTemplateRepositoryProvider" provider-class="de.pavloff.spark4knime.jsnippet.template.PluginFileTemplateRepositoryProvider">
+    </template-repository>
    </extension>
 </plugin>
