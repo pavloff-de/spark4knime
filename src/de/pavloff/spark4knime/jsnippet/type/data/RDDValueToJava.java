@@ -1,6 +1,3 @@
-/**
- * 
- */
 package de.pavloff.spark4knime.jsnippet.type.data;
 
 import org.apache.spark.api.java.JavaRDD;
@@ -10,17 +7,18 @@ import de.pavloff.spark4knime.RddCell;
 import de.pavloff.spark4knime.jsnippet.expression.TypeException;
 
 /**
+ * Provides the value of an RDDValue object for the java snippet node.
+ * 
  * @author Oleg Pavlov, University of Heidelberg
- *
  */
 public class RDDValueToJava extends DataValueToJava {
-	
+
 	/**
-     * Create a new instance.
-     */
-    public RDDValueToJava() {
-        super(JavaRDD.class);
-    }
+	 * Create a new instance.
+	 */
+	public RDDValueToJava() {
+		super(JavaRDD.class);
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -28,8 +26,7 @@ public class RDDValueToJava extends DataValueToJava {
 	@SuppressWarnings("rawtypes")
 	@Override
 	public boolean isCompatibleTo(DataCell cell, Class c) throws TypeException {
-		return c.equals(JavaRDD.class)
-	            && cell.getType() == RddCell.TYPE;
+		return c.equals(JavaRDD.class) && cell.getType() == RddCell.TYPE;
 	}
 
 	/**
@@ -38,7 +35,7 @@ public class RDDValueToJava extends DataValueToJava {
 	@SuppressWarnings("rawtypes")
 	@Override
 	protected Object getValueUnchecked(DataCell cell, Class c) {
-		return ((RddCell)cell).getRDDValue();
+		return ((RddCell) cell).getRDDValue();
 	}
 
 }

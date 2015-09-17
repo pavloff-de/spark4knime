@@ -134,6 +134,7 @@ import org.osgi.framework.Bundle;
  * document. The document is a java class which is compiled for execution.
  * 
  * @author Heiko Hofer
+ * @author Oleg Pavlov, University of Heidelberg
  */
 @SuppressWarnings("restriction")
 public final class JavaSnippet {
@@ -170,6 +171,7 @@ public final class JavaSnippet {
 	private NodeLogger m_logger;
 
 	private static long idCounter = 0;
+	// unique JSnippet ID in whole Workspace
 	private final String m_uid;
 
 	/**
@@ -190,7 +192,13 @@ public final class JavaSnippet {
 		m_tempClassPathDir = tempDir;
 		m_uid = createID();
 	}
-
+	
+	/**
+	 * Gives an unique ID for each JSnippet object
+	 * Important for serialization
+	 * 
+	 * @author Oleg Pavlov, University of Heidelberg
+	 */
 	public static synchronized String createID() {
 		return String.valueOf(idCounter++);
 	}
@@ -286,6 +294,7 @@ public final class JavaSnippet {
 					// TODO how to react?
 				}
 			}
+			// add spark jar file
 			if (sparkJarFile != null) {
 				jarFiles.add(sparkJarFile);
 			}
@@ -318,8 +327,50 @@ public final class JavaSnippet {
 		return exists;
 	}
 
+	/**
+	 * Get compilation units used by the JavaSnippetCompiler.
+	 * 
+	 * @return the files to compile
+	 * @throws IOException
+	 *             When files cannot be created.
+	 */
+	public Iterable<? extends JavaFileObject> getCompilationUnits()
+			throws IOException {
+
+		if (m_snippet == null || m_snippetFile == null
+				|| !m_snippetFile.exists()) {
+			m_snippet = createJSnippetFile();
+		} else {
+			if (m_dirty) {
+				Writer out = m_snippet.openWriter();
+				try {
+					try {
+						Document doc = getDocument();
+						out.write(doc.getText(0, doc.getLength()));
+						m_dirty = false;
+					} catch (BadLocationException e) {
+						// this should never happen.
+						throw new IllegalStateException(e);
+					}
+				} finally {
+					out.close();
+				}
+			}
+		}
+		return Collections.singletonList(m_snippet);
+	}
+
+	/**
+	 * Creates a jar from JSnippet for Spark executor
+	 * 
+	 * @param snippetLoader
+	 * @throws IOException
+	 * @throws ClassNotFoundException
+	 * 
+	 * @author Oleg Pavlov, University of Heidelberg
+	 */
 	@SuppressWarnings("unchecked")
-	private void createJSnippetJarForSpark(ClassLoader snippetLoader)
+	private void createJSnippetJarFileForSpark(ClassLoader snippetLoader)
 			throws IOException, ClassNotFoundException {
 		if (m_snippetJarFile == null) {
 			m_snippetJarFile = FileUtil.createTempFile("jsnippetForSpark-",
@@ -362,45 +413,13 @@ public final class JavaSnippet {
 		JavaSparkContext sc = SparkContexter.getSparkContext(null);
 		sc.addJar(m_snippetJarFile.getPath());
 	}
-
-	/**
-	 * Get compilation units used by the JavaSnippetCompiler.
-	 * 
-	 * @return the files to compile
-	 * @throws IOException
-	 *             When files cannot be created.
-	 */
-	public Iterable<? extends JavaFileObject> getCompilationUnits()
-			throws IOException {
-
-		if (m_snippet == null || m_snippetFile == null
-				|| !m_snippetFile.exists()) {
-			m_snippet = createJSnippetFile();
-		} else {
-			if (m_dirty) {
-				Writer out = m_snippet.openWriter();
-				try {
-					try {
-						Document doc = getDocument();
-						out.write(doc.getText(0, doc.getLength()));
-						m_dirty = false;
-					} catch (BadLocationException e) {
-						// this should never happen.
-						throw new IllegalStateException(e);
-					}
-				} finally {
-					out.close();
-				}
-			}
-		}
-		return Collections.singletonList(m_snippet);
-	}
-
+	
 	/**
 	 * Create the java-file of the snippet.
 	 */
 	private JavaFileObject createJSnippetFile() throws IOException {
-		m_snippetFile = new File(m_tempClassPathDir, "JSnippet" + m_uid + ".java");
+		m_snippetFile = new File(m_tempClassPathDir, "JSnippet" + m_uid
+				+ ".java");
 		FileOutputStream fos = new FileOutputStream(m_snippetFile);
 		OutputStreamWriter out = new OutputStreamWriter(fos,
 				Charset.forName("UTF-8"));
@@ -612,7 +631,10 @@ public final class JavaSnippet {
 	private String createFieldsSection() {
 		StringBuilder out = new StringBuilder();
 		out.append("// system variables\n");
-		out.append("public class JSnippet" + m_uid + " extends AbstractJSnippet implements Serializable{\n");
+		// call class JSnippet13 so make unique
+		out.append("public class JSnippet" + m_uid
+				// serialization is important for Spark
+				+ " extends AbstractJSnippet implements Serializable{\n");
 		if (m_fields.getInColFields().size() > 0) {
 			out.append("  // Fields for input columns\n");
 			for (InCol field : m_fields.getInColFields()) {
@@ -1025,7 +1047,7 @@ public final class JavaSnippet {
 				ClassLoader loader = compiler.createClassLoader(this.getClass()
 						.getClassLoader());
 				// create JAR for Spark Executor
-				createJSnippetJarForSpark(loader);
+				createJSnippetJarFileForSpark(loader);
 				return (Class<? extends AbstractJSnippet>) loader
 						.loadClass("JSnippet" + m_uid);
 			} catch (ClassNotFoundException e) {

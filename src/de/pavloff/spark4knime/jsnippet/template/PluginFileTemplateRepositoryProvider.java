@@ -61,60 +61,62 @@ import org.osgi.framework.Bundle;
 /**
  * A m_file template provider for templates relative to a plugin. Since the
  * templates are shipped out by a plugin, they cannot be removed or replaced.
- *
+ * 
  * @author Heiko Hofer
+ * @author Oleg Pavlov, University of Heidelberg
  */
-public class PluginFileTemplateRepositoryProvider
-        implements TemplateRepositoryProvider {
-    private static NodeLogger logger
-        = NodeLogger.getLogger(PluginFileTemplateRepositoryProvider.class);
-    private static FileTemplateRepository repo;
-    private final Object m_lock = new Object[0];
+public class PluginFileTemplateRepositoryProvider implements
+		TemplateRepositoryProvider {
+	private static NodeLogger logger = NodeLogger
+			.getLogger(PluginFileTemplateRepositoryProvider.class);
+	private static FileTemplateRepository repo;
+	private final Object m_lock = new Object[0];
 
-    private File m_file;
+	private File m_file;
 
-    /**
-     * Create a instance for the bundle "org.knime.jnippets" and the relative
-     * path "/jsnippets".
-     */
-    public PluginFileTemplateRepositoryProvider() {
-        this("de.pavloff.spark4knime", "jsnippets");
-    }
+	/**
+	 * Create a instance for the bundle "de.pavloff.spark4knime" and the relative
+	 * path "/jsnippets".
+	 * @author Oleg Pavlov, University of Heidelberg
+	 */
+	public PluginFileTemplateRepositoryProvider() {
+		this("de.pavloff.spark4knime", "jsnippets");
+	}
 
-    /**
-     * @param symbolicName the name of the bundle like "org.nime.jsnipptes"
-     * @param relativePath the path to the repositories base folder,
-     *  i.e. "/jsnippes"
-     */
-    public PluginFileTemplateRepositoryProvider(final String symbolicName,
-            final String relativePath) {
-        try {
-            Bundle bundle = Platform.getBundle(symbolicName);
-            URL url = FileLocator.find(bundle, new Path(relativePath), null);
-            m_file = FileUtil.getFileFromURL(FileLocator.toFileURL(url));
-        } catch (Exception e) {
-            logger.error("Cannot locate jsnippet templates in path "
-                    + symbolicName + " of the bundle "
-                    + relativePath + ".", e);
-        }
-    }
+	/**
+	 * @param symbolicName
+	 *            the name of the bundle like "org.nime.jsnipptes"
+	 * @param relativePath
+	 *            the path to the repositories base folder, i.e. "/jsnippes"
+	 */
+	public PluginFileTemplateRepositoryProvider(final String symbolicName,
+			final String relativePath) {
+		try {
+			Bundle bundle = Platform.getBundle(symbolicName);
+			URL url = FileLocator.find(bundle, new Path(relativePath), null);
+			m_file = FileUtil.getFileFromURL(FileLocator.toFileURL(url));
+		} catch (Exception e) {
+			logger.error("Cannot locate jsnippet templates in path "
+					+ symbolicName + " of the bundle " + relativePath + ".", e);
+		}
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public TemplateRepository getRepository() {
-        synchronized (m_lock) {
-            if (null == repo) {
-                try {
-                    repo = FileTemplateRepository.createProtected(m_file);
-                } catch (IOException e) {
-                    logger.error("Cannot create the template provider with "
-                            + "base file " + m_file.getAbsolutePath(), e);
-                }
-            }
-        }
-        return repo;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public TemplateRepository getRepository() {
+		synchronized (m_lock) {
+			if (null == repo) {
+				try {
+					repo = FileTemplateRepository.createProtected(m_file);
+				} catch (IOException e) {
+					logger.error("Cannot create the template provider with "
+							+ "base file " + m_file.getAbsolutePath(), e);
+				}
+			}
+		}
+		return repo;
+	}
 
 }

@@ -53,49 +53,53 @@ import org.knime.core.node.NodeView;
 
 /**
  * The node factory of the java snippet node.
- *
+ * 
  * @author Heiko Hofer
+ * @author Oleg Pavlov, University of Heidelberg
  */
-public class JavaSnippetForRDDNodeFactory extends NodeFactory<JavaSnippetForRDDNodeModel> {
+public class JavaSnippetForRDDNodeFactory extends
+		NodeFactory<JavaSnippetForRDDNodeModel> {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public JavaSnippetForRDDNodeModel createNodeModel() {
-        return new JavaSnippetForRDDNodeModel();
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public JavaSnippetForRDDNodeModel createNodeModel() {
+		return new JavaSnippetForRDDNodeModel();
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int getNrNodeViews() {
-        return 1;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public int getNrNodeViews() {
+		// RDD view
+		return 1;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public NodeView<JavaSnippetForRDDNodeModel> createNodeView(final int viewIndex,
-            final JavaSnippetForRDDNodeModel nodeModel) {
-    	return new JavaSnippetForRDDNodeView(nodeModel);
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public NodeView<JavaSnippetForRDDNodeModel> createNodeView(
+			final int viewIndex, final JavaSnippetForRDDNodeModel nodeModel) {
+		// create RDD view
+		return new JavaSnippetForRDDNodeView(nodeModel);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean hasDialog() {
-        return true;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean hasDialog() {
+		return true;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public NodeDialogPane createNodeDialogPane() {
-        return new JavaSnippetForRDDNodeDialog(this.getClass());
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public NodeDialogPane createNodeDialogPane() {
+		return new JavaSnippetForRDDNodeDialog(this.getClass());
+	}
 }
