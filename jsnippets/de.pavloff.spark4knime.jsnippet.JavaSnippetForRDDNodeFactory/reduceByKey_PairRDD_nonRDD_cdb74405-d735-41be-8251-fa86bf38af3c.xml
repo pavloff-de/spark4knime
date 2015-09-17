@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config xmlns="http://www.knime.org/2008/09/XMLConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.knime.org/2008/09/XMLConfig http://www.knime.org/XMLConfig_2008_09.xsd" key="reduceByKey_PairRDD_nonRDD_cdb74405-d735-41be-8251-fa86bf38af3c.xml">
+<entry key="Meta category" type="xstring" value="de.pavloff.spark4knime.jsnippet.JavaSnippetForRDDNodeFactory"/>
+<entry key="Category" type="xstring" value="Spark"/>
+<entry key="Name" type="xstring" value="reduceByKey.PairRDD-nonRDD"/>
+<entry key="Description" type="xstring" value="ReduceByKey function to calculate any reduced value of key-value pair."/>
+<entry key="Version" type="xstring" value="version 1.x"/>
+<config key="Snippet">
+<entry key="scriptImports" type="xstring" value="// Your custom imports:%%00010import org.apache.spark.api.java.JavaRDD;%%00010import org.apache.spark.api.java.JavaPairRDD;%%00010import org.apache.spark.api.java.function.PairFunction;%%00010import scala.Tuple2;%%00010"/>
+<entry key="scriptFields" type="xstring" value="// Your custom variables:%%00010"/>
+<entry key="scriptBody" type="xstring" value="// Enter your code here:%%00010//%%00010// JavaPairRDD&lt;K,V&gt; mapToPair(PairFunction&lt;T,K,V&gt; f)%%00010// returns a new PairRDD by applying a function to all%%00010// elements of the input RDD. Function f implements%%00010// org.apache.spark.api.java.function.PairFunction class.%%00010//%%00010// T is tuple of any key-value pair in in_RDD and%%00010// K,V are types of key, values in out_PairRDD%%00010// Function f should implement a%%00010// Tuple2&lt;K,V&gt; call(T) method.%%00010//%%00010out_PairRDD = in_RDD.mapToPair(new PairFunction&lt;T, K, V&gt;() {%%00010%%00009@Override%%00010%%00009public Tuple2&lt;K, V&gt; call(T keyValue) throws Exception {%%00010%%00009%%00009return new Tuple2(keyValue);%%00010%%00009}%%00010});%%00010"/>
+<config key="jarFiles">
+<entry key="array-size" type="xint" value="0"/>
+</config>
+<config key="outCols">
+<entry key="array-size" type="xint" value="1"/>
+<config key="0">
+<entry key="Name" type="xstring" value="RDD"/>
+<entry key="JavaName" type="xstring" value="out_PairRDD"/>
+<entry key="JavaType" type="xstring" value="org.apache.spark.api.java.JavaPairRDD"/>
+<config key="Type">
+<entry key="cell_class" type="xstring" value="de.pavloff.spark4knime.PairRddCell"/>
+<entry key="is_null" type="xboolean" value="false"/>
+</config>
+<entry key="replaceExisting" type="xboolean" value="true"/>
+</config>
+</config>
+<config key="outVars">
+<entry key="array-size" type="xint" value="0"/>
+</config>
+<config key="inCols">
+<entry key="array-size" type="xint" value="1"/>
+<config key="0">
+<entry key="Name" type="xstring" value="RDD"/>
+<entry key="JavaName" type="xstring" value="in_RDD"/>
+<entry key="JavaType" type="xstring" value="org.apache.spark.api.java.JavaRDD"/>
+<config key="Type">
+<entry key="cell_class" type="xstring" value="de.pavloff.spark4knime.RddCell"/>
+<entry key="is_null" type="xboolean" value="false"/>
+</config>
+</config>
+</config>
+<config key="inVars">
+<entry key="array-size" type="xint" value="0"/>
+</config>
+<entry key="version" type="xstring" value="version 1.x"/>
+<entry key="templateUUID" type="xstring" value="cdb74405-d735-41be-8251-fa86bf38af3c"/>
+<entry key="runOnExecute" type="xboolean" value="false"/>
+</config>
+</config>

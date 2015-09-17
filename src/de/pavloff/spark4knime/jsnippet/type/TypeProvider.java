@@ -103,215 +103,215 @@ import org.knime.core.node.workflow.FlowVariable.Type;
 
 /**
  * A central place for type converters for data cells and flow variables.
- *
+ * 
  * @author Heiko Hofer
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public final class TypeProvider {
-    private static TypeProvider provider;
-    private Map<Class<? extends DataValue>, DataValueToJava>
-        m_dataValueConverter;
+	private static TypeProvider provider;
+	private Map<Class<? extends DataValue>, DataValueToJava> m_dataValueConverter;
 
+	private Map<DataType, DataValueToJava> m_dataValueToJava;
+	private Map<DataType, DataValueToJava> m_collDataValueToJava;
+	private Map<DataType, JavaToDataCell> m_javaToCell;
+	private Map<DataType, JavaToDataCell> m_javaToListCell;
 
-    private Map<DataType, DataValueToJava> m_dataValueToJava;
-    private Map<DataType, DataValueToJava> m_collDataValueToJava;
-    private Map<DataType, JavaToDataCell> m_javaToCell;
-    private Map<DataType, JavaToDataCell> m_javaToListCell;
+	private Map<Type, TypeConverter> m_flowVarConverter;
+	private ToStringToJava m_toStringToJava;
 
-    private Map<Type, TypeConverter> m_flowVarConverter;
-    private ToStringToJava m_toStringToJava;
+	/** Prevent creation of class instances. */
+	private TypeProvider() {
+		m_dataValueConverter = new LinkedHashMap<Class<? extends DataValue>, DataValueToJava>();
+		m_dataValueConverter.put(BooleanValue.class, new BooleanValueToJava());
+		m_dataValueConverter.put(IntValue.class, new IntValueToJava());
+		m_dataValueConverter.put(DoubleValue.class, new DoubleValueToJava());
+		m_dataValueConverter.put(LongValue.class, new LongValueToJava());
+		m_dataValueConverter.put(StringValue.class, new StringValueToJava());
+		m_dataValueConverter.put(XMLValue.class, new XMLValueToJava());
+		m_dataValueConverter.put(DateAndTimeValue.class,
+				new DateAndTimeValueToJava());
+		// RDD part
+		m_dataValueConverter.put(RddValue.class, new RDDValueToJava());
+		m_dataValueConverter.put(PairRddValue.class, new PairRDDValueToJava());
 
-    /** Prevent creation of class instances. */
-    private TypeProvider() {
-        m_dataValueConverter =
-            new LinkedHashMap<Class<? extends DataValue>, DataValueToJava>();
-        m_dataValueConverter.put(BooleanValue.class, new BooleanValueToJava());
-        m_dataValueConverter.put(IntValue.class, new IntValueToJava());
-        m_dataValueConverter.put(DoubleValue.class, new DoubleValueToJava());
-        m_dataValueConverter.put(LongValue.class, new LongValueToJava());
-        m_dataValueConverter.put(StringValue.class, new StringValueToJava());
-        m_dataValueConverter.put(XMLValue.class, new XMLValueToJava());
-        m_dataValueConverter.put(DateAndTimeValue.class,
-                new DateAndTimeValueToJava());
-        m_dataValueConverter.put(RddValue.class, new RDDValueToJava());
-        m_dataValueConverter.put(PairRddValue.class, new PairRDDValueToJava());
+		m_dataValueToJava = new LinkedHashMap<DataType, DataValueToJava>();
+		m_dataValueToJava.put(StringCell.TYPE,
+				m_dataValueConverter.get(StringValue.class));
+		m_dataValueToJava.put(IntCell.TYPE,
+				new MultiValueToJava(m_dataValueConverter.get(IntValue.class),
+						m_dataValueConverter.get(DoubleValue.class)));
+		m_dataValueToJava.put(LongCell.TYPE,
+				m_dataValueConverter.get(LongValue.class));
+		m_dataValueToJava.put(DoubleCell.TYPE,
+				m_dataValueConverter.get(DoubleValue.class));
+		m_dataValueToJava.put(BooleanCell.TYPE,
+				m_dataValueConverter.get(BooleanValue.class));
+		m_dataValueToJava.put(XMLCell.TYPE,
+				new MultiValueToJava(m_dataValueConverter.get(XMLValue.class),
+						m_dataValueConverter.get(StringValue.class)));
+		m_dataValueToJava.put(DateAndTimeCell.TYPE,
+				m_dataValueConverter.get(DateAndTimeValue.class));
+		// RDD part
+		m_dataValueToJava.put(RddCell.TYPE,
+				m_dataValueConverter.get(RddValue.class));
+		m_dataValueToJava.put(PairRddCell.TYPE,
+				m_dataValueConverter.get(PairRddValue.class));
 
+		// add list cell converters
+		m_collDataValueToJava = new LinkedHashMap<DataType, DataValueToJava>();
+		for (DataType type : m_dataValueToJava.keySet()) {
+			DataValueToJava dvtj = m_dataValueToJava.get(type);
+			m_collDataValueToJava.put(type, new ListCellToJava(dvtj));
+		}
 
-        m_dataValueToJava = new LinkedHashMap<DataType, DataValueToJava>();
-        m_dataValueToJava.put(StringCell.TYPE,
-                m_dataValueConverter.get(StringValue.class));
-        m_dataValueToJava.put(IntCell.TYPE,
-                new MultiValueToJava(
-                      m_dataValueConverter.get(IntValue.class)
-                    , m_dataValueConverter.get(DoubleValue.class)
-                ));
-        m_dataValueToJava.put(LongCell.TYPE,
-                m_dataValueConverter.get(LongValue.class));
-        m_dataValueToJava.put(DoubleCell.TYPE,
-                m_dataValueConverter.get(DoubleValue.class));
-        m_dataValueToJava.put(BooleanCell.TYPE,
-                m_dataValueConverter.get(BooleanValue.class));
-        m_dataValueToJava.put(XMLCell.TYPE,
-                new MultiValueToJava(
-                        m_dataValueConverter.get(XMLValue.class)
-                      , m_dataValueConverter.get(StringValue.class)
-                  ));
-        m_dataValueToJava.put(DateAndTimeCell.TYPE,
-                m_dataValueConverter.get(DateAndTimeValue.class));
-        m_dataValueToJava.put(RddCell.TYPE,
-                m_dataValueConverter.get(RddValue.class));
-        m_dataValueToJava.put(PairRddCell.TYPE,
-                m_dataValueConverter.get(PairRddValue.class));
+		// the converters from java to a data cell
+		m_javaToCell = new LinkedHashMap<DataType, JavaToDataCell>();
+		m_javaToCell.put(BooleanCell.TYPE, new JavaToBooleanCell());
+		m_javaToCell.put(IntCell.TYPE, new JavaToIntCell());
+		m_javaToCell.put(DoubleCell.TYPE, new JavaToDoubleCell());
+		m_javaToCell.put(LongCell.TYPE, new JavaToLongCell());
+		m_javaToCell.put(StringCell.TYPE, new JavaToStringCell());
+		m_javaToCell.put(XMLCell.TYPE, new JavaToXMLCell());
+		m_javaToCell.put(DateAndTimeCell.TYPE, new JavaToDateAndTimeCell());
+		// RDD part
+		m_javaToCell.put(RddCell.TYPE, new JavaToRddCell());
+		m_javaToCell.put(PairRddCell.TYPE, new JavaToPairRddCell());
 
-        // add list cell converters
-        m_collDataValueToJava = new LinkedHashMap<DataType, DataValueToJava>();
-        for (DataType type : m_dataValueToJava.keySet()) {
-            DataValueToJava dvtj = m_dataValueToJava.get(type);
-            m_collDataValueToJava.put(type, new ListCellToJava(dvtj));
-        }
+		// add list cell converter
+		m_javaToListCell = new LinkedHashMap<DataType, JavaToDataCell>();
+		for (DataType type : m_javaToCell.keySet()) {
+			JavaToDataCell dvtj = m_javaToCell.get(type);
+			m_javaToListCell.put(type, new JavaToListCell(dvtj));
+		}
 
-        // the converters from java to a data cell
-        m_javaToCell = new LinkedHashMap<DataType, JavaToDataCell>();
-        m_javaToCell.put(BooleanCell.TYPE, new JavaToBooleanCell());
-        m_javaToCell.put(IntCell.TYPE, new JavaToIntCell());
-        m_javaToCell.put(DoubleCell.TYPE, new JavaToDoubleCell());
-        m_javaToCell.put(LongCell.TYPE, new JavaToLongCell());
-        m_javaToCell.put(StringCell.TYPE, new JavaToStringCell());
-        m_javaToCell.put(XMLCell.TYPE, new JavaToXMLCell());
-        m_javaToCell.put(DateAndTimeCell.TYPE, new JavaToDateAndTimeCell());
-        m_javaToCell.put(RddCell.TYPE, new JavaToRddCell());
-        m_javaToCell.put(PairRddCell.TYPE, new JavaToPairRddCell());
-        
-        // add list cell converter
-        m_javaToListCell = new LinkedHashMap<DataType, JavaToDataCell>();
-        for (DataType type : m_javaToCell.keySet()) {
-            JavaToDataCell dvtj = m_javaToCell.get(type);
-            m_javaToListCell.put(type, new JavaToListCell(dvtj));
-        }
+		// Converters for flow variables
+		m_flowVarConverter = new LinkedHashMap<Type, TypeConverter>();
+		m_flowVarConverter.put(Type.DOUBLE, new DoubleFlowVarToJava());
+		m_flowVarConverter.put(Type.INTEGER, new IntFlowVarToJava());
+		m_flowVarConverter.put(Type.STRING, new StringFlowVarToJava());
 
-        // Converters for flow variables
-        m_flowVarConverter = new LinkedHashMap<Type, TypeConverter>();
-        m_flowVarConverter.put(Type.DOUBLE, new DoubleFlowVarToJava());
-        m_flowVarConverter.put(Type.INTEGER, new IntFlowVarToJava());
-        m_flowVarConverter.put(Type.STRING, new StringFlowVarToJava());
+		// default converter using toString() when no special converter for
+		// a data cell can be found
+		m_toStringToJava = new ToStringToJava();
 
-        // default converter using toString() when no special converter for
-        // a data cell can be found
-        m_toStringToJava = new ToStringToJava();
+	}
 
-    }
+	/**
+	 * Get default type provider.
+	 * 
+	 * @return the default instance
+	 */
+	public static TypeProvider getDefault() {
+		if (null == provider) {
+			provider = new TypeProvider();
+		}
+		return provider;
+	}
 
-    /**
-     * Get default type provider.
-     * @return the default instance
-     */
-    public static TypeProvider getDefault() {
-        if (null == provider) {
-            provider = new TypeProvider();
-        }
-        return provider;
-    }
+	/**
+	 * Get list of possible data types for input columns.
+	 * 
+	 * @return the list of data types
+	 */
+	public Collection<DataType> getInputDataTypes() {
+		return m_dataValueToJava.keySet();
+	}
 
+	/**
+	 * Get list of possible data types for output columns.
+	 * 
+	 * @return the list of data types
+	 */
+	public Collection<DataType> getOutputDataTypes() {
+		return m_javaToCell.keySet();
+	}
 
-    /**
-     * Get list of possible data types for input columns.
-     * @return the list of data types
-     */
-    public Collection<DataType> getInputDataTypes() {
-        return m_dataValueToJava.keySet();
-    }
+	/**
+	 * Get list of possible flow variable types.
+	 * 
+	 * @return the list of flow variables types
+	 */
+	public Collection<Type> getTypes() {
+		return m_flowVarConverter.keySet();
+	}
 
-    /**
-     * Get list of possible data types for output columns.
-     * @return the list of data types
-     */
-    public Collection<DataType> getOutputDataTypes() {
-        return m_javaToCell.keySet();
-    }
+	/**
+	 * Get the type converter for the give flow variable type.
+	 * 
+	 * @param type
+	 *            the flow variable type
+	 * @return the type converter for the given flow variable type
+	 */
+	public TypeConverter getTypeConverter(final Type type) {
+		return m_flowVarConverter.get(type);
+	}
 
-    /**
-     * Get list of possible flow variable types.
-     * @return the list of flow variables types
-     */
-    public Collection<Type> getTypes() {
-        return m_flowVarConverter.keySet();
-    }
+	/**
+	 * Get the type converter to convert a data value of the given type to a
+	 * java object.
+	 * 
+	 * @param type
+	 *            the type to be converted
+	 * @param isCollectionType
+	 *            if collection of the given type should be converted
+	 * @return the type converter
+	 */
+	public DataValueToJava getDataValueToJava(final DataType type,
+			final boolean isCollectionType) {
+		// if this is a known data type
+		if (isCollectionType) {
+			if (m_collDataValueToJava.containsKey(type)) {
+				return m_collDataValueToJava.get(type);
+			}
+		} else {
+			if (m_dataValueToJava.containsKey(type)) {
+				return m_dataValueToJava.get(type);
+			}
+		}
 
-    /**
-     * Get the type converter for the give flow variable type.
-     * @param type the flow variable type
-     * @return the type converter for the given flow variable type
-     */
-    public TypeConverter getTypeConverter(final Type type) {
-        return m_flowVarConverter.get(type);
-    }
+		// check data value converters this type is compatible with
+		List<DataValueToJava> compatibleList = new ArrayList<DataValueToJava>();
+		for (Class<? extends DataValue> dv : m_dataValueConverter.keySet()) {
+			if (type.isCompatible(dv)) {
+				compatibleList.add(m_dataValueConverter.get(dv));
+			}
+		}
+		DataValueToJava[] compatible = compatibleList
+				.toArray(new DataValueToJava[compatibleList.size()]);
+		if (compatible.length > 0) {
+			// remember compatible types
+			DataValueToJava cellToJava = new MultiValueToJava(compatible);
+			m_dataValueToJava.put(type, cellToJava);
+			DataValueToJava listCellToJava = new ListCellToJava(cellToJava);
+			m_collDataValueToJava.put(type, listCellToJava);
+			return type.isCollectionType() ? listCellToJava : cellToJava;
+		} else {
+			return m_toStringToJava;
+		}
+	}
 
-    /**
-     * Get the type converter to convert a data value of the given type to a
-     * java object.
-     *
-     * @param type the type to be converted
-     * @param isCollectionType if collection of the given type should be
-     * converted
-     * @return the type converter
-     */
-    public DataValueToJava getDataValueToJava(final DataType type,
-            final boolean isCollectionType) {
-        // if this is a known data type
-        if (isCollectionType) {
-            if (m_collDataValueToJava.containsKey(type)) {
-                return m_collDataValueToJava.get(type);
-            }
-        } else {
-            if (m_dataValueToJava.containsKey(type)) {
-                return m_dataValueToJava.get(type);
-            }
-        }
-
-        // check data value converters this type is compatible with
-        List<DataValueToJava> compatibleList = new ArrayList<DataValueToJava>();
-        for (Class<? extends DataValue> dv : m_dataValueConverter.keySet()) {
-            if (type.isCompatible(dv)) {
-                compatibleList.add(m_dataValueConverter.get(dv));
-            }
-        }
-        DataValueToJava[] compatible = compatibleList.toArray(
-                new DataValueToJava[compatibleList.size()]);
-        if (compatible.length > 0) {
-            // remember compatible types
-            DataValueToJava cellToJava = new MultiValueToJava(compatible);
-            m_dataValueToJava.put(type, cellToJava);
-            DataValueToJava listCellToJava
-                = new ListCellToJava(cellToJava);
-            m_collDataValueToJava.put(type, listCellToJava);
-            return type.isCollectionType() ? listCellToJava : cellToJava;
-        } else {
-            return m_toStringToJava;
-        }
-    }
-
-
-
-    /**
-     * Get an type converter that can be utilized to create data cells of the
-     * given type or collection cells with elements of the given type.
-     * @param type the type
-     * @param isCollectionType if collection cells should be created
-     * @return the converter from java class to a data cell.
-     */
-    public JavaToDataCell getJavaToDataCell(final DataType type,
-            final boolean isCollectionType) {
-        if (isCollectionType) {
-            if (m_javaToListCell.containsKey(type)) {
-                return m_javaToListCell.get(type);
-            }
-        } else {
-            if (m_javaToCell.containsKey(type)) {
-                return m_javaToCell.get(type);
-            }
-        }
-        // data type is not known
-        throw new TypeException("The data type "
-                + type
-                + " is not supported.");
-    }
+	/**
+	 * Get an type converter that can be utilized to create data cells of the
+	 * given type or collection cells with elements of the given type.
+	 * 
+	 * @param type
+	 *            the type
+	 * @param isCollectionType
+	 *            if collection cells should be created
+	 * @return the converter from java class to a data cell.
+	 */
+	public JavaToDataCell getJavaToDataCell(final DataType type,
+			final boolean isCollectionType) {
+		if (isCollectionType) {
+			if (m_javaToListCell.containsKey(type)) {
+				return m_javaToListCell.get(type);
+			}
+		} else {
+			if (m_javaToCell.containsKey(type)) {
+				return m_javaToCell.get(type);
+			}
+		}
+		// data type is not known
+		throw new TypeException("The data type " + type + " is not supported.");
+	}
 }

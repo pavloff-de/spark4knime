@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<config xmlns="http://www.knime.org/2008/09/XMLConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.knime.org/2008/09/XMLConfig http://www.knime.org/XMLConfig_2008_09.xsd" key="rdd_reduce_Function__b3cea423-35be-46ca-ad82-e6a4777335a3.xml">
+<config xmlns="http://www.knime.org/2008/09/XMLConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.knime.org/2008/09/XMLConfig http://www.knime.org/XMLConfig_2008_09.xsd" key="reduce_RDD_nonRDD_5f586b25-9217-43e5-af9b-8b8d8c8edd1f.xml">
 <entry key="Meta category" type="xstring" value="de.pavloff.spark4knime.jsnippet.JavaSnippetForRDDNodeFactory"/>
 <entry key="Category" type="xstring" value="Spark"/>
-<entry key="Name" type="xstring" value="rdd.reduce(Function)"/>
-<entry key="Description" type="xstring" value="Example for reduce function on simple RDD. Return value is Double"/>
+<entry key="Name" type="xstring" value="reduce.RDD-nonRDD"/>
+<entry key="Description" type="xstring" value="Reduce function to calculate any reduced value of RDD."/>
 <entry key="Version" type="xstring" value="version 1.x"/>
 <config key="Snippet">
 <entry key="scriptImports" type="xstring" value="// Your custom imports:%%00010import org.apache.spark.api.java.JavaRDD;%%00010import org.apache.spark.api.java.function.Function2;%%00010"/>
 <entry key="scriptFields" type="xstring" value="// Your custom variables:%%00010"/>
-<entry key="scriptBody" type="xstring" value="// Enter your code here:%%00010out_RDD = c_RDD.reduce(new Function2&lt;String, Double, Double&gt;() {%%00010%%00009@Override%%00010%%00009public Double call(String arg0, Double arg1) throws Exception {%%00010%%00009%%00009return Double.valueOf(arg0) + arg1;%%00010%%00009}%%00010});%%00010%%00010%%00010%%00010"/>
+<entry key="scriptBody" type="xstring" value="// Enter your code here:%%00010//%%00010// &lt;R&gt; reduce(Function2&lt;T,R,R&gt; f)%%00010// reduces the elements of this RDD using the%%00010// specified commutative and associative binary%%00010// operator. Function f implements%%00010// org.apache.spark.api.java.function.Function2 class.%%00010//%%00010// T is type of entries in in_RDD and R is a type of%%00010// result. Function f should implement a%%00010// &lt;R&gt; call(T, R) method.%%00010//%%00010reducedValue = in_RDD.reduce(new Function2&lt;String, Double, Double&gt;() {%%00010%%00009@Override%%00010%%00009public R call(T arg0, R arg1) throws Exception {%%00010%%00009%%00009return R.valueOf(arg0) + arg1;%%00010%%00009}%%00010});%%00010"/>
 <config key="jarFiles">
 <entry key="array-size" type="xint" value="0"/>
 </config>
@@ -16,7 +16,7 @@
 <entry key="array-size" type="xint" value="1"/>
 <config key="0">
 <entry key="Name" type="xstring" value="RDD"/>
-<entry key="JavaName" type="xstring" value="out_RDD"/>
+<entry key="JavaName" type="xstring" value="reducedValue"/>
 <entry key="JavaType" type="xstring" value="java.lang.Double"/>
 <config key="Type">
 <entry key="cell_class" type="xstring" value="org.knime.core.data.def.DoubleCell"/>
@@ -32,7 +32,7 @@
 <entry key="array-size" type="xint" value="1"/>
 <config key="0">
 <entry key="Name" type="xstring" value="RDD"/>
-<entry key="JavaName" type="xstring" value="c_RDD"/>
+<entry key="JavaName" type="xstring" value="in_RDD"/>
 <entry key="JavaType" type="xstring" value="org.apache.spark.api.java.JavaRDD"/>
 <config key="Type">
 <entry key="cell_class" type="xstring" value="de.pavloff.spark4knime.RddCell"/>
@@ -44,7 +44,7 @@
 <entry key="array-size" type="xint" value="0"/>
 </config>
 <entry key="version" type="xstring" value="version 1.x"/>
-<entry key="templateUUID" type="xstring" value="b3cea423-35be-46ca-ad82-e6a4777335a3"/>
+<entry key="templateUUID" type="xstring" value="5f586b25-9217-43e5-af9b-8b8d8c8edd1f"/>
 <entry key="runOnExecute" type="xboolean" value="false"/>
 </config>
 </config>

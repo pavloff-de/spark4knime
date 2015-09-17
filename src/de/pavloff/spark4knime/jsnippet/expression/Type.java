@@ -60,103 +60,108 @@ import org.w3c.dom.Document;
 
 /**
  * Types for the java snippet.
- *
+ * 
  * @author Heiko Hofer
+ * @author Oleg Pavlov, University of Heidelberg
  */
 public final class Type {
-    /** the string type. */
-    public static final String tString = "";
+	/** the string type. */
+	public static final String tString = "";
 
-    /** the integer type. */
-    public static final Integer tInt = 0;
+	/** the integer type. */
+	public static final Integer tInt = 0;
 
-    /** the double type. */
-    public static final Double tDouble = 0.0;
+	/** the double type. */
+	public static final Double tDouble = 0.0;
 
-    /** the long type. */
-    public static final Long tLong = 0l;
+	/** the long type. */
+	public static final Long tLong = 0l;
 
-    /** the boolean type. */
-    public static final Boolean tBoolean = false;
+	/** the boolean type. */
+	public static final Boolean tBoolean = false;
 
-    /** the java.util.Date type. */
-    public static final Date tDate = new Date(0);
+	/** the java.util.Date type. */
+	public static final Date tDate = new Date(0);
 
-    /** the java.util.Calendar type. */
-    public static final Calendar tCalendar = new GregorianCalendar();
-    
-    /** the org.apache.spark.api.java.JavaRDD type. */
-    @SuppressWarnings("unchecked")
+	/** the java.util.Calendar type. */
+	public static final Calendar tCalendar = new GregorianCalendar();
+
+	/** the org.apache.spark.api.java.JavaRDD type. */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static final JavaRDD tRDD = new JavaRDD(null, null);
-    
-    /** the org.apache.spark.api.java.JavaPairRDD type. */
-    @SuppressWarnings("unchecked")
+
+	/** the org.apache.spark.api.java.JavaPairRDD type. */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static final JavaPairRDD tPairRDD = new JavaPairRDD(null, null, null);
 
-    /** the DOM type. */
-    public static Document tXML = null;
-    static {
-        try {
-            tXML = DocumentBuilderFactory.newInstance().
-                         newDocumentBuilder().newDocument();
-        } catch (ParserConfigurationException e) {
-            // should never be reached
-        }
-    }
+	/** the DOM type. */
+	public static Document tXML = null;
+	static {
+		try {
+			tXML = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+					.newDocument();
+		} catch (ParserConfigurationException e) {
+			// should never be reached
+		}
+	}
 
-    private Type() {
-        // utility classes do not need to be instantiated.
-    }
+	private Type() {
+		// utility classes do not need to be instantiated.
+	}
 
-    /**
-     * Get the identifier associated with the given type.
-     * @param type the type
-     * @return the identifier associated with the given type
-     */
-    @SuppressWarnings("rawtypes")
-    public static String getIdentifierFor(final Class type) {
-        if (type.equals(String.class)) {
-            return "tString";
-        } else if (type.equals(Integer.class)) {
-            return "tInt";
-        } else if (type.equals(Double.class)) {
-            return "tDouble";
-        } else if (type.equals(Long.class)) {
-            return "tBoolean";
-        } else if (type.equals(Boolean.class)) {
-            return "tString";
-        } else if (type.equals(Date.class)) {
-            return "tDate";
-        } else if (type.equals(Calendar.class)) {
-            return "tCalendar";
-        } else if (type.equals(Document.class)) {
-            return "tXML";
-        } else if (type.equals(JavaRDD.class)) {
-            return "tRDD";
-        } else if (type.equals(JavaPairRDD.class)) {
-            return "tPairRDD";
-        }
-        throw new TypeException("Unknown type: " + type.getName());
-    }
+	/**
+	 * Get the identifier associated with the given type.
+	 * 
+	 * @param type
+	 *            the type
+	 * @return the identifier associated with the given type
+	 */
+	@SuppressWarnings("rawtypes")
+	public static String getIdentifierFor(final Class type) {
+		if (type.equals(String.class)) {
+			return "tString";
+		} else if (type.equals(Integer.class)) {
+			return "tInt";
+		} else if (type.equals(Double.class)) {
+			return "tDouble";
+		} else if (type.equals(Long.class)) {
+			return "tBoolean";
+		} else if (type.equals(Boolean.class)) {
+			return "tString";
+		} else if (type.equals(Date.class)) {
+			return "tDate";
+		} else if (type.equals(Calendar.class)) {
+			return "tCalendar";
+		} else if (type.equals(Document.class)) {
+			return "tXML";
+		} else if (type.equals(JavaRDD.class)) {
+			return "tRDD";
+		} else if (type.equals(JavaPairRDD.class)) {
+			return "tPairRDD";
+		}
+		throw new TypeException("Unknown type: " + type.getName());
+	}
 
-    /**
-     * Get the class of the given value. The value is supposed to be a member
-     * value of this class.
-     * @param t the variable
-     * @return the class
-     */
-    @SuppressWarnings("rawtypes")
-    public static Class getMembersClass(final Object t) {
-        if (t == tCalendar) {
-            return Calendar.class;
-        } else if (t == tXML) {
-            return Document.class;
-        } else if (t == tRDD) {
-            return JavaRDD.class;
-        } else if (t == tPairRDD) {
-            return JavaPairRDD.class;
-        } else {
-            return t.getClass();
-        }
-    }
+	/**
+	 * Get the class of the given value. The value is supposed to be a member
+	 * value of this class.
+	 * 
+	 * @param t
+	 *            the variable
+	 * @return the class
+	 */
+	@SuppressWarnings("rawtypes")
+	public static Class getMembersClass(final Object t) {
+		if (t == tCalendar) {
+			return Calendar.class;
+		} else if (t == tXML) {
+			return Document.class;
+		} else if (t == tRDD) {
+			return JavaRDD.class;
+		} else if (t == tPairRDD) {
+			return JavaPairRDD.class;
+		} else {
+			return t.getClass();
+		}
+	}
 }

@@ -22,9 +22,7 @@ public class JavaSnippetForRDDNodeView extends
 	protected JavaSnippetForRDDNodeView(
 			final JavaSnippetForRDDNodeModel nodeModel) {
 		super(nodeModel);
-
-		// TODO instantiate the components of the view here.
-
+		// instantiate the components of the view here.
 	}
 
 	/**
@@ -32,15 +30,12 @@ public class JavaSnippetForRDDNodeView extends
 	 */
 	@Override
 	protected void modelChanged() {
-
-		// TODO retrieve the new model from your nodemodel and
-		// update the view.
+		// retrieve the new model from your nodemodel and update the view.
 		JavaSnippetForRDDNodeModel nodeModel = (JavaSnippetForRDDNodeModel) getNodeModel();
 		assert nodeModel != null;
 
 		// be aware of a possibly not executed nodeModel! The data you retrieve
 		// from your nodemodel could be null, emtpy, or invalid in any kind.
-
 	}
 
 	/**
@@ -48,8 +43,7 @@ public class JavaSnippetForRDDNodeView extends
 	 */
 	@Override
 	protected void onClose() {
-
-		// TODO things to do when closing the view
+		// things to do when closing the view
 	}
 
 	/**
@@ -57,12 +51,12 @@ public class JavaSnippetForRDDNodeView extends
 	 */
 	@Override
 	protected void onOpen() {
-
 		// things to do when opening the view
 		JavaSnippetForRDDNodeModel nodeModel = (JavaSnippetForRDDNodeModel) getNodeModel();
 		assert nodeModel != null;
 		RddViewer view = nodeModel.getRddViewer();
 		assert (view != null);
+		
 		setComponent(view.getTableView());
 	}
 

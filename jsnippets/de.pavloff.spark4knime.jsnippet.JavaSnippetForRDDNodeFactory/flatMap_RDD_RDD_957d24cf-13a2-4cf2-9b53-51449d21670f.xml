@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<config xmlns="http://www.knime.org/2008/09/XMLConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.knime.org/2008/09/XMLConfig http://www.knime.org/XMLConfig_2008_09.xsd" key="rdd_filter_Function__01ffcc44-e2d6-4baa-b6bf-9b4ea14e1ab4.xml">
+<config xmlns="http://www.knime.org/2008/09/XMLConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.knime.org/2008/09/XMLConfig http://www.knime.org/XMLConfig_2008_09.xsd" key="flatMap_RDD_RDD_957d24cf-13a2-4cf2-9b53-51449d21670f.xml">
 <entry key="Meta category" type="xstring" value="de.pavloff.spark4knime.jsnippet.JavaSnippetForRDDNodeFactory"/>
 <entry key="Category" type="xstring" value="Spark"/>
-<entry key="Name" type="xstring" value="rdd.filter(Function)"/>
-<entry key="Description" type="xstring" value="Filtering an RDD using filter Function"/>
+<entry key="Name" type="xstring" value="flatMap.RDD-RDD"/>
+<entry key="Description" type="xstring" value="FlatMap function to convert RDD to any other RDD."/>
 <entry key="Version" type="xstring" value="version 1.x"/>
 <config key="Snippet">
-<entry key="scriptImports" type="xstring" value="// Your custom imports:%%00010import org.apache.spark.api.java.JavaRDD;%%00010import org.apache.spark.api.java.function.Function;%%00010"/>
+<entry key="scriptImports" type="xstring" value="// Your custom imports:%%00010import org.apache.spark.api.java.JavaRDD;%%00010import org.apache.spark.api.java.function.FlatMapFunction;%%00010"/>
 <entry key="scriptFields" type="xstring" value="// Your custom variables:%%00010"/>
-<entry key="scriptBody" type="xstring" value="// Enter your code here:%%00010out_RDD = c_RDD.filter(new Function&lt;Double, Boolean&gt;() {%%00010%%00009@Override%%00010%%00009public Boolean call(Double arg0) throws Exception {%%00010%%00009%%00009return arg0 != 0;%%00010%%00009}%%00010});%%00010%%00010%%00010%%00010"/>
+<entry key="scriptBody" type="xstring" value="// Enter your code here:%%00010//%%00010// JavaRDD&lt;R&gt; flatMap(FlatMapFunction&lt;T,R&gt; f)%%00010// returns a new RDD by first applying a function to all%%00010// elements of this RDD, and then flattening the results.%%00010// Function f implements%%00010// org.apache.spark.api.java.function.FlatMapFunction class.%%00010//%%00010// T is type of entries in in_RDD and R is a type of%%00010// entries in out_RDD. Function f should implement a%%00010// java.lang.Iterable&lt;R&gt; call(T) method.%%00010//%%00010out_RDD = in_RDD.flatMap(new FlatMapFunction&lt;T, R&gt;() {%%00010%%00009@Override%%00010%%00009public Iterable&lt;R&gt; call(T arg0) throws Exception {%%00010%%00009%%00009return arg0.asList();%%00010%%00009}%%00010});%%00010"/>
 <config key="jarFiles">
 <entry key="array-size" type="xint" value="0"/>
 </config>
@@ -32,7 +32,7 @@
 <entry key="array-size" type="xint" value="1"/>
 <config key="0">
 <entry key="Name" type="xstring" value="RDD"/>
-<entry key="JavaName" type="xstring" value="c_RDD"/>
+<entry key="JavaName" type="xstring" value="in_RDD"/>
 <entry key="JavaType" type="xstring" value="org.apache.spark.api.java.JavaRDD"/>
 <config key="Type">
 <entry key="cell_class" type="xstring" value="de.pavloff.spark4knime.RddCell"/>
@@ -44,7 +44,7 @@
 <entry key="array-size" type="xint" value="0"/>
 </config>
 <entry key="version" type="xstring" value="version 1.x"/>
-<entry key="templateUUID" type="xstring" value="01ffcc44-e2d6-4baa-b6bf-9b4ea14e1ab4"/>
+<entry key="templateUUID" type="xstring" value="957d24cf-13a2-4cf2-9b53-51449d21670f"/>
 <entry key="runOnExecute" type="xboolean" value="false"/>
 </config>
 </config>

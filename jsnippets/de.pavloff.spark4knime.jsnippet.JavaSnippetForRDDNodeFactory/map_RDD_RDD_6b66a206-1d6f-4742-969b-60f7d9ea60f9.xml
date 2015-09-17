@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<config xmlns="http://www.knime.org/2008/09/XMLConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.knime.org/2008/09/XMLConfig http://www.knime.org/XMLConfig_2008_09.xsd" key="rdd_Map_Function__2546c8dd-ba03-4938-a066-c9a0305903d7.xml">
+<config xmlns="http://www.knime.org/2008/09/XMLConfig" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.knime.org/2008/09/XMLConfig http://www.knime.org/XMLConfig_2008_09.xsd" key="map_RDD_RDD_6b66a206-1d6f-4742-969b-60f7d9ea60f9.xml">
 <entry key="Meta category" type="xstring" value="de.pavloff.spark4knime.jsnippet.JavaSnippetForRDDNodeFactory"/>
 <entry key="Category" type="xstring" value="Spark"/>
-<entry key="Name" type="xstring" value="rdd.Map(Function)"/>
-<entry key="Description" type="xstring" value="Exemplary implementation of Map Function for a simple RDD"/>
+<entry key="Name" type="xstring" value="map.RDD-RDD"/>
+<entry key="Description" type="xstring" value="Map function to convert RDD to any other RDD."/>
 <entry key="Version" type="xstring" value="version 1.x"/>
 <config key="Snippet">
 <entry key="scriptImports" type="xstring" value="// Your custom imports:%%00010import org.apache.spark.api.java.JavaRDD;%%00010import org.apache.spark.api.java.function.Function;%%00010"/>
 <entry key="scriptFields" type="xstring" value="// Your custom variables:%%00010"/>
-<entry key="scriptBody" type="xstring" value="// Enter your code here:%%00010out_RDD = c_RDD.map(new Function&lt;Double, String&gt;() {%%00010%%00009@Override%%00010%%00009public String call(Double arg0) throws Exception {%%00010%%00009%%00009return arg0.toString();%%00010%%00009}%%00010});%%00010%%00010%%00010%%00010"/>
+<entry key="scriptBody" type="xstring" value="// Enter your code here:%%00010//%%00010// JavaRDD&lt;R&gt; map(Function&lt;T,R&gt; f)%%00010// returns a new RDD by applying a function f%%00010// to all elements of this RDD. Function f implements%%00010// org.apache.spark.api.java.function.Function class.%%00010//%%00010// T is type of entries in in_RDD and R is a type of%%00010// entries in out_RDD. Function f should implement a%%00010// R call(T) method.%%00010//%%00010out_RDD = in_RDD.map(new Function&lt;T, R&gt;() {%%00010%%00009@Override%%00010%%00009public R call(T arg0) throws Exception {%%00010%%00009%%00009return new R(arg0);%%00010%%00009}%%00010});%%00010"/>
 <config key="jarFiles">
 <entry key="array-size" type="xint" value="0"/>
 </config>
@@ -32,7 +32,7 @@
 <entry key="array-size" type="xint" value="1"/>
 <config key="0">
 <entry key="Name" type="xstring" value="RDD"/>
-<entry key="JavaName" type="xstring" value="c_RDD"/>
+<entry key="JavaName" type="xstring" value="in_RDD"/>
 <entry key="JavaType" type="xstring" value="org.apache.spark.api.java.JavaRDD"/>
 <config key="Type">
 <entry key="cell_class" type="xstring" value="de.pavloff.spark4knime.RddCell"/>
@@ -44,7 +44,7 @@
 <entry key="array-size" type="xint" value="0"/>
 </config>
 <entry key="version" type="xstring" value="version 1.x"/>
-<entry key="templateUUID" type="xstring" value="2546c8dd-ba03-4938-a066-c9a0305903d7"/>
+<entry key="templateUUID" type="xstring" value="6b66a206-1d6f-4742-969b-60f7d9ea60f9"/>
 <entry key="runOnExecute" type="xboolean" value="false"/>
 </config>
 </config>
