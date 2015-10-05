@@ -3,14 +3,13 @@
     <name>RDDToSequenceFile</name>
     
     <shortDescription>
-        Save elements of the RDD as Hadoop Sequence File.
+        Save elements of the RDD as Hadoop Sequence File
     </shortDescription>
     
     <fullDescription>
-        <intro>Insert long description here...</intro>
+        <intro>Saves RDD as Hadoop Sequence File. It is only recommended for further map-reduce on Hadoop.</intro>
         
-        
-        <option name="Output directory">Output directory shouldn't exist. Use "Overwrite" option to remove an existing directory before save RDD.</option>
+        <option name="Output directory">Output directory shouldn't exist (ignore KNIME warning). Use "Overwrite" option to remove an existing directory before save RDD.</option>
         <option name="Overwrite if exists">Option allows to use existing directory as output. The directory will be removed before RDD will be saved.</option>
         <!-- possibly more options that can also be grouped by tabs -->
         <!--

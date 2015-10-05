@@ -6,7 +6,9 @@
     java code snippets.</shortDescription>
     <fullDescription>
         <intro>
-            <p>This node allows you to execute arbitrary java code to create
+        <p>The node Java Snippet was extended to support RDD and PairRDD.</p>
+        <p>Original description below:</p>
+        <p>This node allows you to execute arbitrary java code to create
             a new columns or to replace an existing ones. Enter the java code in 
             the text area.</p>
             <p>An output columns is defined by creating a java field bound to 
@@ -41,7 +43,9 @@
           second way is to use the methods <i>getCell(name, type)</i> or 
           <i>getFlowVariable(name, type)</i> where <i>name</i> is the name of
           the input column or the flow variable, respectively. You can use
-          the following values for the <i>type</i> parameter. <br/>          
+          the following values for the <i>type</i> parameter. <br/>
+          <i>tRDD</i> : RDD<br/>
+          <i>tPairRDD</i> : pairRDD<br/>
           <i>tString</i> : String (f)<br/>
           <i>tInt</i>  : Integer (f)<br/>
           <i>tDouble</i> : Double (f)<br/>
@@ -97,7 +101,7 @@
         </outPort>
     </ports>
     <views>
-        <view index="0" name="name of first view">Description of first view...</view>
+        <view index="0" name="Table View">Show data as table. First 10 entries if it is an RDD or pairRDD.</view>
         <!--view index="1" name="name of second view">Description of second view...</view-->
     </views>
 </knimeNode>

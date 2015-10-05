@@ -3,12 +3,11 @@
     <name>Take</name>
     
     <shortDescription>
-        Take first n elements of RDD
+        Take first N elements of RDD
     </shortDescription>
     
     <fullDescription>
-        <intro>Insert long description here...</intro>
-        
+        <intro>Return a list with the first N elements of the dataset.</intro>
         
         <option name="Number of elements">Take first N elements</option>
         <!--<option name="short name of second option (like in the dialog)">description of second option</option>-->
@@ -32,7 +31,7 @@
     </ports>
     
     <views>
-        <view index="0" name="Elements of RDD">First N entries displayed</view>
+        <view index="0" name="Elements of RDD">First N entries</view>
         <!--view index="1" name="name of second view">Description of second view...</view-->
     </views>
 </knimeNode>

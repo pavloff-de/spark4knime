@@ -7,8 +7,10 @@
     </shortDescription>
     
     <fullDescription>
-        <intro>Insert long description here...</intro>
-        
+        <intro><p>Creates an RDD from text file. Data will be parallelized by lines.</p>
+        <p>Only input nodes provide an option to define the Spark Master URL. 
+        The URL of first executed node obtains for whole workspace. 
+        All spark nodes use always the same instance of SparkContext.</p></intro>
         
         <option name="Spark master"> Master is a Spark, Mesos or YARN cluster URL, or a special "local" string to run in local mode. Default value "local[*]" allows to run Spark locally with as many worker threads as logical cores on your machine</option>
         <option name="Text file">Path to text file on your local file system</option>

@@ -3,12 +3,11 @@
     <name>Distinct</name>
     
     <shortDescription>
-        Creates a new RDD that contains the distinct elements of the source RDD's
+        Create a new RDD that contains the distinct elements of the source RDD
     </shortDescription>
     
     <fullDescription>
-        <intro>Insert long description here...</intro>
-        
+        <intro>Returns a new dataset that contains the distinct elements of the source dataset.</intro>
         
         <!--<option name="short name of first option (like in the dialog)">description of first option</option>-->
         <!--<option name="short name of second option (like in the dialog)">description of second option</option>-->

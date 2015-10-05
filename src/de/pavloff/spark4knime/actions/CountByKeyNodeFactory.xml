@@ -3,11 +3,11 @@
     <name>CountByKey</name>
     
     <shortDescription>
-        Make a hashmap of (Key, Int) pairs with the count of each key. Only for pairRDD available.
+        Make a list of (Key, Int) pairs with the count of each key
     </shortDescription>
     
     <fullDescription>
-        <intro>Insert long description here...</intro>
+        <intro>Only available on pairRDDs. Returns a list of (Key, Int) pairs with the count of each key.</intro>
         
         
         <!--<option name="short name of first option (like in the dialog)">description of first option</option>-->

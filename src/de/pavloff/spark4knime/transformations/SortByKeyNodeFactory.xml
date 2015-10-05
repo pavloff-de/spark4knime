@@ -7,8 +7,8 @@
     </shortDescription>
     
     <fullDescription>
-        <intro>Insert long description here...</intro>
-        
+        <intro>When applied on a dataset of (K, V) pairs, returns a dataset of (K, V) pairs 
+        sorted by keys in ascending or descending order. K must be sortable.</intro>
         
         <option name="Order">Defines order to sort RDD</option>
         <!--<option name="short name of second option (like in the dialog)">description of second option</option>-->

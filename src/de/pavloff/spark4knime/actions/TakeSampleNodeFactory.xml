@@ -3,12 +3,13 @@
     <name>TakeSample</name>
     
     <shortDescription>
-        Random sample of RDD as list.
+        Random sample of RDD as list
     </shortDescription>
     
     <fullDescription>
-        <intro>Insert long description here...</intro>
-        
+        <intro>Return a list with a random sample of N elements of the dataset. 
+        It provides sampling with or without replacement. 
+        Optionally can be pre-specified a random number generator seed.</intro>
         
         <option name="Number of data">Sample of N elements</option>
         <option name="Replacement">Sampling with or without replacement</option>

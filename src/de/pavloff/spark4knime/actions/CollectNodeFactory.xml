@@ -3,12 +3,13 @@
     <name>Collect</name>
     
     <shortDescription>
-        Collect all the elements of the RDD as a table.
+        Collect all the elements of the RDD as a table
     </shortDescription>
     
     <fullDescription>
-        <intro>Insert long description here...</intro>
-        
+        <intro>Getting all the data of RDD to KNIME. 
+        Attention: large data can overflow the main memory. 
+        Using this node is only recommended for small data or single end results.</intro>
         
         <!--<option name="short name of first option (like in the dialog)">description of first option</option>-->
         <!--<option name="short name of second option (like in the dialog)">description of second option</option>-->

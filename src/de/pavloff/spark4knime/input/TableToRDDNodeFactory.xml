@@ -3,12 +3,17 @@
     <name>TableToRDD</name>
     
     <shortDescription>
-        Read a table from previous node as input and parallelize data by rows.
+        Read a table from previous node as input and parallelize data by rows
     </shortDescription>
     
     <fullDescription>
-        <intro>Insert long description here...</intro>
-        
+        <intro><p>Creates an RDD from data of input node. Data will be parallelized by rows. 
+        Types of input data will be saved in RDD. One column creates a simple RDD. 
+        PairRDD (key-value pair) can be created from two columns. 
+        More than two columns will be ignored.</p>
+        <p>Only input nodes provide an option to define the Spark Master URL. 
+        The URL of first executed node obtains for whole workspace. 
+        All spark nodes use always the same instance of SparkContext.</p></intro>
         
         <option name="Spark master"> Master is a Spark, Mesos or YARN cluster URL, or a special "local" string to run in local mode. Default value "local[*]" allows to run Spark locally with as many worker threads as logical cores on your machine</option>
         <!-- <option name="short name of second option (like in the dialog)">description of second option</option> -->
@@ -25,9 +30,9 @@
     </fullDescription>
     
     <ports>
-        <inPort index="0" name="Input table to parallelize">One or two columns (key-value pair) will be parallelized.</inPort>
+        <inPort index="0" name="Input table to parallelize">One (simple) or two columns (key-value pair) will be parallelized.</inPort>
         <!-- possibly more input ports here-->
-        <outPort index="0" name="Spark RDD">Resilient distributed dataset (RDD) with a text file parallelized by lines</outPort>
+        <outPort index="0" name="Spark RDD">Resilient distributed dataset (RDD) with a input data parallelized by rows</outPort>
         <!-- possibly more output ports here-->
     </ports>
     

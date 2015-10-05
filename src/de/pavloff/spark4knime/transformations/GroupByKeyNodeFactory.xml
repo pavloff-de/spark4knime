@@ -3,12 +3,11 @@
     <name>GroupByKey</name>
     
     <shortDescription>
-        When called on a dataset of (K, V) pairs, returns a RDD of (K, Iterable&lt;V&gt;) pairs
+        When applied on a dataset of (K, V) pairs, returns a RDD of (K, Iterable&lt;V&gt;) pairs
     </shortDescription>
     
     <fullDescription>
-        <intro>Insert long description here...</intro>
-        
+        <intro>Returns a new RDD of (K, ListOf&lt;V&gt;) pairs.</intro>
         
         <!--<option name="short name of first option (like in the dialog)">description of first option</option>-->
         <!--<option name="short name of second option (like in the dialog)">description of second option</option>-->

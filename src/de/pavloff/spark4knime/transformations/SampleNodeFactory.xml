@@ -7,8 +7,9 @@
     </shortDescription>
     
     <fullDescription>
-        <intro>Insert long description here...</intro>
-        
+        <intro>Creates a new RDD with a fraction of the input data. 
+        It provides sampling with or without replacement. 
+        Optionally can be pre-specified a random number generator seed.</intro>
         
         <option name="Fraction of data">Sample of N percent of elements</option>
         <option name="Replacement">Sampling with or without replacement</option>

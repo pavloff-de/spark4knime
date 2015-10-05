@@ -3,14 +3,13 @@
     <name>RDDToTextFile</name>
     
     <shortDescription>
-        Save elements of the RDD as text file.
+        Save elements of the RDD as text file
     </shortDescription>
     
     <fullDescription>
-        <intro>Insert long description here...</intro>
+        <intro>Saves RDD as text file.</intro>
         
-        
-        <option name="Output directory">Output directory shouldn't exist. Use "Overwrite" option to remove an existing directory before save RDD.</option>
+        <option name="Output directory">Output directory shouldn't exist (ignore KNIME warning). Use "Overwrite" option to remove an existing directory before save RDD.</option>
         <option name="Overwrite if exists">Option allows to use existing directory as output. The directory will be removed before RDD will be saved.</option>
         <!-- possibly more options that can also be grouped by tabs -->
         <!--
