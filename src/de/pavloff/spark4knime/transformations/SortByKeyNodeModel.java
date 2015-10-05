@@ -39,16 +39,16 @@ public class SortByKeyNodeModel extends NodeModel {
 	 * the dialog or from a settings file) (package visibility to be usable from
 	 * the dialog).
 	 */
-	static final String CFGKEY_ORDER = "Order";
+	static final String CFGKEY_DESC_ORDER = "Order";
 
 	/** initial default count value. */
-	static final Boolean DEFAULT_ORDER = false;
+	static final Boolean DEFAULT_DESC_ORDER = false;
 
 	// example value: the models count variable filled from the dialog
 	// and used in the models execution method. The default components of the
 	// dialog work with "SettingsModels".
-	private final SettingsModelBoolean m_order = new SettingsModelBoolean(
-			SortByKeyNodeModel.CFGKEY_ORDER, SortByKeyNodeModel.DEFAULT_ORDER);
+	private final SettingsModelBoolean m_desc_order = new SettingsModelBoolean(
+			SortByKeyNodeModel.CFGKEY_DESC_ORDER, SortByKeyNodeModel.DEFAULT_DESC_ORDER);
 
 	/**
 	 * Constructor for the node model.
@@ -72,7 +72,7 @@ public class SortByKeyNodeModel extends NodeModel {
 			BufferedDataTable[] out;
 			out = new BufferedDataTable[] { TableCellUtils.setRDD(exec,
 					((JavaPairRDD) TableCellUtils.getRDD(inData[0]))
-							.sortByKey(m_order.getBooleanValue()), true) };
+							.sortByKey(!m_desc_order.getBooleanValue()), true) };
 
 			// update veiwer
 			rddViewer = new RddViewer(out[0], exec);
@@ -118,7 +118,7 @@ public class SortByKeyNodeModel extends NodeModel {
 	protected void saveSettingsTo(final NodeSettingsWO settings) {
 		// save user settings to the config object.
 
-		m_order.saveSettingsTo(settings);
+		m_desc_order.saveSettingsTo(settings);
 
 	}
 
@@ -131,7 +131,7 @@ public class SortByKeyNodeModel extends NodeModel {
 		// load (valid) settings from the config object. It can be safely
 		// assumed that the settings are valided by the method below.
 
-		m_order.loadSettingsFrom(settings);
+		m_desc_order.loadSettingsFrom(settings);
 
 	}
 
@@ -145,7 +145,7 @@ public class SortByKeyNodeModel extends NodeModel {
 		// is in a certain range (which is ensured by the SettingsModel). Do not
 		// actually set any values of any member variables.
 
-		m_order.validateSettings(settings);
+		m_desc_order.validateSettings(settings);
 
 	}
 

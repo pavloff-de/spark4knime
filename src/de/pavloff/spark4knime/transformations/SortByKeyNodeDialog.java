@@ -25,8 +25,8 @@ public class SortByKeyNodeDialog extends DefaultNodeSettingsPane {
 
 		// order
 		addDialogComponent(new DialogComponentBoolean(new SettingsModelBoolean(
-				SortByKeyNodeModel.CFGKEY_ORDER,
-				SortByKeyNodeModel.DEFAULT_ORDER), "descending order"));
+				SortByKeyNodeModel.CFGKEY_DESC_ORDER,
+				SortByKeyNodeModel.DEFAULT_DESC_ORDER), "descending order"));
 
 	}
 }
